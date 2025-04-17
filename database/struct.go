@@ -2,7 +2,12 @@ package database
 
 type User struct {
 	Username string `json:"username"`
-	Pass     string `json:"pass"`
+	Password     string `json:"password"`
+	Age		int 	`json:"age"`
+	Gender  string 	`json:"gender"`
+	FirstName	string `json:"firstName"`
+	LastName	string	`json:"lastName"`
+	Email 	string 	`json:"email"` 	
 }
 type Error struct {
 	Message string `json:"message"`

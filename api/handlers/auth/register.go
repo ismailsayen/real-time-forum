@@ -20,6 +20,22 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var user database.User
-	json.NewDecoder(r.Body).Decode(&user)
-	fmt.Println(user)
+
+	if r.Body == nil {
+		http.Error(w, "Empty request body", http.StatusBadRequest)
+		return
+	}
+		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+			http.Error(w, "Invalid json format data", http.StatusBadRequest)
+			return
+		}
+	if  user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.Username == ""||user.Age == 0 {
+    // fmt.Println("error less data ")
+	http.Error(w, "All fields are required", http.StatusBadRequest)
+	return 
+}
+fmt.Println("succ",user)
+	
+	
+
 }
