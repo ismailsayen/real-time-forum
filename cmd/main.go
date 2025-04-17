@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"rtFroum/routes"
+)
 
 func main() {
-	fmt.Println("hello")
+	routes.Routers()
+	fmt.Println("http://localhost:8080/")
+	http.ListenAndServe(":8080", nil)
 }
