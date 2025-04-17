@@ -12,6 +12,6 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc("/static/", handlers.Static)
 	http.HandleFunc("/login", auth.Login)
-	http.HandleFunc("/register", auth.Register)
+	http.HandleFunc("/register", auth.RegisterHandler(db))
 
 }

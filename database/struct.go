@@ -11,5 +11,5 @@ type User struct {
 }
 type Error struct {
 	Message string `json:"message"`
-	Status    int    `json:"code"`
+	Status    int    `json:"status"`
 }
