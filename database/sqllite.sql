@@ -1,0 +1,58 @@
+CREATE TABLE IF not EXISTS users (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nickname char(20) UNIQUE NOT NULL,
+    FirstName NOT NULL,
+    LastName NOT NULL,
+    Email char(50) UNIQUE NOT NULL,
+    Password char(100),
+    Age INTEGER,
+    Gender char(20),
+);
+CREATE TABLE IF NOT EXISTS Session(
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Session TEXT,
+    Expared_At DATE,
+    ID_User INTEGER,
+    FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE 
+)
+CREATE TABLE IF NOT EXISTS Posts (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Title char(50),
+    Content TEXT, 
+    DateCreation DATE,
+    Image BLOB,
+    ID_User INTEGER,
+    FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE 
+);
+
+CREATE TABLE IF NOT EXISTS Category(
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name_Category varchar(20) UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS PostCategory(
+    ID_Post INTEGER,
+    ID_Category INTEGER,
+    PRIMARY KEY (ID_Post, ID_Category),
+    FOREIGN KEY (ID_Post) REFERENCES Posts(ID) ON DELETE CASCADE ON UPDATE CASCADE, 
+    FOREIGN KEY (ID_Category) REFERENCES Category(ID) ON DELETE CASCADE ON UPDATE CASCADE 
+);
+
+CREATE TABLE IF NOT EXISTS Comment(
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Content TEXT,
+    DateCreation DATE,
+    ID_User INTEGER,    
+    ID_Post INTEGER,
+    FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (ID_Post) REFERENCES Posts(ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('Coding');
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('Innovation');
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('Betcoin');
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('kids');
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('movie');
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('sport');
+INSERT OR IGNORE INTO Category (Name_Category) VALUES ('food');
