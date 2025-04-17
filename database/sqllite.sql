@@ -1,8 +1,8 @@
 CREATE TABLE IF not EXISTS users (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Nickname char(20) UNIQUE NOT NULL,
-    FirstName NOT NULL,
-    LastName NOT NULL,
+    FirstName char(20) NOT NULL,
+    LastName char(20)  NOT NULL,
     Email char(50) UNIQUE NOT NULL,
     Password char(100),
     Age INTEGER,
@@ -11,7 +11,7 @@ CREATE TABLE IF not EXISTS users (
 CREATE TABLE IF NOT EXISTS Session(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Session TEXT,
-    Expared_At DATE,
+    Expired_At DATE,
     ID_User INTEGER,
     FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE 
 )
@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS Posts (
     Title char(50),
     Content TEXT, 
     DateCreation DATE,
-    Image BLOB,
     ID_User INTEGER,
     FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE 
 );
