@@ -6,15 +6,17 @@ CREATE TABLE IF not EXISTS users (
     Email char(50) UNIQUE NOT NULL,
     Password char(100),
     Age INTEGER,
-    Gender char(20),
+    Gender char(20)
 );
+
 CREATE TABLE IF NOT EXISTS Session(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Session TEXT,
     Expired_At DATE,
     ID_User INTEGER,
     FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE 
-)
+);
+
 CREATE TABLE IF NOT EXISTS Posts (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Title char(50),
