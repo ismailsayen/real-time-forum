@@ -1,7 +1,7 @@
 package database
 
 type User struct {
-	Username string `json:"username"`
+	NickName string `json:"nickname"`
 	Password     string `json:"password"`
 	Age		int 	`json:"age"`
 	Gender  string 	`json:"gender"`
