@@ -33,7 +33,7 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	// fmt.Println("succ", user)
-	if user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.Username == "" || user.Age == 0 {
+	if user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.NickName == "" || user.Age == 0 {
 		// fmt.Println("error less data ")
 		utils.SendError(w, http.StatusBadRequest, "All fields are required")
 		return
@@ -46,7 +46,7 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "Invalid email format")
 		return
 	}
-	if len(user.Username) > 30 || len(user.Email) > 30 || len(user.Password) > 30 || len(user.FirstName) > 30 || len(user.LastName) > 30 {
+	if len(user.NickName) > 30 || len(user.Email) > 30 || len(user.Password) > 30 || len(user.FirstName) > 30 || len(user.LastName) > 30 {
 		utils.SendError(w, http.StatusBadRequest, "field Content too large ")
 		return
 	}

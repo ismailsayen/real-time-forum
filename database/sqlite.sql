@@ -6,7 +6,7 @@ CREATE TABLE IF not EXISTS users (
     Email char(50) UNIQUE NOT NULL,
     Password char(100),
     Age INTEGER,
-    Gender char(20)
+    Gender TEXT CHECK(Gender IN ('Male','Female'))
 );
 
 CREATE TABLE IF NOT EXISTS Session(
