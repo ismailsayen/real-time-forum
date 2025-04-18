@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"rtFroum/database"
 	"strings"
 )
@@ -17,11 +18,17 @@ func Register(user database.User, db *sql.DB) (int, string) {
 	defer stm.Close()
 	res, err := stm.Exec(user.NickName, user.FirstName, user.LastName, user.Email, user.Password, user.Age, user.Gender)
 	if err != nil {
-		if strings.Contains(err.Error(), "NickName") {
+		fmt.Println( err.Error())
+		errMsg := strings.ToLower(err.Error())
+		if strings.Contains(errMsg, "nickname") {
+			fmt.Println("true nick")
 			return 0, "NickName already exists"
-		} else if strings.Contains(err.Error(), "Email") {
-			return 0,  "email already exists"
+		} else if strings.Contains(errMsg, "email") {
+			fmt.Println("true email")
+
+			return 0, "Email already exists"
 		}
+		return 0, "Error inserting user into database" 
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
