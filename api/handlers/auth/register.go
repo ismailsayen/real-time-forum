@@ -3,20 +3,19 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
+
 	"rtFroum/api/models"
 	"rtFroum/database"
 	"rtFroum/utils"
-	"time"
-
-	"github.com/gofrs/uuid"
 )
+
 func RegisterHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		Register(w, r, db) 
+		Register(w, r, db)
 	}
 }
+
 func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		utils.SendError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
@@ -54,23 +53,12 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	id, err := models.Register(user, db)
 	if len(err) > 0 {
 		utils.SendError(w, http.StatusInternalServerError, err)
-		return 
-	}
-	token, errr := uuid.NewV4()
-	if errr != nil {
-		utils.SendError(w, http.StatusInternalServerError, "cant generate new token for session")
 		return
 	}
-	err1 := models.CreateSession(id, token.String(), time.Now().Add((24 * time.Hour)), db)
+
+	err1 := models.CreateSession(w, id, db)
 	if err1 != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Cannot Create Sessions")
 		return
 	}
-	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
-		Value:    token.String(),
-		HttpOnly: true,
-		Expires:  time.Now().Add((24 * time.Hour)),
-	})
-	fmt.Println("user created succccc")
 }

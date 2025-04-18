@@ -3,10 +3,20 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 	"time"
+
+	"rtFroum/utils"
+
+	"github.com/gofrs/uuid"
 )
 
-func CreateSession(id int, token string, expired time.Time, db *sql.DB) error {
+func CreateSession(w http.ResponseWriter, id int, db *sql.DB) error {
+	token, err := uuid.NewV4()
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "cant generate new token for session")
+		return err
+	}
 	query := `
 	INSERT INTO session (ID_User, token, Expired_At) 
 	VALUES (?, ?, ?) 
@@ -18,10 +28,16 @@ func CreateSession(id int, token string, expired time.Time, db *sql.DB) error {
 		return err
 	}
 	defer stm.Close()
+	expired := time.Now().Add((24 * time.Hour))
 	_, err = stm.Exec(id, token, expired)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    token.String(),
+		HttpOnly: true,
+		Expires:  expired,
+	})
 	return nil
 }

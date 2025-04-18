@@ -39,5 +39,10 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	err = models.CreateSession(w, ID, db)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "Cannot Create Sessions")
+		return
+	}
 	
 }
