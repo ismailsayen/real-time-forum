@@ -25,7 +25,10 @@ func Routers(db *sql.DB) {
 		handlers.CommentHandler(w, r, db)
 	})
 	http.HandleFunc("/addPost", func(w http.ResponseWriter, r *http.Request) {
-		handlers.PostHandler(w, r, db)
+		handlers.AddPost(w, r, db)
+	})
+	http.HandleFunc("/Getposts", func(w http.ResponseWriter, r *http.Request) {
+		handlers.PostHundler(w, r, db)
 	})
 	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
 		middleware.VerifyCookie(w, r, db)
