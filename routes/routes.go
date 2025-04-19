@@ -10,12 +10,16 @@ import (
 
 func Routers(db *sql.DB) {
 	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc("/static/", handlers.Static)
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		auth.Login(w, r, db)
 	})
-
-	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		auth.Register(w, r, db)
 	})
+
+
+	http.HandleFunc("/addComment", func(w http.ResponseWriter, r *http.Request) {
+		auth.Register(w, r, db)
+	})
+	http.HandleFunc("/static/", handlers.Static)
 }
