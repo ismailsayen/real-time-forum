@@ -31,9 +31,7 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
-	// fmt.Println("succ", user)
 	if user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.NickName == "" || user.Age == 0 {
-		// fmt.Println("error less data ")
 		utils.SendError(w, http.StatusBadRequest, "All fields are required")
 		return
 	}
@@ -52,7 +50,7 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	user.Password = utils.HashPassword(user.Password)
 	id, err := models.Register(user, db)
 	if len(err) > 0 {
-		utils.SendError(w, http.StatusInternalServerError, err)
+		utils.SendError(w, http.StatusBadRequest, err)
 		return
 	}
 
