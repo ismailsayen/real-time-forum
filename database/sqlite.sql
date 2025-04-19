@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS Posts (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Title char(50),
     Content TEXT, 
-    DateCreation DATE,
-    ID_User INTEGER,
+    Create_at INTEGER  ,
+    User_id INTEGER,
     FOREIGN KEY (ID_User) REFERENCES users(ID) ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
