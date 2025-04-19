@@ -19,7 +19,10 @@ func Routers(db *sql.DB) {
 
 
 	http.HandleFunc("/addComment", func(w http.ResponseWriter, r *http.Request) {
-		auth.Register(w, r, db)
+		handlers.CommentHandler(w, r, db)
+	})
+	http.HandleFunc("/addPost", func(w http.ResponseWriter, r *http.Request) {
+		handlers.PostHandler(w, r, db)
 	})
 	http.HandleFunc("/static/", handlers.Static)
 }
