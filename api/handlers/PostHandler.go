@@ -3,13 +3,15 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"html"
 	"net/http"
+	"strconv"
+	"strings"
+
 	"rtFroum/api/models"
 	"rtFroum/database"
 	"rtFroum/utils"
-	"strconv"
-	"strings"
 )
 
 func PostHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
@@ -36,11 +38,12 @@ func PostHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	post.Content=html.EscapeString(post.Content)
-	post.Title=html.EscapeString(post.Title)
-	post.UserID=1
-	idPost, err := models.CreatePost(post.Title, post.Content, post.Categories,post.CreatedAt,post.UserID, db)
+	post.Content = html.EscapeString(post.Content)
+	post.Title = html.EscapeString(post.Title)
+	post.UserID = 1
+	idPost, err := models.CreatePost(post.Title, post.Content, post.CreatedAt, post.UserID, db)
 	if err != nil {
+		fmt.Println(err)
 		utils.SendError(w, http.StatusBadRequest, "Cannot create post")
 		return
 	}
@@ -51,7 +54,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			utils.SendError(w, http.StatusBadRequest, "cannot loop on category")
 			return
 		}
-		err = models.InsertIntoCategoryPost(int(idPost), catId,db)
+		err = models.InsertIntoCategoryPost(int(idPost), catId, db)
 		if err != nil {
 			utils.SendError(w, http.StatusBadRequest, "cannot insert into category")
 			return

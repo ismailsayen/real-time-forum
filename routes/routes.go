@@ -6,6 +6,7 @@ import (
 
 	"rtFroum/api/handlers"
 	"rtFroum/api/handlers/auth"
+	"rtFroum/middleware"
 )
 
 func Routers(db *sql.DB) {
@@ -17,12 +18,14 @@ func Routers(db *sql.DB) {
 		auth.Register(w, r, db)
 	})
 
-
 	http.HandleFunc("/addComment", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CommentHandler(w, r, db)
 	})
 	http.HandleFunc("/addPost", func(w http.ResponseWriter, r *http.Request) {
 		handlers.PostHandler(w, r, db)
+	})
+	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
+		middleware.VerifyCookie(w, r, db)
 	})
 	http.HandleFunc("/static/", handlers.Static)
 }

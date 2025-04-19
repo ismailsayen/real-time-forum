@@ -16,8 +16,7 @@ type Posts struct {
 	Content    string   `json:"content"`
 	Categories []string `json:"categories"`
 	CreatedAt  int      `json:"created_at"`
-	// CommentsCount int       `json:"comments_count"`
-	NickName string `json:"nickname"`
+	NickName   string   `json:"nickname"`
 }
 type Category struct {
 	ID   int    `json:"id"`
