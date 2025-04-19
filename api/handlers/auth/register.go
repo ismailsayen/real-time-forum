@@ -10,11 +10,7 @@ import (
 	"rtFroum/utils"
 )
 
-func RegisterHandler(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		Register(w, r, db)
-	}
-}
+
 
 func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {

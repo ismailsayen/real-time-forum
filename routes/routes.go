@@ -14,5 +14,8 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		auth.Login(w, r, db)
 	})
-	http.HandleFunc("/register", auth.RegisterHandler(db))
+
+	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		auth.Register(w, r, db)
+	})
 }
