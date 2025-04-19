@@ -13,3 +13,10 @@ type Error struct {
 	Message string `json:"message"`
 	Status  int    `json:"status"`
 }
+type Comment struct {
+	Id      int    `json:"id"`
+	Content string `json:"content"`
+	IdUser  int    `json:"iduser"`
+	IdPost  int    `json:"idPost"`
+	Date    int `json:"date"`
+}

@@ -24,7 +24,6 @@ func CreateSession(w http.ResponseWriter, id int, db *sql.DB) error {
 	`
 	stm, err := db.Prepare(query)
 	if err != nil {
-		fmt.Println("zzz")
 		fmt.Println(err)
 		return err
 	}
@@ -32,7 +31,6 @@ func CreateSession(w http.ResponseWriter, id int, db *sql.DB) error {
 	expired := time.Now().Add((24 * time.Hour))
 	_, err = stm.Exec(id, token, expired)
 	if err != nil {
-		fmt.Println("qqqq")
 		return err
 	}
 	http.SetCookie(w, &http.Cookie{
