@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 	"rtFroum/database"
 	"strings"
 )
@@ -18,7 +19,7 @@ func Register(user database.User, db *sql.DB) (int, string) {
 	defer stm.Close()
 	res, err := stm.Exec(user.NickName, user.FirstName, user.LastName, user.Email, user.Password, user.Age, user.Gender)
 	if err != nil {
-		fmt.Println( err.Error())
+		fmt.Println(err.Error())
 		errMsg := strings.ToLower(err.Error())
 		if strings.Contains(errMsg, "nickname") {
 			fmt.Println("true nick")
@@ -28,7 +29,7 @@ func Register(user database.User, db *sql.DB) (int, string) {
 
 			return 0, "Email already exists"
 		}
-		return 0, "Error inserting user into database" 
+		return 0, "Error inserting user into database"
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
@@ -36,4 +37,20 @@ func Register(user database.User, db *sql.DB) (int, string) {
 	}
 	return int(id), ""
 
+}
+
+func GetUserId(r *http.Request,db *sql.DB) (int, error) {
+	var userId int
+	token, err := r.Cookie("token")
+	if err != nil || token.Value == "" {
+		return 0, err
+	}
+	value := token.Value
+	query := "SELECT user_id FROM session WHERE token = ?"
+	stm, err := db.Prepare(query)
+	if err != nil {
+		return 0, err
+	}
+	err = stm.QueryRow(value).Scan(&userId)
+	return int(userId), err
 }
