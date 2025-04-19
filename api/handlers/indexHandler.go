@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"rtFroum/utils"
 	"text/template"
 )
 
@@ -17,5 +18,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
+	}
+	if r.URL.Path!="/"{
+		fmt.Println(r.URL.Path)
+		utils.SendError(w,http.StatusNotFound,"Page Not Found")
+		return 
 	}
 }
