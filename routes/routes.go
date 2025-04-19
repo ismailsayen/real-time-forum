@@ -10,7 +10,10 @@ import (
 )
 
 func Routers(db *sql.DB) {
-	http.HandleFunc("/", handlers.IndexHandler)
+	
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HomeHandler(w, r, db)
+	})
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		auth.Login(w, r, db)
 	})
