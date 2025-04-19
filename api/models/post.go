@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"rtFroum/database"
 )
 
@@ -39,7 +40,7 @@ func GetPosts(db *sql.DB) ([]database.Posts, error) {
 		return nil, err
 	}
 	defer rows.Close()
-
+fmt.Println(rows)
 	var posts []database.Posts
 	for rows.Next() {
 		var post database.Posts
@@ -48,6 +49,7 @@ func GetPosts(db *sql.DB) ([]database.Posts, error) {
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("l",post)
 		post.Categories = append(post.Categories, categorie)
 		posts = append(posts, post)
 	}

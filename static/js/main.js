@@ -6,13 +6,16 @@ async function isLogged() {
   }
 }
 
-function test(){
+function test() {
   const tt = document.createElement("div");
-  tt.innerHTML="this is home /"
-  const btn =document.createElement("button")
-  btn.textContent="click"
-  btn.addEventListener("click",DisplayPost)
+  tt.innerHTML = "This is home /";
 
+  const btn = document.createElement("button");
+  btn.textContent = "Click";
+  btn.addEventListener("click", DisplayPost);
+
+  tt.appendChild(btn); 
+  document.body.appendChild(tt); 
 }
 async function DisplayPost() {
   try {
@@ -20,7 +23,7 @@ async function DisplayPost() {
     const data = await resp.json();
 
     const container = document.querySelector(".container");
-console.log(data);
+  console.log(data);
 
     data.forEach(post => {
       const postss = document.createElement("div");
@@ -38,5 +41,6 @@ console.log(data);
     console.error("Error fetching posts:", error);
   }
 }
+test()
 // DisplayPost();
 // isLogged();
