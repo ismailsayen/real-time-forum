@@ -9,6 +9,21 @@ type User struct {
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 }
+type Posts struct {
+	ID            int       `json:"id"`
+	UserID        int       `json:"user_id"`
+	Title         string    `json:"title"`
+	Content       string    `json:"content"`
+	Categories    []string  `json:"categories"`
+	CreatedAt     int    `json:"created_at"`
+	// CommentsCount int       `json:"comments_count"`
+	NickName      string    `json:"nickname"`
+
+}
+type Category struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 type Error struct {
 	Message string `json:"message"`
 	Status  int    `json:"status"`
