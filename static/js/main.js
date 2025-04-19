@@ -5,4 +5,4 @@ async function isLogged() {
     window.history.pushState(null,'',"/")
   }
 }
-isLogged();
+// isLogged();
