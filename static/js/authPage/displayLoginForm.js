@@ -119,3 +119,6 @@ export function DisplayLoginForm() {
   btnRegister.addEventListener("click", Register);
   btnLogin.addEventListener("click", Login);
 }
+
+
+
