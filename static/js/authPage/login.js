@@ -38,7 +38,6 @@ try {
         error.style.display = "block";
         return;
     }
-
     window.history.pushState(null, "", "/home");
     LoadPage()
 } catch (err) {
