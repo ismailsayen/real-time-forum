@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"rtFroum/api/models"
@@ -21,6 +22,7 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "All fields are required")
 		return
 	}
+	fmt.Println("the user is :", user)
 	ID, err := models.UserExist(user.NickName, db)
 	if err == sql.ErrNoRows {
 		utils.SendError(w, http.StatusBadRequest, "Invalid email or password")
@@ -44,5 +46,5 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusInternalServerError, "Cannot Create Sessions")
 		return
 	}
-	
+
 }

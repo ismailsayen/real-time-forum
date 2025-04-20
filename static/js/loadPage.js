@@ -1,4 +1,5 @@
 import { DisplayLoginForm } from "./authPage/displayLoginForm.js";
+import { DisplayPost } from "./DisplayPost.js";
 import { DispalyError } from "./ErrorPage.js";
 
 export function LoadPage() {
@@ -11,6 +12,9 @@ export function LoadPage() {
     case "/auth":
       DisplayLoginForm();
       break;
+    case "/home":
+      DisplayPost()
+      break
     default:
       DispalyError();
   }
