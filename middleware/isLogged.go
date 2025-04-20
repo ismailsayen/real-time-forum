@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"time"
@@ -10,7 +11,8 @@ import (
 )
 
 func VerifyCookie(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	cookie, err := r.Cookie("Token")
+	cookie, err := r.Cookie("token")
+	fmt.Println(cookie)
 	if err != nil {
 		utils.SendError(w, http.StatusForbidden, "You need to login/register")
 		return
