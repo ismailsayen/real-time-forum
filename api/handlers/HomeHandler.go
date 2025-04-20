@@ -4,17 +4,18 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"rtFroum/utils"
+	"slices"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.URL.Path != "/" {
-		fmt.Println("1", r.URL.Path)
-		utils.SendError(w, http.StatusNotFound, "Page Not Found")
-		fmt.Println("kk")
+	frontUrl := []string{"/", "/auth"}
+	if !slices.Contains(frontUrl, r.URL.Path) {
+		fmt.Println("llklkl", r.URL.Path)
+		// utils.SendError(w, http.StatusNotFound, "Page Not Found")
+		w.WriteHeader(http.StatusNotFound)
+		TempExec(w, r)
 		return
 	}
-
 	TempExec(w, r)
 
 }
