@@ -14,7 +14,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		fmt.Println("kk")
 		return
 	}
-	fmt.Println("2", r.URL.Path)
-	
+
 	TempExec(w, r)
+
 }

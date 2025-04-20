@@ -14,7 +14,23 @@ import (
 	"rtFroum/utils"
 )
 
-func PostHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func PostHundler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodGet {
+		utils.SendError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+		return
+	}
+	posts, err := models.GetPosts(db)
+	if err != nil {
+		fmt.Println(err)
+		utils.SendError(w, http.StatusInternalServerError, "Cannot Fetch Post")
+		return
+	}
+	fmt.Println(posts)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(posts)
+}
+
+func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		utils.SendError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
