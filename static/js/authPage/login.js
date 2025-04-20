@@ -25,9 +25,14 @@ export function DesplayLoginForm() {
                   <div class="field">
                      <input type="text" placeholder="Email Address" required>
                   </div>
+                    
+
                   <div class="field">
                      <input type="password" placeholder="Password" required>
+                     
+
                   </div>
+                  <div class="error login-error"></div>
                   <div class="field btn">
                      <div class="btn-layer"></div>
                      <input type="submit" value="Login">
@@ -39,14 +44,22 @@ export function DesplayLoginForm() {
                <form action="#" class="signup-form">
                <div class="field">
                     <input type="text" name="nickname" placeholder="Nickname" required>
+                  <div class="error nickname-error"></div>
+                    
                 </div>
                 <div class="field bouth ">
                     <input type="text" name="firstName" placeholder="First Name" required>
+                  
+
                     <input type="text" name="lastName" placeholder="Last Name" required>
-                </div>
+                    </div>
+                    <div class="error lastname-error"></div>
+                    <div class="error firstname-error"></div>
                 
                 <div class="field">
                       <input type="number" name="age" placeholder="Age" min="18" required>
+                  <div class="error age-error"></div>
+
                 </div>  
                 <div class="slide-controls">
                 <input type="radio" name="gender" id="Male"class="slide" value="Male" checked></input>
@@ -54,14 +67,20 @@ export function DesplayLoginForm() {
                  <label for="Male" class="slide Male">Male</label>
                <label for="Female" class="slide Female ">Female</label>
                <div class="slider-tab"></div>
-                </div>
+               
+               </div>
+               <div class="error gender-error"></div>
 
                 <div class="field">
                 <input type="email" name="email" placeholder="Email Address" required>
+                  <div class="error email-error"></div>
+
               </div>
               <div class="field">
                 <input type="password" name="password" placeholder="Password" required>
-              </div>
+                
+                </div>
+                <div class="error field password-error">errror rrjja</div>
               <div class="field btn">
                <div class="btn-layer"></div>
                <input type="submit" value="Signup">

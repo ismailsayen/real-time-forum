@@ -6,8 +6,6 @@ export function LoadPage() {
   container.innerHTML = "";
   switch (path) {
     case "/":
-      const tilte = (document.createElement("h1").textContent = "authPage");
-      container.append(tilte);
       DesplayLoginForm()
   }
 }

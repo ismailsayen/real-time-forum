@@ -213,3 +213,12 @@ form .btn input[type="submit"]{
     display: flex;
     gap: 10px;
 }
+.error{
+  color:red;
+  border: 1px solid red;
+  background-color: pink;
+text-align: center;
+border-radius: 5px;
+display: none;
+ max-height: fit-content;
+}
