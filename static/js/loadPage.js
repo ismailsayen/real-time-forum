@@ -1,4 +1,4 @@
-import { DesplayLoginForm } from "./authPage/login.js";
+import { DisplayLoginForm } from "./authPage/displayLoginForm.js";
 import { DispalyError } from "./ErrorPage.js";
 
 export function LoadPage() {
@@ -7,11 +7,9 @@ export function LoadPage() {
   container.innerHTML = "";
   switch (path) {
     case "/auth":
-      DesplayLoginForm()
-      break
+      DisplayLoginForm();
+      break;
     default:
-      
-      DispalyError()
-
+      DispalyError();
   }
 }
