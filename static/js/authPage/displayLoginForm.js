@@ -1,3 +1,4 @@
+import { Login } from "./login.js";
 import { Register } from "./register.js";
 
 export function DisplayLoginForm() {
@@ -36,7 +37,7 @@ export function DisplayLoginForm() {
                     <div class="error login-error"></div>
                     <div class="field btn">
                        <div class="btn-layer"></div>
-                    <input type="button" value="Login" id="login">
+                    <input type="button" value="Login" id="btnlogin">
                     </div>
                     <div class="signup-link">
                        Not a member? <a href="">Signup now</a>
@@ -101,7 +102,7 @@ export function DisplayLoginForm() {
   const signupBtn = document.querySelector("label.signup");
   const signupLink = document.querySelector("form .signup-link a");
   const btnRegister = document.getElementById("register");
-  const btnLogin = document.getElementById("login");
+  const btnLogin = document.getElementById("btnlogin");
   signupBtn.onclick = () => {
     loginForm.style.marginLeft = "-50%";
     loginText.style.marginLeft = "-50%";
