@@ -1,8 +1,9 @@
-export async function DispalyError(){
-        let resp = await fetch("/")
-        let data = await resp.json()
-        console.log(data);
+export async function DispalyError(status){
         
     const container=document.querySelector(".container")
-    container.innerHTML=`alert("error not found")`
+    console.log(container);
+    container.innerHTML=`error `
+    if(status==404){
+        container.innerHTML+=status
+    }
 }
