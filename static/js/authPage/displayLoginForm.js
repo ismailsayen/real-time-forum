@@ -25,12 +25,12 @@ export function DisplayLoginForm() {
               <div class="form-inner">
                  <form action="#" class="login">
                     <div class="field">
-                       <input type="text" placeholder="Email Address" required>
+                       <input type="text" id="nickname" placeholder="Email Address" required>
                     </div>
                       
   
                     <div class="field">
-                       <input type="password" placeholder="Password" required>
+                       <input type="password" id="loginPassword" placeholder="Password" required>
                        
   
                     </div>
