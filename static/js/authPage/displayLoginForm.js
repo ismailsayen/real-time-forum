@@ -87,18 +87,18 @@ function RegisterForm() {
       <form class="signup-form" method="post" id="signup-form">
                  <div class="field">
                       <input type="text" name="nickname" placeholder="Nickname" required>
-                    <div class="error nickname-error"></div>     
+                    <div class="error Errnickname"></div>     
                   </div>
                   <div class="field bouth ">
                       <input type="text" name="firstName" placeholder="First Name" required>
                       <input type="text" name="lastName" placeholder="Last Name" required>
                   </div>
-                      <div class="error lastname-error"></div>
-                      <div class="error firstname-error"></div>
+                      <div class="error ErrfirstName"></div>
+                      <div class="error ErrlastName"></div>
                   
                   <div class="field">
                         <input type="number" name="age" placeholder="Age" min="18" required>
-                    <div class="error age-error"></div>
+                    <div class="error Errage"></div>
   
                   </div>  
                   <div class="slide-controls">
@@ -109,17 +109,17 @@ function RegisterForm() {
                  <div class="slider-tab"></div>
                  
                  </div>
-                 <div class="error gender-error"></div>
+                 <div class="error Errgender"></div>
   
                   <div class="field">
                   <input type="email" name="email" placeholder="Email Address" required>
-                    <div class="error email-error"></div>
+                    <div class="error Erremail"></div>
   
                 </div>
                 <div class="field">
                   <input type="password" name="password" placeholder="Password" required>   
                </div>
-                  <div class="error field password-error">errror rrjja</div>
+                  <div class="error field Errpassword">errror rrjja</div>
                 <div class="field btn">
                  <div class="btn-layer"></div>
                     <input  value="Register" id="register" type="submit">

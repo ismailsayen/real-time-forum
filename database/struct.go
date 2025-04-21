@@ -33,3 +33,13 @@ type Comment struct {
 	IdPost  int    `json:"idPost"`
 	Date    int    `json:"date"`
 }
+type ErrorRegister struct {
+	ErrEmpty     string `json:"ErrEmpty"`
+	ErrNickName  string `json:"Errnickname"`
+	ErrPassword  string `json:"Errpassword"`
+	ErrAge       string `json:"Errage"`
+	ErrGender    string `json:"Errgender"`
+	ErrFirstName string `json:"ErrfirstName"`
+	ErrLastName  string `json:"ErrlastName"`
+	ErrEmail     string `json:"Erremail"`
+}

@@ -2,14 +2,13 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"rtFroum/database"
 )
 
-func Register(user database.User, db *sql.DB) (int, string) {
+func Register(user database.User, db *sql.DB, strErr *database.ErrorRegister) (int, string) {
 	query := `INSERT INTO users (Nickname,FirstName,LastName,Email,Password,Age,Gender)
 	VALUES (?,?,?,?,?,?,?)
 	`
@@ -20,14 +19,12 @@ func Register(user database.User, db *sql.DB) (int, string) {
 	defer stm.Close()
 	res, err := stm.Exec(user.NickName, user.FirstName, user.LastName, user.Email, user.Password, user.Age, strings.ToLower(user.Gender))
 	if err != nil {
-		fmt.Println(err.Error())
 		errMsg := strings.ToLower(err.Error())
 		if strings.Contains(errMsg, "nickname") {
-			fmt.Println("true nick")
+			strErr.ErrNickName = "NickName already exists"
 			return 0, "NickName already exists"
 		} else if strings.Contains(errMsg, "email") {
-			fmt.Println("true email")
-
+			strErr.ErrEmail = "Email already exists"
 			return 0, "Email already exists"
 		}
 		return 0, "Error inserting user into database"

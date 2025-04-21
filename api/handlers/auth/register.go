@@ -3,6 +3,8 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 
 	"rtFroum/api/models"
@@ -16,36 +18,24 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	var user database.User
-
-	if r.Body == nil {
-		utils.SendError(w, http.StatusBadRequest, "Empty request body")
-		return
-	}
+	var Errors database.ErrorRegister
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
-	if user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.NickName == "" || user.Age == 0 {
-		utils.SendError(w, http.StatusBadRequest, "All fields are required")
-		return
-	}
-	if user.Age <= 18 {
-		utils.SendError(w, http.StatusBadRequest, "Age must be greater than 18")
-		return
-	}
-	if !utils.IsValidEmail(user.Email) {
-		utils.SendError(w, http.StatusBadRequest, "Invalid email format")
-		return
-	}
-	if len(user.NickName) > 30 || len(user.Email) > 30 || len(user.Password) > 30 || len(user.FirstName) > 30 || len(user.LastName) > 30 {
-		utils.SendError(w, http.StatusBadRequest, "field Content too large ")
+	if !VerifyData(&user, &Errors, r.Body) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Errors)
 		return
 	}
 	user.Password = utils.HashPassword(user.Password)
-	id, err := models.Register(user, db)
+	id, err := models.Register(user, db, &Errors)
 	if len(err) > 0 {
-		utils.SendError(w, http.StatusBadRequest, err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Errors)
 		return
 	}
 
@@ -55,4 +45,40 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	utils.SendError(w, http.StatusOK, "your are logged")
+}
+
+func VerifyData(user *database.User, errStruct *database.ErrorRegister, Body io.ReadCloser) bool {
+	if user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.NickName == "" || user.Age == 0 || Body == nil {
+		errStruct.ErrEmpty = "All fields are required"
+	}
+	if user.Age <= 18 {
+		errStruct.ErrAge = "Age must be greater than 18"
+	}
+	if !utils.IsValidEmail(user.Email) {
+		errStruct.ErrEmail = "Invalid email format"
+	}
+	if len(user.NickName) > 30 {
+		errStruct.ErrNickName = "field Content too large"
+	}
+
+	if len(user.Email) > 30 {
+		errStruct.ErrEmail = "field Content too large"
+	}
+
+	if len(user.Password) > 30 {
+		errStruct.ErrPassword = "field Content too large"
+	}
+
+	if len(user.FirstName) > 30 {
+		errStruct.ErrFirstName = "field Content too large"
+	}
+
+	if len(user.LastName) > 30 {
+		errStruct.ErrLastName = "field Content too large"
+	}
+	if errStruct.ErrEmpty != "" || errStruct.ErrNickName != "" || errStruct.ErrPassword != "" || errStruct.ErrAge != "" || errStruct.ErrGender != "" || errStruct.ErrFirstName != "" || errStruct.ErrLastName != "" || errStruct.ErrEmail != "" {
+		return false
+	}
+
+	return true
 }
