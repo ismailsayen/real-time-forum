@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"rtFroum/api/models"
@@ -41,8 +42,8 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	err = models.CreateSession(w, ID, db)
 	if err != nil {
+		fmt.Println(err)
 		utils.SendError(w, http.StatusInternalServerError, "Cannot Create Sessions")
 		return
 	}
-	
 }

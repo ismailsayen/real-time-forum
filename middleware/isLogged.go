@@ -3,14 +3,13 @@ package middleware
 import (
 	"database/sql"
 	"net/http"
-
 	"time"
 
 	"rtFroum/utils"
 )
 
 func VerifyCookie(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	cookie, err := r.Cookie("Token")
+	cookie, err := r.Cookie("token")
 	if err != nil {
 		utils.SendError(w, http.StatusForbidden, "You need to login/register")
 		return
@@ -28,5 +27,5 @@ func VerifyCookie(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusForbidden, "Session Expired, you need to need to login/register")
 		return
 	}
-
+	utils.SendError(w, http.StatusOK, "your are logged")
 }

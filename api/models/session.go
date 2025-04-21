@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -17,19 +16,19 @@ func CreateSession(w http.ResponseWriter, id int, db *sql.DB) error {
 		utils.SendError(w, http.StatusInternalServerError, "cant generate new token for session")
 		return err
 	}
+	expired := time.Now().Add(24 * time.Hour)
 	query := `
-	INSERT INTO session (ID_User, token, Expired_At) 
-	VALUES (?, ?, ?) 
-	ON CONFLICT DO UPDATE SET token = EXCLUDED.token , expired_at = CURRENT_TIMESTAMP
-	`
+	INSERT INTO session (ID_User, token, Expired_At)
+	VALUES (?, ?, ?)
+	ON CONFLICT(ID_User)
+	DO UPDATE SET token = EXCLUDED.token, Expired_At = ?
+`
 	stm, err := db.Prepare(query)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer stm.Close()
-	expired := time.Now().Add((24 * time.Hour))
-	_, err = stm.Exec(id, token, expired)
+	_, err = stm.Exec(id, token, expired, expired)
 	if err != nil {
 		return err
 	}
