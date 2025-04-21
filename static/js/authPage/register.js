@@ -1,3 +1,3 @@
 export async function Register() {
-  alert("");
+  console.log("sssssss");
 }
