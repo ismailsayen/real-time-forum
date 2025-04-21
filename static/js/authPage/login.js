@@ -5,7 +5,6 @@ const nickname = document.querySelector("#nickname").value
 const password = document.querySelector("#loginPassword").value
 const error = document.querySelector(".login-error")
 
-console.log(nickname,password);
 if (nickname === "" || password === "") {
     error.innerHTML = "Nickname and password cannot be empty";
     error.style.display = "block";

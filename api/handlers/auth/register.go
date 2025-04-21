@@ -10,8 +10,6 @@ import (
 	"rtFroum/utils"
 )
 
-
-
 func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		utils.SendError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
@@ -23,6 +21,7 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "Empty request body")
 		return
 	}
+
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
@@ -55,4 +54,5 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusInternalServerError, "Cannot Create Sessions")
 		return
 	}
+	utils.SendError(w, http.StatusOK, "your are logged")
 }

@@ -192,7 +192,7 @@ form .btn .btn-layer {
 form .btn:hover .btn-layer {
   left: 0;
 }
-form .btn input[type="button"] {
+form .btn #register {
   height: 100%;
   width: 100%;
   z-index: 1;

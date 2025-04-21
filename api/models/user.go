@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"rtFroum/database"
 	"strings"
+
+	"rtFroum/database"
 )
 
 func Register(user database.User, db *sql.DB) (int, string) {
@@ -17,7 +18,7 @@ func Register(user database.User, db *sql.DB) (int, string) {
 		return 0, "Error Preparing the quey"
 	}
 	defer stm.Close()
-	res, err := stm.Exec(user.NickName, user.FirstName, user.LastName, user.Email, user.Password, user.Age, user.Gender)
+	res, err := stm.Exec(user.NickName, user.FirstName, user.LastName, user.Email, user.Password, user.Age, strings.ToLower(user.Gender))
 	if err != nil {
 		fmt.Println(err.Error())
 		errMsg := strings.ToLower(err.Error())
@@ -36,10 +37,9 @@ func Register(user database.User, db *sql.DB) (int, string) {
 		return 0, "Error getting last id inserted"
 	}
 	return int(id), ""
-
 }
 
-func GetUserId(r *http.Request,db *sql.DB) (int, error) {
+func GetUserId(r *http.Request, db *sql.DB) (int, error) {
 	var userId int
 	token, err := r.Cookie("token")
 	if err != nil || token.Value == "" {
