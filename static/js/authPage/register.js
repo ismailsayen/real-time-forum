@@ -17,9 +17,9 @@ export function Register() {
       },
       body: JSON.stringify(formData),
     });
-    let data = await req.json();
-    if (data.Status != 200) {
-      console.log("qqqqqq");
+    //let data = await req.json();
+    if (!req.ok) {
+      console.log(req.Message);
       return;
     }
     SetUrl("/");
