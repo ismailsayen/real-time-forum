@@ -222,4 +222,5 @@ form .btn #register {
   border-radius: 5px;
   display: none;
   max-height: fit-content;
+  margin-top: 10px;
 }
