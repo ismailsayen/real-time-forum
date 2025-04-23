@@ -43,7 +43,7 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
-
+	fmt.Println(post)
 	if strings.TrimSpace(post.Title) == "" || len(post.Categories) == 0 || strings.TrimSpace(post.Content) == "" {
 		utils.SendError(w, http.StatusBadRequest, "Title or Content or Categorie field's  empty ")
 		return
