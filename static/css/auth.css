@@ -184,7 +184,7 @@ form .btn .btn-layer {
 form .btn:hover .btn-layer {
   left: 0;
 }
-form .btn #register {
+form .btn #register,form .btn #btnlogin {
   height: 100%;
   width: 100%;
   z-index: 1;
@@ -216,3 +216,4 @@ form .btn #register {
   max-height: fit-content;
   margin: 5px 0;
 }
+

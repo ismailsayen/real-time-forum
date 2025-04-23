@@ -90,7 +90,7 @@ function RegisterForm() {
                  <div class="field">
                       <input type="text" name="nickname" placeholder="Nickname" required>
                      </div>
-                     <div class="error Errnickname"></div>     
+                     <div class="error Errnickname  "></div>     
                   <div class="field bouth ">
                       <input type="text" name="firstName" placeholder="First Name" required>
                       <input type="text" name="lastName" placeholder="Last Name" required>
@@ -100,9 +100,9 @@ function RegisterForm() {
                   
                   <div class="field">
                         <input type="number" name="age" placeholder="Age" min="18" required>
-                    <div class="error Errage"></div>
-  
-                  </div>  
+                        
+                     </div>  
+                     <div class="error Errage"></div>
                   <div class="slide-controls">
                   <input type="radio" name="gender" id="Male"class="slide" value="Male" checked/>
                   <input type="radio" name="gender" id="Female" class="slide" value="Female"  style=" color: #999;"/>
@@ -115,9 +115,9 @@ function RegisterForm() {
   
                   <div class="field">
                   <input type="email" name="email" placeholder="Email Address" required>
-                    <div class="error Erremail"></div>
-  
-                </div>
+                  
+               </div>
+               <div class="error Erremail"></div>
                 <div class="field">
                   <input type="password" name="password" placeholder="Password" required>   
                </div>

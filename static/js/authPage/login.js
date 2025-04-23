@@ -37,6 +37,7 @@ try {
         error.style.display = "block";
         return;
     }
+    localStorage.setItem("welcome", `Welcome, ${nickname}!`);
     window.history.pushState(null, "", "/");
     LoadPage()
 } catch (err) {

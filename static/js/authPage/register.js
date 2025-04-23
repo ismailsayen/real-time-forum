@@ -8,6 +8,7 @@ export function Register() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    clearErrors();
     const formData = Object.fromEntries(new FormData(form, btn));
     formData.age = parseInt(formData.age);
 
@@ -20,7 +21,7 @@ export function Register() {
     });
 
     if (!req.ok) {
-      //Toast("404 azbi")
+
       let data = await req.json();
       for (let [key, value] of Object.entries(data)) {
         if (value !== "") {
@@ -30,6 +31,7 @@ export function Register() {
       }
       return;
     }
+    localStorage.setItem("welcome", `Welcome, ${nickname}!`);
     SetUrl("/");
     LoadPage();
   });
@@ -39,4 +41,13 @@ function displayError(name, message) {
   const div = document.querySelector(`.${name}`);
   div.innerHTML = message;
   div.style.display = "block";
+}
+
+
+function clearErrors() {
+  const errorDivs = document.querySelectorAll(".error"); 
+  errorDivs.forEach(div => {
+    div.innerHTML = "";
+    div.style.display = "none";
+  });
 }
