@@ -11,16 +11,43 @@ export async function DisplayPost() {
     }
 
     data.forEach((post) => {
-      
       const postss = document.createElement("div");
-      postss.innerHTML = `
-            <h2>${post.title}</h2>
-            <p><strong>By:</strong> ${post.nickname}</p>
-            <p>${post.content}</p>
-            <p><strong>Categories:</strong> ${post.categories.join(", ")}</p>
-            <hr/>
-          `;
-          container.appendChild(postss)
+      postss.className = "cards";
+      postss.innerHTML = /*html*/ `
+    
+  <div class="card">
+    <div class="header-card">
+      <h4>
+        <img src="/static/images/profil.svg" alt="profil" />
+        ${post.nickname}
+      </h4>
+      <p class="datetime">Created at: ${post.created_at} ago</p>
+    </div>
+
+    <h3 class="title">${post.title}</h3>
+    <p class="content">${post.content}</p>
+
+    <div class="footer-card">
+      <div class="category">
+        <p>
+          <span>Category:</span> #
+          ${post.categories.join("").split(",").join(" #")}
+        </p>
+      </div>
+
+      <div class="reacts">
+        <div>
+          <span>10</span>
+          <button>
+            <i class="fa-regular fa-comment"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+       
+`;
+      container.appendChild(postss);
     });
     SetUrl("/posts");
   } catch (error) {

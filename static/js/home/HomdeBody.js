@@ -173,6 +173,7 @@ async function handlePostSubmit(event) {
       const postSection = document.querySelector(".post-section");
       container.innerHTML=""
       DisplayPost();
+      Toast("Post added ✅.")
     } else {
       const errr = await response.json();
       console.error("Failed to create post", errr);
