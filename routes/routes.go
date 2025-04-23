@@ -31,6 +31,9 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/addPost", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddPost(w, r, db)
 	})
+	http.HandleFunc("/getCategory", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetCategory(w, r, db)
+	})
 	http.HandleFunc("/Getposts", func(w http.ResponseWriter, r *http.Request) {
 		handlers.PostHundler(w, r, db)
 	})

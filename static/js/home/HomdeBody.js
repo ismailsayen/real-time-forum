@@ -1,6 +1,7 @@
+import { Toast } from "../toast/toast.js";
 import { DisplayPost } from "./DisplayPost.js";
 
-export function HomeBody() {
+export async function HomeBody() {
   const header = document.querySelector(".header").getBoundingClientRect();
   const container = document.querySelector(".container");
   const homebd = document.createElement("div");
@@ -10,46 +11,45 @@ export function HomeBody() {
   postSection.className="post-section"
   homebd.className = "container-body";
   homebd.style.height = `calc(100% - ${header.height}px - 0.7rem)`;
-
+const postss = document.createElement("div");
+      postss.className="posts"
   const addPostBtn = document.createElement("button");
   addPostBtn.className = "add-post-btn";
   addPostBtn.textContent = "Add Post";
   addPostBtn.addEventListener("click", openPostForm);
-  
+ const categories = await GetCategory()
+console.log(categories);
 
   postSection.appendChild(addPostBtn);
 
-  createPostFormModal();
+  createPostFormModal(categories);
   homebd.appendChild(postSection)
   homebd.appendChild(usersSection)
   container.appendChild(homebd);
   DisplayPost();
 }
 
-function createPostFormModal() {
-  // Create modal container
+function createPostFormModal(categories) {
+
   const modal = document.createElement("div");
   modal.className = "post-modal";
   modal.style.display = "none";
-  
-  // Create modal content
+
   const modalContent = document.createElement("div");
   modalContent.className = "post-modal-content";
-  
-  // Create close button
+
   const closeBtn = document.createElement("span");
   closeBtn.className = "close-btn";
   closeBtn.innerHTML = "&times;";
   closeBtn.addEventListener("click", () => {
     modal.style.display = "none";
   });
-  
-  // Create form
+
   const form = document.createElement("form");
   form.id = "post-form";
   form.addEventListener("submit", handlePostSubmit);
-  
-  // Create form fields
+
+ 
   form.innerHTML = `
     <h2>Create New Post</h2>
     <div class="form-group">
@@ -60,22 +60,46 @@ function createPostFormModal() {
       <label for="content">Content:</label>
       <textarea id="content" name="content" rows="5" required></textarea>
     </div>
-    <div class="form-group">
-      <label for="categories">Categories (comma-separated):</label>
-      <input type="text" id="categories" name="categories">
-    </div>
-    <button type="submit" class="submit-btn">Submit Post</button>
   `;
-  
-  // Assemble modal
+  const checkboxGroup = document.createElement("div");
+
+  checkboxGroup.className = "form-group checkbox-group";
+  const label = document.createElement("label");
+  label.textContent = "Categories:";
+  checkboxGroup.appendChild(label);
+
+  categories.forEach((cat) => {
+    const checkboxContainer = document.createElement("div");
+    checkboxContainer.className = "checkbox-cat";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "categories";
+    checkbox.value = cat.id;
+    checkbox.id = `${cat.id}`;
+
+    const checkboxLabel = document.createElement("label");
+    checkboxLabel.setAttribute("for", `${cat.id}`);
+    checkboxLabel.textContent = cat.name;
+
+    checkboxContainer.appendChild(checkboxLabel);
+    checkboxContainer.appendChild(checkbox);
+    checkboxGroup.appendChild(checkboxContainer);
+  });
+
+  form.appendChild(checkboxGroup);
+
+  const submitBtn = document.createElement("button");
+  submitBtn.type = "submit";
+  submitBtn.className = "submit-btn";
+  submitBtn.textContent = "Submit Post";
+  form.appendChild(submitBtn);
+
   modalContent.appendChild(closeBtn);
   modalContent.appendChild(form);
   modal.appendChild(modalContent);
-  
-  // Add modal to body
   document.body.appendChild(modal);
-  
-  // Close modal when clicking outside
+
   window.addEventListener("click", (event) => {
     if (event.target === modal) {
       modal.style.display = "none";
@@ -90,23 +114,60 @@ function openPostForm() {
   }
 }
 
+async function GetCategory() {
+  try {
+     const resp = await fetch("/getCategory");
+ 
+     if (!resp.ok) {
+       const result = await resp.json();
+       console.log(result);
+       return;
+     }
+     const data =await resp.json()
+     console.log(data);
+     return data
+
+   } catch (err) {
+     Toast(err);
+   }
+
+
+}
+
+
+
+
 async function handlePostSubmit(event) {
   event.preventDefault();
-  
-  const titleInput = document.getElementById("title");
-  const contentInput = document.getElementById("content");
-  const categoriesInput = document.getElementById("categories");
-  
+  const title = document.getElementById("title").value;
+  const content = document.getElementById("content").value;
+  const checkedCategories = Array.from(
+    document.querySelectorAll('input[name="categories"]:checked')
+  ).map(checkbox => checkbox.value);
+
+  if(checkedCategories.length==0){
+    Toast("Category Required")
+    return 
+  }
+  if(!title || title.length<=5){
+    Toast("Title to short")
+    return 
+  }
+  if(!content ||content.length<=5){
+    Toast("Content too short ")
+    return
+  }
+
+
   const newPost = {
-    title: titleInput.value,
-    content: contentInput.value,
-    // Assuming you have a way to get the current user's nickname
-    nickname: "CurrentUser", // Replace with actual user nickname
-    categories: categoriesInput.value.split(",").map(cat => cat.trim()).filter(cat => cat !== "")
+    title: title,
+    content: content,
+    user_id:1,
+    categories: checkedCategories
   };
   
   try {
-    const response = await fetch("/CreatePost", {
+    const response = await fetch("/addPost", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,23 +176,20 @@ async function handlePostSubmit(event) {
     });
     
     if (response.ok) {
-      // Close modal
       document.querySelector(".post-modal").style.display = "none";
-      
-      // Clear form
       document.getElementById("post-form").reset();
-      
-      // Refresh posts display
       const postSection = document.querySelector(".post-section");
-      // Remove all posts except the Add Post button
       while (postSection.childNodes.length > 1) {
         postSection.removeChild(postSection.lastChild);
       }
-      DisplayPost();
+       DisplayPost();
     } else {
-      console.error("Failed to create post");
+      const errr= await response.json()
+      console.error("Failed to create post",errr);
+      Toast(errr)
     }
   } catch (error) {
     console.error("Error creating post:", error);
+    Toast(error)
   }
 }
