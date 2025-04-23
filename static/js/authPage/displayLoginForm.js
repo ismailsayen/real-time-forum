@@ -4,6 +4,7 @@ import { Register } from "./register.js";
 export function DisplayLoginForm() {
   const container = document.querySelector(".container");
   const div = document.createElement("div");
+  div.className = "auth-container";
   div.innerHTML = /*html*/ `
    <div class="wrapper">
            <div class="title-text">
@@ -29,6 +30,7 @@ export function DisplayLoginForm() {
               </div>
            </div>
         </div>
+      
   `;
   container.appendChild(div);
   const loginText = document.querySelector(".title-text .login");
