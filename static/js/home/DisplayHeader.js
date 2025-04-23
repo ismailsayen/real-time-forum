@@ -1,6 +1,4 @@
-import { Logout } from "./authPage/logout.js";
-
-
+import { Logout } from "../authPage/logout.js";
 
 export function Header() {
   const container = document.querySelector(".container");
@@ -15,9 +13,7 @@ export function Header() {
   logoutBtn.textContent = "Logout";
   logoutBtn.className = "logout-btn";
   logoutBtn.addEventListener("click", () => {
-    console.log("event");
-    
-    Logout()
+    Logout();
   });
 
   header.appendChild(title);

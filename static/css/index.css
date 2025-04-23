@@ -15,7 +15,6 @@ body {
   width: 100%;
 }
 
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -23,7 +22,6 @@ body {
   background-color: #282c34;
   color: white;
   padding: 1rem;
-  margin-bottom: 1rem;
 }
 
 .logout-btn {
@@ -34,7 +32,6 @@ body {
   cursor: pointer;
   border-radius: 5px;
 }
-
 
 .toast {
   position: fixed;
@@ -51,9 +48,35 @@ body {
   animation: fadeInOut 3s ease;
 }
 
+.container-body {
+  width: 100%;
+  display: flex;
+}
+.user-section {
+  height: 100%;
+  width: 450px;
+  background-color: white;
+}
+.post-section {
+  height: 100%;
+  width: 100%;
+  background-color: #e6e6e6;
+}
 @keyframes fadeInOut {
-  0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
 }

@@ -1,11 +1,10 @@
 export async function DisplayPost() {
+  const container = document.querySelector(".post-section");
   try {
     const resp = await fetch("/Getposts");
     const data = await resp.json();
-
-    const container = document.querySelector(".container");
-    if (data == null) {
-      container.textContent = "no post";
+    if (data === null) {
+      container.innerHTML = "<h1>No Post</h1>";
       return;
     }
 
