@@ -15,7 +15,7 @@ export function HomeBody() {
   addPostBtn.className = "add-post-btn";
   addPostBtn.textContent = "Add Post";
   addPostBtn.addEventListener("click", openPostForm);
-  
+  GetCategory()
 
   postSection.appendChild(addPostBtn);
 
@@ -27,29 +27,25 @@ export function HomeBody() {
 }
 
 function createPostFormModal() {
-  // Create modal container
+
   const modal = document.createElement("div");
   modal.className = "post-modal";
   modal.style.display = "none";
-  
-  // Create modal content
+
   const modalContent = document.createElement("div");
   modalContent.className = "post-modal-content";
-  
-  // Create close button
+
   const closeBtn = document.createElement("span");
   closeBtn.className = "close-btn";
   closeBtn.innerHTML = "&times;";
   closeBtn.addEventListener("click", () => {
     modal.style.display = "none";
   });
-  
-  // Create form
+
   const form = document.createElement("form");
   form.id = "post-form";
   form.addEventListener("submit", handlePostSubmit);
-  
-  // Create form fields
+
   form.innerHTML = `
     <h2>Create New Post</h2>
     <div class="form-group">
@@ -67,15 +63,14 @@ function createPostFormModal() {
     <button type="submit" class="submit-btn">Submit Post</button>
   `;
   
-  // Assemble modal
+
   modalContent.appendChild(closeBtn);
   modalContent.appendChild(form);
   modal.appendChild(modalContent);
   
-  // Add modal to body
+
   document.body.appendChild(modal);
   
-  // Close modal when clicking outside
   window.addEventListener("click", (event) => {
     if (event.target === modal) {
       modal.style.display = "none";
@@ -89,6 +84,38 @@ function openPostForm() {
     modal.style.display = "block";
   }
 }
+
+async function GetCategory() {
+  try {
+     const resp = await fetch("/getCategory");
+ 
+     if (!resp.ok) {
+       const result = await resp.json();
+       console.log(result);
+       return;
+     }
+     console.log(resp);
+
+   } catch (err) {
+     Toast(err);
+   }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function handlePostSubmit(event) {
   event.preventDefault();
