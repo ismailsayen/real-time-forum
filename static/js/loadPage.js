@@ -1,6 +1,7 @@
 import { DisplayLoginForm } from "./authPage/displayLoginForm.js";
 import { DisplayPost } from "./DisplayPost.js";
 import { DispalyError } from "./ErrorPage.js";
+import { HomePage } from "./HomePage.js";
 
 export function LoadPage() {
   let container = document.querySelector(".container");
@@ -13,7 +14,8 @@ export function LoadPage() {
       DisplayLoginForm();
       break;
     case "/":
-      DisplayPost();
+      HomePage()
+      // DisplayPost();
       break;
     default:
       DispalyError();

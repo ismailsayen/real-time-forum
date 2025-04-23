@@ -21,7 +21,7 @@ export function Register() {
     });
 
     if (!req.ok) {
-      //Toast("404 azbi")
+
       let data = await req.json();
       for (let [key, value] of Object.entries(data)) {
         if (value !== "") {
@@ -31,6 +31,7 @@ export function Register() {
       }
       return;
     }
+    localStorage.setItem("welcome", `Welcome, ${nickname}!`);
     SetUrl("/");
     LoadPage();
   });
