@@ -8,6 +8,7 @@ export function Register() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    clearErrors();
     const formData = Object.fromEntries(new FormData(form, btn));
     formData.age = parseInt(formData.age);
 
@@ -39,4 +40,13 @@ function displayError(name, message) {
   const div = document.querySelector(`.${name}`);
   div.innerHTML = message;
   div.style.display = "block";
+}
+
+
+function clearErrors() {
+  const errorDivs = document.querySelectorAll(".error"); 
+  errorDivs.forEach(div => {
+    div.innerHTML = "";
+    div.style.display = "none";
+  });
 }
