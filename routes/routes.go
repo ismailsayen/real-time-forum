@@ -22,7 +22,9 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		auth.Register(w, r, db)
 	})
-
+	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+		auth.LogoutController(w, r, db)
+	})
 	http.HandleFunc("/addComment", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CommentHandler(w, r, db)
 	})
