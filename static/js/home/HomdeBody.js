@@ -5,32 +5,31 @@ export async function HomeBody() {
   const header = document.querySelector(".header").getBoundingClientRect();
   const container = document.querySelector(".container");
   const homebd = document.createElement("div");
-  const usersSection =document.createElement("div")
-  const postSection =document.createElement("div")
-  usersSection.className="user-section"
-  postSection.className="post-section"
+  const usersSection = document.createElement("div");
+  const postSection = document.createElement("div");
+  usersSection.className = "user-section";
+  postSection.className = "post-section";
   homebd.className = "container-body";
   homebd.style.height = `calc(100% - ${header.height}px - 0.7rem)`;
-const postss = document.createElement("div");
-      postss.className="posts"
+  const postss = document.createElement("div");
+  postss.className = "postss";
   const addPostBtn = document.createElement("button");
   addPostBtn.className = "add-post-btn";
   addPostBtn.textContent = "Add Post";
   addPostBtn.addEventListener("click", openPostForm);
- const categories = await GetCategory()
-console.log(categories);
+  const categories = await GetCategory();
 
   postSection.appendChild(addPostBtn);
 
   createPostFormModal(categories);
-  homebd.appendChild(postSection)
-  homebd.appendChild(usersSection)
+  homebd.appendChild(postSection);
+  homebd.appendChild(usersSection);
+  postSection.appendChild(postss);
   container.appendChild(homebd);
   DisplayPost();
 }
 
 function createPostFormModal(categories) {
-
   const modal = document.createElement("div");
   modal.className = "post-modal";
   modal.style.display = "none";
@@ -49,7 +48,6 @@ function createPostFormModal(categories) {
   form.id = "post-form";
   form.addEventListener("submit", handlePostSubmit);
 
- 
   form.innerHTML = `
     <h2>Create New Post</h2>
     <div class="form-group">
@@ -116,56 +114,50 @@ function openPostForm() {
 
 async function GetCategory() {
   try {
-     const resp = await fetch("/getCategory");
- 
-     if (!resp.ok) {
-       const result = await resp.json();
-       console.log(result);
-       return;
-     }
-     const data =await resp.json()
-     console.log(data);
-     return data
+    const resp = await fetch("/getCategory");
 
-   } catch (err) {
-     Toast(err);
-   }
+    if (!resp.ok) {
+      const result = await resp.json();
+      console.log(result);
+      return;
+    }
+    const data = await resp.json();
 
-
+    return data;
+  } catch (err) {
+    Toast(err);
+  }
 }
-
-
-
 
 async function handlePostSubmit(event) {
   event.preventDefault();
+  const container = document.querySelector(".postss");
   const title = document.getElementById("title").value;
   const content = document.getElementById("content").value;
   const checkedCategories = Array.from(
     document.querySelectorAll('input[name="categories"]:checked')
-  ).map(checkbox => checkbox.value);
+  ).map((checkbox) => checkbox.value);
 
-  if(checkedCategories.length==0){
-    Toast("Category Required")
-    return 
+  if (checkedCategories.length == 0) {
+    Toast("Category Required");
+    return;
   }
-  if(!title || title.length<=5){
-    Toast("Title to short")
-    return 
+  if (!title || title.length <= 5) {
+    Toast("Title to short");
+    return;
   }
-  if(!content ||content.length<=5){
-    Toast("Content too short ")
-    return
+  if (!content || content.length <= 5) {
+    Toast("Content too short ");
+    return;
   }
-
 
   const newPost = {
     title: title,
     content: content,
-    user_id:1,
-    categories: checkedCategories
+    categories: checkedCategories,
+    created_at: new Date() - 0,
   };
-  
+
   try {
     const response = await fetch("/addPost", {
       method: "POST",
@@ -174,22 +166,20 @@ async function handlePostSubmit(event) {
       },
       body: JSON.stringify(newPost),
     });
-    
+
     if (response.ok) {
       document.querySelector(".post-modal").style.display = "none";
       document.getElementById("post-form").reset();
       const postSection = document.querySelector(".post-section");
-      while (postSection.childNodes.length > 1) {
-        postSection.removeChild(postSection.lastChild);
-      }
-       DisplayPost();
+      container.innerHTML=""
+      DisplayPost();
     } else {
-      const errr= await response.json()
-      console.error("Failed to create post",errr);
-      Toast(errr)
+      const errr = await response.json();
+      console.error("Failed to create post", errr);
+      Toast(errr);
     }
   } catch (error) {
     console.error("Error creating post:", error);
-    Toast(error)
+    Toast(error);
   }
 }

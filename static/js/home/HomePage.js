@@ -4,7 +4,6 @@ import { HomeBody } from "./HomdeBody.js";
 
 export function HomePage() {
   Header();
-
   HomeBody();
   const welcome = localStorage.getItem("welcome");
   if (welcome) {
@@ -12,5 +11,4 @@ export function HomePage() {
     localStorage.removeItem("welcome");
   }
 
-  console.log("home");
 }

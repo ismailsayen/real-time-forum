@@ -10,32 +10,45 @@ import (
 )
 
 func Routers(db *sql.DB) {
-	
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HomeHandler(w, r, db)
-	})
-
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		auth.Login(w, r, db)
 	})
 	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		auth.Register(w, r, db)
 	})
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HomeHandler(w, r, db)
+	})
+
 	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
-		auth.LogoutController(w, r, db)
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			auth.LogoutController(w, r, db)
+		}), db).ServeHTTP(w, r)
 	})
+
 	http.HandleFunc("/addComment", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CommentHandler(w, r, db)
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.CommentHandler(w, r, db)
+		}), db).ServeHTTP(w, r)
 	})
+
 	http.HandleFunc("/addPost", func(w http.ResponseWriter, r *http.Request) {
-		handlers.AddPost(w, r, db)
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.AddPost(w, r, db)
+		}), db).ServeHTTP(w, r)
 	})
+
 	http.HandleFunc("/getCategory", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetCategory(w, r, db)
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetCategory(w, r, db)
+		}), db).ServeHTTP(w, r)
 	})
+
 	http.HandleFunc("/Getposts", func(w http.ResponseWriter, r *http.Request) {
-		handlers.PostHundler(w, r, db)
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.PostHundler(w, r, db)
+		}), db).ServeHTTP(w, r)
 	})
 	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
 		middleware.VerifyCookie(w, r, db)

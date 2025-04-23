@@ -1,5 +1,7 @@
+import { SetUrl } from "../navigation/setPath.js";
+
 export async function DisplayPost() {
-  const container = document.querySelector(".post-section");
+  const container = document.querySelector(".postss");
   try {
     const resp = await fetch("/Getposts");
     const data = await resp.json();
@@ -9,6 +11,7 @@ export async function DisplayPost() {
     }
 
     data.forEach((post) => {
+      
       const postss = document.createElement("div");
       postss.innerHTML = `
             <h2>${post.title}</h2>
@@ -17,10 +20,10 @@ export async function DisplayPost() {
             <p><strong>Categories:</strong> ${post.categories.join(", ")}</p>
             <hr/>
           `;
-      container.appendChild(postss);
+          container.appendChild(postss)
     });
-    window.history.pushState(null, "", "/posts");
+    SetUrl("/posts");
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    console.log("Error fetching posts:", error);
   }
 }

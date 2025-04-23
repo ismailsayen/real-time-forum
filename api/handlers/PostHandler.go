@@ -34,6 +34,7 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	var post database.Posts
+	ID := r.Context().Value("userId").(int)
 
 	if r.Body == nil {
 		utils.SendError(w, http.StatusBadRequest, "Empty request body")
@@ -43,7 +44,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
-	fmt.Println(post)
 	if strings.TrimSpace(post.Title) == "" || len(post.Categories) == 0 || strings.TrimSpace(post.Content) == "" {
 		utils.SendError(w, http.StatusBadRequest, "Title or Content or Categorie field's  empty ")
 		return
@@ -54,7 +54,7 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	post.Content = html.EscapeString(post.Content)
 	post.Title = html.EscapeString(post.Title)
-	post.UserID = 1
+	post.UserID = ID
 	idPost, err := models.CreatePost(post.Title, post.Content, post.CreatedAt, post.UserID, db)
 	if err != nil {
 		fmt.Println(err)
