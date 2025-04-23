@@ -87,8 +87,8 @@ function RegisterForm() {
       <form class="signup-form" method="post" id="signup-form">
                  <div class="field">
                       <input type="text" name="nickname" placeholder="Nickname" required>
-                    <div class="error Errnickname"></div>     
-                  </div>
+                     </div>
+                     <div class="error Errnickname"></div>     
                   <div class="field bouth ">
                       <input type="text" name="firstName" placeholder="First Name" required>
                       <input type="text" name="lastName" placeholder="Last Name" required>
