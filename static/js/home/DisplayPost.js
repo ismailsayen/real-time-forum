@@ -23,10 +23,8 @@ export async function DisplayPost() {
       </h4>
       <p class="datetime">Created at: ${convertTime(post.created_at)} </p>
     </div>
-
     <h3 class="title">${post.title}</h3>
     <p class="content">${post.content}</p>
-
     <div class="footer-card">
       <div class="category">
         <p>
@@ -36,7 +34,6 @@ export async function DisplayPost() {
             .join(" #")}
         </p>
       </div>
-
       <div class="reacts">
         <div>
           <span>${Number(post.nbCmnts)}</span>
@@ -47,16 +44,12 @@ export async function DisplayPost() {
       </div>
     </div>
     <div class="comments" data-postID="${Number(post.id)}">
-      
     </div>
   <div class="new-comment">
     <input type="text" name="newComment" id="" placeholder="Write your comment Here.">
     <button><i class="fa-solid fa-plus"></i></button>
-  </div>
-
-       
+  </div>     
 `;
-
       container.appendChild(postss);
       const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
       btn.addEventListener("click", ShowComments);
