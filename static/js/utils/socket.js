@@ -1,3 +1,5 @@
+import { DisplayPost } from "../home/DisplayPost.js";
+
 let socket;
 
 export function initWebSocket() {
@@ -14,6 +16,10 @@ export function initWebSocket() {
     if (data.type === "new_comment") {
       // Show a toast or update the UI
       console.log("💬 New Comment:", data.comment);
+    }
+    if (data.type === "new_post") {
+        DisplayPost()
+        console.log("📝 New Post Added with ID:", data.postId, "at", data.time,data);
     }
 
     if (data.type === "notification") {

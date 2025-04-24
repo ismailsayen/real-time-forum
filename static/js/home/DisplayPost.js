@@ -13,7 +13,7 @@ export async function DisplayPost() {
       container.innerHTML = "<h1>No Post</h1>";
       return;
     }
-
+    container.innerHTML = ""; 
     data.forEach((post) => {
       const postss = document.createElement("div");
       postss.className = "card";
@@ -108,7 +108,7 @@ return
       type: "new_comment",
       postId: idpost,
       comment: newComment.content,
-      time: new Date(),
+      time: new Date()-0,
     });
   } else {
     const errr = await resp.json();
