@@ -305,3 +305,66 @@ img[src="/static/images/profil.svg"] {
   min-width: 110px;
   justify-content: end;
 }
+.cmnt-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+.cmnt-btn:hover i {
+  color: red;
+}
+.comments {
+  width: 100%;
+  margin: auto;
+  background-color: #e6e6e6;
+  height: 100px;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: none;
+}
+
+.new-comment {
+  background-color: #e6e6e6;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.new-comment input {
+  flex: 1;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+}
+
+.new-comment button {
+  background: transparent;
+  border: none;
+  width: 50px; /* ajuste selon ton besoin */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+  border-radius: 50%;
+}
+
+.new-comment button i {
+  color: black; /* couleur de l'icône par défaut */
+  transition: color 0.3s;
+}
+
+.new-comment button:hover {
+  background: black;
+}
+
+.new-comment button:hover i {
+  color: white;
+}

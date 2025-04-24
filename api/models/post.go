@@ -27,14 +27,24 @@ func CreatePost(title string, content string, create_at int, userId int, db *sql
 
 func GetPosts(db *sql.DB) ([]database.Posts, error) {
 	query := `
-    SELECT p.ID, p.User_id, p.title, p.Content, GROUP_CONCAT(c.Name_Category) AS categories, p.Create_at, u.Nickname
+    SELECT 
+        p.ID,
+        p.User_id,
+        p.title, 
+        p.Content, 
+        GROUP_CONCAT(DISTINCT c.Name_Category) AS categories, 
+        p.Create_at, 
+        u.Nickname, 
+        COUNT(DISTINCT cm.id) AS nb_comments
     FROM posts p
     INNER JOIN users u ON p.User_id = u.ID
     INNER JOIN PostCategory pc ON p.ID = pc.ID_Post
     INNER JOIN Category c ON pc.ID_Category = c.ID
+    LEFT JOIN Comment cm ON p.ID = cm.ID_Post
     GROUP BY p.ID
     ORDER BY p.Create_at DESC;
-    `
+`
+
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
@@ -44,7 +54,7 @@ func GetPosts(db *sql.DB) ([]database.Posts, error) {
 	for rows.Next() {
 		var post database.Posts
 		var categorie string
-		err = rows.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &categorie, &post.CreatedAt, &post.NickName)
+		err = rows.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &categorie, &post.CreatedAt, &post.NickName, &post.NBCmnts)
 		if err != nil {
 			return nil, err
 		}

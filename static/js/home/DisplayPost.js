@@ -1,5 +1,6 @@
 import { SetUrl } from "../navigation/setPath.js";
 import { convertTime } from "../utils/convertDate.js";
+import { ShowComments } from "../utils/showComment.js";
 
 export async function DisplayPost() {
   const container = document.querySelector(".postss");
@@ -15,8 +16,6 @@ export async function DisplayPost() {
       const postss = document.createElement("div");
       postss.className = "card";
       postss.innerHTML = /*html*/ `
-    
- 
     <div class="header-card">
       <h4>
         <img src="/static/images/profil.svg" alt="profil" />
@@ -31,24 +30,36 @@ export async function DisplayPost() {
     <div class="footer-card">
       <div class="category">
         <p>
-          <span>Category:</span> #
-          ${post.categories.join("").split(",").join(" #")}
+          <span>Category: </span>#${post.categories
+            .join("")
+            .split(",")
+            .join(" #")}
         </p>
       </div>
 
       <div class="reacts">
         <div>
-          <span>10</span>
-          <button>
-            <i class="fa-regular fa-comment"></i>
+          <span>${Number(post.nbCmnts)}</span>
+          <button data-post="${Number(post.id)}" class="cmnt-btn hide">
+            <i class="fa-regular fa-comment" ></i>
           </button>
         </div>
       </div>
     </div>
+    <div class="comments" data-postID="${Number(post.id)}">
+      
+    </div>
+  <div class="new-comment">
+    <input type="text" name="newComment" id="" placeholder="Write your comment Here.">
+    <button><i class="fa-solid fa-plus"></i></button>
+  </div>
 
        
 `;
+
       container.appendChild(postss);
+      const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
+      btn.addEventListener("click", ShowComments);
     });
     SetUrl("/posts");
   } catch (error) {

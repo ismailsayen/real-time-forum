@@ -17,6 +17,7 @@ type Posts struct {
 	Categories []string `json:"categories"`
 	CreatedAt  int      `json:"created_at"`
 	NickName   string   `json:"nickname"`
+	NBCmnts    int      `json:"nbCmnts"`
 }
 type Category struct {
 	ID   int    `json:"id"`
