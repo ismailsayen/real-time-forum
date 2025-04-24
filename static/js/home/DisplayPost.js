@@ -1,4 +1,5 @@
 import { SetUrl } from "../navigation/setPath.js";
+import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
 import { ShowComments } from "../utils/showComment.js";
 
@@ -50,13 +51,13 @@ export async function DisplayPost() {
       
     </div>
   <div class="new-comment">
-    <input type="text" name="newComment" id="" placeholder="Write your comment Here.">
-    <button><i class="fa-solid fa-plus"></i></button>
+    <input type="text" name="newComment" id="comment-content" placeholder="Write your comment Here.">
+    <button id="comment-btn"><i class="fa-solid fa-plus"></i></button>
+    
   </div>
-
-       
 `;
-
+const commentBtn = postss.querySelector("#comment-btn");
+commentBtn.addEventListener("click", () => addComment(Number(post.id)));
       container.appendChild(postss);
       const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
       btn.addEventListener("click", ShowComments);
@@ -65,4 +66,74 @@ export async function DisplayPost() {
   } catch (error) {
     console.log("Error fetching posts:", error);
   }
+
+  
+
+}
+
+
+
+async function addComment(idpost){
+const content =document.getElementById("comment-content")
+if(!content.value||content.value.length<=3){
+Toast("invalide Comment")
+return
+}
+
+
+
+
+
+
+
+
+  const newComment = {
+    content:content.value,
+  
+    IdPost:idpost,
+    date:new Date() - 0
+  };
+
+ try{
+
+  const resp= await fetch("/addComment",{
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newComment),
+  });
+
+  if (resp.ok) {
+  
+    Toast("Commment added ✅.")
+    content.value=""
+  } else {
+    const errr = await resp.json();
+    console.error("Failed to create comment", errr);
+    Toast(errr);
+  }
+
+
+ }catch(err){
+  Toast(err)
+
+ }
+
+}
+
+
+
+
+
+async function getComment() {
+  
+try{
+
+  const resp = await fetch()
+
+}catch(err){
+Toast(err)
+}
+
 }
