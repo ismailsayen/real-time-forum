@@ -59,6 +59,15 @@ func Routers(db *sql.DB) {
 			handlers.FetchComment(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
+
+	http.HandleFunc("/getChat", func(w http.ResponseWriter, r *http.Request) {
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetMessages(w, r, db)
+		}), db).ServeHTTP(w, r)
+	})
+
+
+
 	http.HandleFunc("/static/", handlers.Static)
 	http.HandleFunc("/ws", handlers.HandleConnections)
 

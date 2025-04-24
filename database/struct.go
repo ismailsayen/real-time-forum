@@ -45,3 +45,19 @@ type ErrorRegister struct {
 	ErrLastName  string `json:"ErrlastName"`
 	ErrEmail     string `json:"Erremail"`
 }
+
+
+type Conversation struct {
+	ID        int   `json:"id"`
+	User1ID   int   `json:"user1_id"`
+	User2ID   int   `json:"user2_id"`
+	CreatedAt int `json:"created_at"` 
+}
+
+type ChatMessage struct {
+	ID             int       `json:"id"`
+	ConversationID int       `json:"conversation_id"`
+	Sender         int `json:"sender"`  
+	Content        string    `json:"content"`
+	SentAt         int     `json:"sent_at"`
+}
