@@ -15,19 +15,20 @@ import (
 func CommentHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		utils.SendError(w, http.StatusMethodNotAllowed, "Metohde Not allowed.")
-		return 
+		return
 	}
+	ID := r.Context().Value("userId").(int)
 	var comment database.Comment
 	json.NewDecoder(r.Body).Decode(&comment)
 	if comment.Content == "" {
 		utils.SendError(w, http.StatusBadRequest, "Cannot send empty comment.")
-		return 
+		return
 	}
 	comment.Content = html.EscapeString(strings.TrimSpace(comment.Content))
-
+	comment.IdUser=ID
 	err := models.Comment(comment.IdPost, comment.IdUser, comment.Date, comment.Content, db)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, err.Error())
-		return 
+		return
 	}
 }
