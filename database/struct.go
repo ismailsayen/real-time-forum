@@ -33,6 +33,7 @@ type Comment struct {
 	IdUser  int    `json:"iduser"`
 	IdPost  int    `json:"idPost"`
 	Date    int    `json:"date"`
+	NickName   string   `json:"nickname"`
 }
 type ErrorRegister struct {
 	ErrEmpty     string `json:"ErrEmpty"`
