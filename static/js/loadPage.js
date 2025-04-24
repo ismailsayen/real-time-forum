@@ -7,7 +7,7 @@ export function LoadPage() {
   let container = document.querySelector(".container");
   let path = location.pathname;
   container.innerHTML = "";
-  initWebSocket(); 
+  // initWebSocket(); 
   switch (path) {
     case "/auth":
       DisplayLoginForm();
