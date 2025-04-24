@@ -15,7 +15,7 @@ export const ShowComments = async (e) => {
                 <img src="/static/images/profil.svg" alt="">
                 ${ele.nickname}
               </h4>
-              <p class="datetime">Created at: ${convertTime(ele.date)}</p>
+              <p class="datetime">${convertTime(ele.date)}</p>
             </div>
             <p class="content">${ele.content}</p>
         </div>

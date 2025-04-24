@@ -251,7 +251,7 @@ img[src="/static/images/profil.svg"] {
 }
 
 .container-body .post-section .postss .card .header-card .datetime {
-  color: var(--second-text-color);
+  color: gray;
   font-weight: 300;
   font-size: 0.8em;
 }
@@ -291,11 +291,13 @@ img[src="/static/images/profil.svg"] {
 }
 
 .container-body .post-section .postss .card .footer-card .category p {
-  color: var(--btn2);
+  color: gray;
+  font-size: 0.8rem;
 }
 
 .container-body .post-section .postss .card .footer-card .category p span {
-  color: var(--second-text-color);
+  color: black;
+  font-size: 1rem;
 }
 
 .container-body .post-section .postss .card .footer-card .reacts {
@@ -323,7 +325,7 @@ img[src="/static/images/profil.svg"] {
   border-radius: 8px;
   margin-top: 10px;
   display: none;
-  min-height: 100px;
+  min-height: 180px;
   max-height: 600px;
   overflow-y: scroll;
 }
@@ -378,9 +380,19 @@ img[src="/static/images/profil.svg"] {
   margin: 10px 0;
   word-break: break-all;
 }
+.comments .comment .header-comment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .comments .comment .header-comment h4 {
   display: flex;
   gap: 7px;
   align-items: center;
   font-weight: 500;
+}
+.comments .comment .datetime {
+  color: gray;
+  font-weight: 300;
+  font-size: 0.8em;
 }
