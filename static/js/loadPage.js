@@ -1,12 +1,13 @@
 import { DisplayLoginForm } from "./authPage/displayLoginForm.js";
 import { DispalyError } from "./ErrorPage.js";
 import { HomePage } from "./home/HomePage.js";
+import { initWebSocket } from "./utils/socket.js";
 
 export function LoadPage() {
   let container = document.querySelector(".container");
   let path = location.pathname;
   container.innerHTML = "";
-
+  initWebSocket(); 
   switch (path) {
     case "/auth":
       DisplayLoginForm();

@@ -2,6 +2,7 @@ import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
 import { ShowComments } from "../utils/showComment.js";
+import { sendMessage } from "../utils/socket.js";
 
 export async function DisplayPost() {
   const container = document.querySelector(".postss");
@@ -41,7 +42,7 @@ export async function DisplayPost() {
       <div class="reacts">
         <div>
           <span>${Number(post.nbCmnts)}</span>
-          <button data-post="${Number(post.id)}" class="cmnt-btn hide">
+          <button data-post="${Number(post.id)}" id="display-comment" class="cmnt-btn hide">
             <i class="fa-regular fa-comment" ></i>
           </button>
         </div>
@@ -58,6 +59,8 @@ export async function DisplayPost() {
 `;
 const commentBtn = postss.querySelector("#comment-btn");
 commentBtn.addEventListener("click", () => addComment(Number(post.id)));
+const displaycomment = postss.querySelector("#display-comment");
+displaycomment.addEventListener("click", () => getComment(Number(post.id)));
       container.appendChild(postss);
       const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
       btn.addEventListener("click", ShowComments);
@@ -80,13 +83,6 @@ Toast("invalide Comment")
 return
 }
 
-
-
-
-
-
-
-
   const newComment = {
     content:content.value,
   
@@ -108,6 +104,12 @@ return
   
     Toast("Commment added ✅.")
     content.value=""
+    sendMessage({
+      type: "new_comment",
+      postId: idpost,
+      comment: newComment.content,
+      time: new Date(),
+    });
   } else {
     const errr = await resp.json();
     console.error("Failed to create comment", errr);
@@ -126,12 +128,29 @@ return
 
 
 
-async function getComment() {
+async function getComment(postid) {
+
+
+  const newComment = {
+    id:postid
+  };
+
+
   
 try{
 
-  const resp = await fetch()
 
+  const resp= await fetch("/getComment",{
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newComment),
+  });
+
+  const data = await resp.json();
+    console.log(data);
+    
 }catch(err){
 Toast(err)
 }
