@@ -53,6 +53,12 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
 		middleware.VerifyCookie(w, r, db)
 	})
+
+	http.HandleFunc("/getComment", func(w http.ResponseWriter, r *http.Request) {
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.FetchComment(w, r, db)
+		}), db).ServeHTTP(w, r)
+	})
 	http.HandleFunc("/static/", handlers.Static)
 	http.HandleFunc("/ws", handlers.HandleWebSocket)
 }
