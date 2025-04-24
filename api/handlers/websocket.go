@@ -37,3 +37,43 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+
+var clients = make(map[*websocket.Conn]bool) // all connected clients
+var broadcast = make(chan Message)           // broadcast channel
+
+type Message struct {
+	Type    string `json:"type"`
+	PostID  int    `json:"postId"`
+	Comment string `json:"comment"`
+	Time    string `json:"time"`
+}
+
+func HandleConnections(w http.ResponseWriter, r *http.Request) {
+	conn, _ := upgrader.Upgrade(w, r, nil)
+	defer conn.Close()
+	clients[conn] = true
+
+	for {
+		var msg Message
+		err := conn.ReadJSON(&msg)
+		if err != nil {
+			delete(clients, conn)
+			break
+		}
+		broadcast <- msg
+	}
+}
+
+func HandleMessages() {
+	for {
+		msg := <-broadcast
+		for client := range clients {
+			err := client.WriteJSON(msg)
+			if err != nil {
+				client.Close()
+				delete(clients, client)
+			}
+		}
+	}
+}
