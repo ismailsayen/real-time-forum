@@ -1,4 +1,5 @@
 import { SetUrl } from "../navigation/setPath.js";
+import { convertTime } from "../utils/convertDate.js";
 
 export async function DisplayPost() {
   const container = document.querySelector(".postss");
@@ -12,16 +13,16 @@ export async function DisplayPost() {
 
     data.forEach((post) => {
       const postss = document.createElement("div");
-      postss.className = "cards";
+      postss.className = "card";
       postss.innerHTML = /*html*/ `
     
-  <div class="card">
+ 
     <div class="header-card">
       <h4>
         <img src="/static/images/profil.svg" alt="profil" />
         ${post.nickname}
       </h4>
-      <p class="datetime">Created at: ${post.created_at} ago</p>
+      <p class="datetime">Created at: ${convertTime(post.created_at)} </p>
     </div>
 
     <h3 class="title">${post.title}</h3>
@@ -44,7 +45,7 @@ export async function DisplayPost() {
         </div>
       </div>
     </div>
-  </div>
+
        
 `;
       container.appendChild(postss);

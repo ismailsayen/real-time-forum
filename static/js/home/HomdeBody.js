@@ -22,8 +22,8 @@ export async function HomeBody() {
   postSection.appendChild(addPostBtn);
 
   createPostFormModal(categories);
-  homebd.appendChild(postSection);
   homebd.appendChild(usersSection);
+  homebd.appendChild(postSection);
   postSection.appendChild(postss);
   container.appendChild(homebd);
   DisplayPost();
