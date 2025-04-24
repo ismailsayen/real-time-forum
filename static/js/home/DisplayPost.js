@@ -39,7 +39,9 @@ export async function DisplayPost() {
       <div class="reacts">
         <div>
           <span>${Number(post.nbCmnts)}</span>
-          <button data-post="${Number(post.id)}" id="display-comment" class="cmnt-btn hide">
+          <button data-post="${Number(
+            post.id
+          )}" class="cmnt-btn hide">
             <i class="fa-regular fa-comment" ></i>
           </button>
         </div>
@@ -48,15 +50,17 @@ export async function DisplayPost() {
     <div class="comments" data-postID="${Number(post.id)}">
     </div>
   <div class="new-comment">
-    <input type="text" name="newComment" id="comment-content" placeholder="Write your comment Here.">
-    <button id="comment-btn"><i class="fa-solid fa-plus"></i></button>
+    <input type="text" name="newComment" id="${Number(
+      post.id
+    )}" placeholder="Write your comment Here.">
+    <button id="comment-btn" id="${Number(
+      post.id
+    )}" ><i class="fa-solid fa-plus"></i></button>
     
   </div>
 `;
-const commentBtn = postss.querySelector("#comment-btn");
-commentBtn.addEventListener("click", () => addComment(Number(post.id)));
-const displaycomment = postss.querySelector("#display-comment");
-displaycomment.addEventListener("click", () => getComment(Number(post.id)));
+      const commentBtn = postss.querySelector("#comment-btn");
+      commentBtn.addEventListener("click", () => addComment(Number(post.id)));
       container.appendChild(postss);
       const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
       btn.addEventListener("click", ShowComments);
@@ -65,90 +69,50 @@ displaycomment.addEventListener("click", () => getComment(Number(post.id)));
   } catch (error) {
     console.log("Error fetching posts:", error);
   }
-
-  
-
 }
 
+async function addComment(idpost) {
+  const content = document.getElementById(`${idpost}`);
+  console.log(content);
 
+  if (!content.value || content.value.length <= 3) {
+    console.log(content.value);
 
-async function addComment(idpost){
-const content =document.getElementById("comment-content")
-if(!content.value||content.value.length<=3){
-Toast("invalide Comment")
-return
-}
-
-  const newComment = {
-    content:content.value,
-  
-    IdPost:idpost,
-    date:new Date() - 0
-  };
-
- try{
-
-  const resp= await fetch("/addComment",{
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newComment),
-  });
-
-  if (resp.ok) {
-  
-    Toast("Commment added ✅.")
-    content.value=""
-    sendMessage({
-      type: "new_comment",
-      postId: idpost,
-      comment: newComment.content,
-      time: new Date(),
-    });
-  } else {
-    const errr = await resp.json();
-    console.error("Failed to create comment", errr);
-    Toast(errr);
+    Toast("invalide Comment");
+    return;
   }
 
-
- }catch(err){
-  Toast(err)
-
- }
-
-}
-
-
-
-
-
-async function getComment(postid) {
-
-
   const newComment = {
-    id:postid
+    content: content.value,
+    IdPost: idpost,
+    date: new Date() - 0,
   };
 
+  try {
+    const resp = await fetch("/addComment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newComment),
+    });
 
-  
-try{
-
-
-  const resp= await fetch("/getComment",{
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newComment),
-  });
-
-  const data = await resp.json();
-    console.log(data);
-    
-}catch(err){
-Toast(err)
+    if (resp.ok) {
+      Toast("Commment added ✅.");
+      content.value = "";
+      sendMessage({
+        type: "new_comment",
+        postId: idpost,
+        comment: newComment.content,
+        time: new Date(),
+      });
+    } else {
+      const errr = await resp.json();
+      console.error("Failed to create comment", errr);
+      Toast(errr);
+    }
+  } catch (err) {
+    Toast(err);
+  }
 }
 
-}

@@ -61,5 +61,6 @@ func GetPosts(db *sql.DB) ([]database.Posts, error) {
 		post.Categories = append(post.Categories, categorie)
 		posts = append(posts, post)
 	}
+
 	return posts, nil
 }

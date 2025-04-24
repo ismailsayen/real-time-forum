@@ -347,7 +347,7 @@ img[src="/static/images/profil.svg"] {
 .new-comment button {
   background: transparent;
   border: none;
-  width: 50px; /* ajuste selon ton besoin */
+  width: 50px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -357,7 +357,7 @@ img[src="/static/images/profil.svg"] {
 }
 
 .new-comment button i {
-  color: black; /* couleur de l'icône par défaut */
+  color: black;
   transition: color 0.3s;
 }
 
@@ -367,4 +367,17 @@ img[src="/static/images/profil.svg"] {
 
 .new-comment button:hover i {
   color: white;
+}
+.comments .comment {
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
+  word-break: break-all;
+}
+.comments .comment .header-comment h4 {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-weight: 500;
 }

@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"net/http"
+
 	"rtFroum/database"
 )
 
@@ -22,7 +23,6 @@ func Comment(post, user, date int, content string, db *sql.DB) error {
 }
 
 func GetComment(w http.ResponseWriter, r *http.Request, db *sql.DB, postId int) ([]database.Comment, error) {
-
 	query := `
        SELECT c.ID , c.Content , u.Nickname , c.DateCreation
        FROM comment c
@@ -40,7 +40,7 @@ func GetComment(w http.ResponseWriter, r *http.Request, db *sql.DB, postId int) 
 	for rows.Next() {
 
 		var c database.Comment
-		if err := rows.Scan(&c.Id, &c.Content, &c.NickName, &c.Date ); err != nil {
+		if err := rows.Scan(&c.Id, &c.Content, &c.NickName, &c.Date); err != nil {
 			return nil, err
 		}
 		comments = append(comments, c)
@@ -48,5 +48,6 @@ func GetComment(w http.ResponseWriter, r *http.Request, db *sql.DB, postId int) 
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+
 	return comments, nil
 }
