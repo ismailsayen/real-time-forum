@@ -54,4 +54,5 @@ func Routers(db *sql.DB) {
 		middleware.VerifyCookie(w, r, db)
 	})
 	http.HandleFunc("/static/", handlers.Static)
+	http.HandleFunc("/ws", handlers.HandleWebSocket)
 }
