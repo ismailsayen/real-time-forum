@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"rtFroum/api/handlers"
 	"rtFroum/database"
 	"rtFroum/routes"
 )
@@ -14,8 +15,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	routes.Routers(db)
+	go handlers.HandleMessages()
 	fmt.Println("http://localhost:8080/")
 	http.ListenAndServe(":8080", nil)
 }

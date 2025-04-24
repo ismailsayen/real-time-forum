@@ -13,7 +13,7 @@ export async function DisplayPost() {
       container.innerHTML = "<h1>No Post</h1>";
       return;
     }
-
+    container.innerHTML = ""; 
     data.forEach((post) => {
       const postss = document.createElement("div");
       postss.className = "card";
