@@ -47,7 +47,7 @@ async function getComment(postid) {
   }
   return data;
 }
-function ShowDiv(div, comments) {
+  export function ShowDiv(div, comments) {
   if (div.classList[1] == "hide") {
     comments.style.display = "block";
     div.classList.replace("hide", "show");

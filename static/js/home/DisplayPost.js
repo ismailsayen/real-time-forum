@@ -1,8 +1,7 @@
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
-import { ShowComments } from "../utils/showComment.js";
-import { sendMessage } from "../utils/socket.js";
+import { ShowComments, ShowDiv } from "../utils/showComment.js";
 
 export async function DisplayPost() {
   const container = document.querySelector(".postss");
@@ -17,6 +16,7 @@ export async function DisplayPost() {
     data.forEach((post) => {
       const postss = document.createElement("div");
       postss.className = "card";
+      const hasCmts = Number(post.nbCmnts) > 0;
       postss.innerHTML = /*html*/ `
     <div class="header-card">
       <h4>
@@ -41,8 +41,8 @@ export async function DisplayPost() {
           <span>${Number(post.nbCmnts)}</span>
           <button data-post="${Number(
             post.id
-          )}" class="cmnt-btn hide">
-            <i class="fa-regular fa-comment" ></i>
+          )}" class="cmnt-btn ${hasCmts ? "hide" : "disabled"}" ${hasCmts ? "" : "disabled"}>
+           ${hasCmts ? `<i class="fa-regular fa-comment"></i>` : `No comments yet`}
           </button>
         </div>
       </div>
@@ -63,7 +63,18 @@ export async function DisplayPost() {
       commentBtn.addEventListener("click", () => addComment(Number(post.id)));
       container.appendChild(postss);
       const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
-      btn.addEventListener("click", ShowComments);
+      if (hasCmts) {
+        const btn = postss.querySelector(`[data-post="${Number(post.id)}"]`);
+        btn.dataset.loaded = "false"; 
+        btn.addEventListener("click", async function (e) {
+          if (this.dataset.loaded === "false") {
+            await ShowComments(e);
+            this.dataset.loaded = "true"; 
+          } else {
+            ShowDiv(this, document.querySelector(`[data-postID="${post.id}"]`));
+          }
+        });
+      }
     });
     SetUrl("/posts");
   } catch (error) {
@@ -100,12 +111,7 @@ async function addComment(idpost) {
     if (resp.ok) {
       Toast("Commment added ✅.");
       content.value = "";
-      sendMessage({
-        type: "new_comment",
-        postId: idpost,
-        comment: newComment.content,
-        time: new Date(),
-      });
+      
     } else {
       const errr = await resp.json();
       console.error("Failed to create comment", errr);
