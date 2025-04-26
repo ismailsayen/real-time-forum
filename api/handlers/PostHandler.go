@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"rtFroum/api/models"
 	"rtFroum/database"
@@ -75,12 +74,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			return
 		}
 	}
-	broadcast <- Message{
-		Type:   "new_post",
-		PostID: 15, 
-		Time:   time.Now().Format("2006-01-02 15:04:05"),
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }

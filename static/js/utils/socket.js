@@ -1,47 +1,64 @@
-import { DisplayPost } from "../home/DisplayPost.js";
+// import { DisplayPost } from "../home/DisplayPost.js";
 
-let socket;
+import { Toast } from "../toast/toast.js";
 
-export function initWebSocket() {
-  socket = new WebSocket("ws://localhost:8080/ws");
+// let socket;
 
-  socket.onopen = () => {
-    console.log("🔌 Connected to WebSocket Server");
-  };
+// export function initWebSocket() {
+//   socket = new WebSocket("ws://localhost:8080/ws");
 
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
+//   socket.onopen = () => {
+//     console.log("🔌 Connected to WebSocket Server");
+//   };
 
-    // Example handlers
-    if (data.type === "new_comment") {
-      // Show a toast or update the UI
-      console.log("💬 New Comment:", data.comment);
-    }
-    if (data.type === "new_post") {
-        DisplayPost()
-        console.log("📝 New Post Added with ID:", data.postId, "at", data.time,data);
-    }
+//   socket.onmessage = (event) => {
+//     const data = JSON.parse(event.data);
 
-    if (data.type === "notification") {
-      // Display notification
-      console.log("🔔 Notification:", data.message);
-    }
-  };
+//     // Example handlers
+//     if (data.type === "new_comment") {
+//       // Show a toast or update the UI
+//       console.log("💬 New Comment:", data.comment);
+//     }
+//     if (data.type === "new_post") {
+//         DisplayPost()
+//         console.log("📝 New Post Added with ID:", data.postId, "at", data.time,data);
+//     }
 
-  socket.onerror = (err) => {
-    console.error("WebSocket Error:", err);
-  };
+//     if (data.type === "notification") {
+//       // Display notification
+//       console.log("🔔 Notification:", data.message);
+//     }
+//   };
 
-  socket.onclose = () => {
-    console.warn("WebSocket closed, retrying in 3s...");
-    setTimeout(initWebSocket, 3000); // Retry connection
-  };
-}
+//   socket.onerror = (err) => {
+//     console.error("WebSocket Error:", err);
+//   };
 
-export function sendMessage(messageObj) {
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(messageObj));
-  } else {
-    console.warn("WebSocket not connected.");
-  }
+//   socket.onclose = () => {
+//     console.warn("WebSocket closed, retrying in 3s...");
+//     setTimeout(initWebSocket, 3000); // Retry connection
+//   };
+// }
+
+// export function sendMessage(messageObj) {
+//   if (socket && socket.readyState === WebSocket.OPEN) {
+//     socket.send(JSON.stringify(messageObj));
+//   } else {
+//     console.warn("WebSocket not connected.");
+//   }
+// }
+
+export function initSocket() {
+  const socket = new WebSocket("ws://localhost:8080/ws");
+  socket.addEventListener("open", () => {
+    console.log("connected");
+  });
+  socket.addEventListener("message", (event) => {
+    Toast(event.data);
+  });
+  document.querySelector(".logout-btn").addEventListener("click", () => {
+    socket.close()
+  });
+
+  return socket;
 }

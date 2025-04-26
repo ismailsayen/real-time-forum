@@ -28,7 +28,8 @@ func GetComment(w http.ResponseWriter, r *http.Request, db *sql.DB, postId int) 
        FROM comment c
        JOIN posts p ON p.ID = c.ID_Post
        JOIN users u ON u.ID = c.ID_User
-       WHERE ID_Post = ?;
+       WHERE ID_Post = ?
+	   ORDER BY c.DateCreation DESC;
     
 	`
 	rows, err := db.Query(query, postId)

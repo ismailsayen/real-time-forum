@@ -3,28 +3,29 @@ package auth
 import (
 	"database/sql"
 	"net/http"
+
 	"rtFroum/utils"
 )
 
-func LogoutController(w http.ResponseWriter, r *http.Request,db *sql.DB) {
+func LogoutController(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	cookies, err := r.Cookie("token")
 	if err != nil || cookies.Value == "" {
-		utils.SendError(w,http.StatusForbidden,"the user not Logged In")
+		utils.SendError(w, http.StatusForbidden, "the user not Logged In")
 		return
 	}
-	delete(cookies.Value,db,w)
+	delete(cookies.Value, db, w)
 	http.SetCookie(w, &http.Cookie{
 		Value:  "",
 		Name:   "token",
 		MaxAge: -1,
 	})
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-func delete(token string,db *sql.DB,w http.ResponseWriter) {
+
+func delete(token string, db *sql.DB, w http.ResponseWriter) {
 	query := "DELETE FROM session WHERE token = ?"
 	_, err := db.Exec(query, token)
 	if err != nil {
-		utils.SendError(w,http.StatusInternalServerError,"Error in Deleting session ")
-		return	
+		utils.SendError(w, http.StatusInternalServerError, "Error in Deleting session ")
+		return
 	}
 }

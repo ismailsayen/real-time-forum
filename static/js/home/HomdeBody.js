@@ -65,7 +65,6 @@ function createPostFormModal(categories) {
   const label = document.createElement("label");
   label.textContent = "Categories:";
   checkboxGroup.appendChild(label);
-  console.log(categories);
 
   categories.forEach((cat) => {
     const checkboxContainer = document.createElement("div");
@@ -119,11 +118,11 @@ async function GetCategory() {
 
     if (!resp.ok) {
       const result = await resp.json();
-      console.log(result);
+
       return;
     }
     const data = await resp.json();
-    console.log(data);
+   
 
     return data;
   } catch (err) {

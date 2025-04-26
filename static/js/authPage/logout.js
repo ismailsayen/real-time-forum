@@ -1,6 +1,7 @@
 import { LoadPage } from "../loadPage.js";
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
+import { initSocket } from "../utils/socket.js";
 
 export async function Logout() {
   try {
@@ -12,10 +13,9 @@ export async function Logout() {
       return;
     }
     Toast("good Bye");
-    console.log("logout");
-
     SetUrl("/auth");
     LoadPage();
+    initSocket().onclose();
   } catch (err) {
     Toast(err);
   }

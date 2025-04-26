@@ -36,18 +36,19 @@ func Register(user database.User, db *sql.DB, strErr *database.ErrorRegister) (i
 	return int(id), ""
 }
 
-func GetUserId(r *http.Request, db *sql.DB) (int, error) {
+func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 	var userId int
+	var nickname string
 	token, err := r.Cookie("token")
 	if err != nil || token.Value == "" {
-		return 0, err
+		return 0, "", err
 	}
 	value := token.Value
-	query := "SELECT user_id FROM session WHERE token = ?"
+	query := "SELECT s.ID_User, u.Nickname FROM session s INNER JOIN users u ON s.ID_User = u.ID WHERE token = ?"
 	stm, err := db.Prepare(query)
 	if err != nil {
-		return 0, err
+		return 0, "", err
 	}
-	err = stm.QueryRow(value).Scan(&userId)
-	return int(userId), err
+	err = stm.QueryRow(value).Scan(&userId, &nickname)
+	return int(userId), nickname, err
 }
