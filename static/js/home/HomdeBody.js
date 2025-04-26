@@ -65,6 +65,7 @@ function createPostFormModal(categories) {
   const label = document.createElement("label");
   label.textContent = "Categories:";
   checkboxGroup.appendChild(label);
+  console.log(categories);
 
   categories.forEach((cat) => {
     const checkboxContainer = document.createElement("div");
@@ -122,6 +123,7 @@ async function GetCategory() {
       return;
     }
     const data = await resp.json();
+    console.log(data);
 
     return data;
   } catch (err) {
@@ -171,9 +173,9 @@ async function handlePostSubmit(event) {
       document.querySelector(".post-modal").style.display = "none";
       document.getElementById("post-form").reset();
       const postSection = document.querySelector(".post-section");
-      container.innerHTML=""
+      container.innerHTML = "";
       DisplayPost();
-      Toast("Post added ✅.")
+      Toast("Post added ✅.");
     } else {
       const errr = await response.json();
       console.error("Failed to create post", errr);
