@@ -1,7 +1,8 @@
 import { Toast } from "../toast/toast.js";
 import { DisplayPost } from "./DisplayPost.js";
+import { FetchUsers } from "./GetUsers.js";
 
-export async function HomeBody() {
+export async function HomeBody(currentuserid) {
   const header = document.querySelector(".header").getBoundingClientRect();
   const container = document.querySelector(".container");
   const homebd = document.createElement("div");
@@ -27,6 +28,7 @@ export async function HomeBody() {
   postSection.appendChild(postss);
   container.appendChild(homebd);
   DisplayPost();
+  FetchUsers(currentuserid)
 }
 
 function createPostFormModal(categories) {

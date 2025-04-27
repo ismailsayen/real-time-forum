@@ -52,3 +52,22 @@ func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 	err = stm.QueryRow(value).Scan(&userId, &nickname)
 	return int(userId), nickname, err
 }
+
+func FetchUsers(db *sql.DB) ([]database.User, error) {
+	rows, err := db.Query("SELECT ID, Nickname, FirstName, LastName, Email, Age, Gender FROM Users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []database.User
+	for rows.Next() {
+		var u database.User
+		err := rows.Scan(&u.ID, &u.NickName, &u.FirstName, &u.LastName, &u.Email, &u.Age, &u.Gender)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
+}
