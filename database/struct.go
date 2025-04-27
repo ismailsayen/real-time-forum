@@ -57,7 +57,7 @@ type Conversation struct {
 
 type ChatMessage struct {
 	ID             int       `json:"id"`
-	SenderNickname	string `json:"sender_nickname"`
+	SenderNickname	string `json:"sender_ickname"`
 	ConversationID int64       `json:"conversation_id"`
 	Sender         int `json:"sender"`  
 	Content        string    `json:"content"`

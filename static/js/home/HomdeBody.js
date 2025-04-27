@@ -1,6 +1,6 @@
 import { Toast } from "../toast/toast.js";
 import { DisplayPost } from "./DisplayPost.js";
-import { FetchUsers } from "./GetUsers.js";
+import { FetchUsers } from "./DisplayChat.js";
 
 export async function HomeBody(currentuserid) {
   const header = document.querySelector(".header").getBoundingClientRect();

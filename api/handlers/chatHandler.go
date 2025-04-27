@@ -94,17 +94,17 @@ func SendMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		ConversationID: chatID,
 		Sender:         request.SenderID,
 		Content:        request.Content,
-		SentAt:         int(time.Now().Unix()), // Current timestamp
+		SentAt:         int(time.Now().Unix()), 	
 	}
 
-	// Insert the message into the database
+
 	messageID, err := models.InsertMessage(db, message)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to send message")
 		return
 	}
 
-	// Send the response with the timestamp
+
 	response := map[string]interface{}{
 		"id":       messageID,
 		"content":  request.Content,
