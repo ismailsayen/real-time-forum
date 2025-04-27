@@ -53,7 +53,12 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
 		middleware.VerifyCookie(w, r, db)
 	})
-
+	http.HandleFunc("/sendMessage", func(w http.ResponseWriter, r *http.Request) {
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.SendMessage(w, r, db)
+		}), db).ServeHTTP(w, r)
+	})
+	
 	http.HandleFunc("/getComment", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handlers.FetchComment(w, r, db)
@@ -63,6 +68,11 @@ func Routers(db *sql.DB) {
 	http.HandleFunc("/getChat", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handlers.GetMessages(w, r, db)
+		}), db).ServeHTTP(w, r)
+	})
+	http.HandleFunc("/getUsers", func(w http.ResponseWriter, r *http.Request) {
+		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetUsers(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {

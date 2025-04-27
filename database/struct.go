@@ -1,6 +1,7 @@
 package database
 
 type User struct {
+	ID 	int 	`json:"id"`
 	NickName  string `json:"nickname"`
 	Password  string `json:"password"`
 	Age       int    `json:"age"`
@@ -56,7 +57,8 @@ type Conversation struct {
 
 type ChatMessage struct {
 	ID             int       `json:"id"`
-	ConversationID int       `json:"conversation_id"`
+	SenderNickname	string `json:"sender_ickname"`
+	ConversationID int64       `json:"conversation_id"`
 	Sender         int `json:"sender"`  
 	Content        string    `json:"content"`
 	SentAt         int     `json:"sent_at"`

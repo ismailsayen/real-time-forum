@@ -22,15 +22,16 @@ func Authorization(next http.Handler, db *sql.DB) http.HandlerFunc {
 		var nickname string
 		var expired time.Time
 		query := `SELECT u.ID, u.Nickname, s.Expired_At 
-			FROM users u
-			JOIN Session s on s.ID_User=u.ID;
-		`
-		db.QueryRow(query, cookie.Value).Scan(&userId, &nickname, &expired)
-		if userId == 0 {
-			fmt.Println("77777777")
-			utils.SendError(w, http.StatusForbidden, "you need to login.")
-			return
-		}
+		FROM users u
+		JOIN Session s ON s.ID_User = u.ID
+		WHERE s.token = ?;
+	`
+	err = db.QueryRow(query, cookie.Value).Scan(&userId, &nickname, &expired)
+	if err != nil {
+		fmt.Println(" error:", err)
+		utils.SendError(w, http.StatusForbidden, "you need to login.")
+		return
+	}
 
 		if time.Now().UTC().After(expired.UTC()) {
 			db.Exec("UPDATE users set Session=? WHERE ID=?", "", userId)

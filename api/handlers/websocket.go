@@ -101,6 +101,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	_, nickname, err := models.GetUserId(r, db)
+	fmt.Println("eer",err)
 
 	clients[conn] = true
 	fmt.Println(len(clients), "aaaqsqds")
