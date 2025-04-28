@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+
 	"rtFroum/database"
 )
 
@@ -68,7 +69,6 @@ func GetChatID(db *sql.DB, user1ID, user2ID int) (int, error) {
 
 	return chatID, nil
 }
-
 
 func GetMessagesByChatID(db *sql.DB, chatID int) ([]database.ChatMessage, error) {
 	query := `

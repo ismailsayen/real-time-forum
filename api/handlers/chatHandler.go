@@ -3,7 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	
 	"net/http"
 	"rtFroum/api/models"
 	"rtFroum/database"
@@ -22,34 +22,34 @@ func GetMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	user1ID := r.Context().Value("userId").(int)
 
 	if r.Body == nil {
-		fmt.Println("body")
+		
 		utils.SendError(w, http.StatusBadRequest, "Empty request body")
 		return
 	}
 	var user2 User2
 	if err := json.NewDecoder(r.Body).Decode(&user2); err != nil {
-		fmt.Println("decode")
+		
 
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
-	fmt.Println(user1ID, user2.ReceiverID)
+	
 
 	chatID, err := models.GetChatID(db, user1ID, user2.ReceiverID)
 	if err != nil {
-		fmt.Println("dd")
+		
 		utils.SendError(w, http.StatusInternalServerError, "there is no chat yet ")
 		return
 	}
 
 	messages, err := models.GetMessagesByChatID(db, chatID)
 	if err != nil {
-		fmt.Println("getmessageby  ")
+		
 
 		utils.SendError(w, http.StatusInternalServerError, "Failed to fetch messages")
 		return
 	}
-	fmt.Println("dd", messages)
+	
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(messages)
