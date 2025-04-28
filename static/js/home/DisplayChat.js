@@ -11,11 +11,13 @@ export async function FetchUsers() {
   const users = await response.json();
   const usersSection = document.querySelector(".user-section");
   usersSection.innerHTML = "";
-
+if(!users){
+usersSection.innerHTML=`<h1>  no users yet </h1>`
+return 
+}
   users.sort((a, b) =>
     a.nickname.localeCompare(b.nickname, undefined, { sensitivity: "base" })
   );
-
   const userList = document.createElement("div");
   userList.className = "user-list";
 
