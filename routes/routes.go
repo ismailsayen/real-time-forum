@@ -6,6 +6,7 @@ import (
 
 	"rtFroum/api/handlers"
 	"rtFroum/api/handlers/auth"
+	"rtFroum/api/handlers/ws"
 	"rtFroum/middleware"
 )
 
@@ -50,15 +51,12 @@ func Routers(db *sql.DB) {
 			handlers.PostHundler(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
-	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
-		middleware.VerifyCookie(w, r, db)
-	})
 	http.HandleFunc("/sendMessage", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handlers.SendMessage(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
-	
+
 	http.HandleFunc("/getComment", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handlers.FetchComment(w, r, db)
@@ -77,8 +75,11 @@ func Routers(db *sql.DB) {
 	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.WebSocket(w, r,db)
+			ws.WebSocket(w, r, db)
 		}), db).ServeHTTP(w, r)
+	})
+	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
+		middleware.VerifyCookie(w, r, db)
 	})
 	http.HandleFunc("/static/", handlers.Static)
 }

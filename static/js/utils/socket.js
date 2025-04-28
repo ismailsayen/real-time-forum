@@ -1,6 +1,7 @@
 // import { DisplayPost } from "../home/DisplayPost.js";
 
 import { Toast } from "../toast/toast.js";
+import { ChangeStatus } from "./changeStatus.js";
 
 // let socket;
 
@@ -54,10 +55,18 @@ export function initSocket() {
     console.log("connected");
   });
   socket.addEventListener("message", (event) => {
-    Toast(event.data);
+    const data = JSON.parse(event.data);
+
+    if (data.type === "userList") {
+      console.log(data);
+
+      ChangeStatus(data.users);
+      return;
+    }
+    // Toast(event.data);
   });
   document.querySelector(".logout-btn").addEventListener("click", () => {
-    socket.close()
+    socket.close();
   });
 
   return socket;

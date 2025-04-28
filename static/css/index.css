@@ -397,22 +397,13 @@ img[src="/static/images/profil.svg"] {
   font-size: 0.8em;
 }
 
-
-
-
-
-
-
-
 .user-section {
   display: flex;
   flex-direction: column;
 }
 
 .user-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  margin: 10px 5px;
 }
 
 .user {
@@ -420,6 +411,20 @@ img[src="/static/images/profil.svg"] {
   background-color: #eee;
   border-radius: 8px;
   cursor: pointer;
+  margin: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.5s ease-in-out;
+}
+.user div {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+}
+.user:hover {
+  background-color: #b8b7b7;
 }
 
 .chat-area {
@@ -464,15 +469,12 @@ img[src="/static/images/profil.svg"] {
 
 .send-button {
   padding: 0.5rem 1rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
-
-
-
 
 .chat-messages {
   flex: 1;

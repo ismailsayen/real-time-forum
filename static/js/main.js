@@ -4,30 +4,19 @@ import { SetUrl } from "./navigation/setPath.js";
 export async function isLogged() {
   try {
     const resp = await fetch("/isLog");
-    const data = await resp.json();
 
     if (resp.status === 403) {
       SetUrl("/auth");
       LoadPage();
-    
     }
-
     if (resp.ok) {
       SetUrl("/");
-      
-      
-      LoadPage(data.userId);
-      
-    } else {
-      console.error("Unhandled response error:", data.status);
-      return null;
+      LoadPage();
     }
   } catch (error) {
     console.error("Fetch error:", error);
-    return null;
+    return;
   }
 }
 
-
- await isLogged();
-
+await isLogged();

@@ -3,7 +3,7 @@ import { DispalyError } from "./ErrorPage.js";
 import { HomePage } from "./home/HomePage.js";
 import { initSocket } from "./utils/socket.js";
 
-export function LoadPage(currentuserid=null) {
+export function LoadPage() {
   let container = document.querySelector(".container");
   let path = location.pathname;
   container.innerHTML = "";
@@ -12,7 +12,7 @@ export function LoadPage(currentuserid=null) {
       DisplayLoginForm();
       break;
     case "/":
-      HomePage(currentuserid);
+      HomePage();
       initSocket();
       break;
     default:

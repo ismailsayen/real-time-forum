@@ -54,8 +54,8 @@ func GetUsers(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-
-	users, err := models.FetchUsers(db)
+	ID := r.Context().Value("userId").(int)
+	users, err := models.FetchUsers(db,ID)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to fetch users")
 		return

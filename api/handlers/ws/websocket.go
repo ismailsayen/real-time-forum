@@ -75,7 +75,7 @@
 // 	}
 // }
 
-package handlers
+package ws
 
 import (
 	"database/sql"
@@ -91,7 +91,7 @@ import (
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
-var clients = make(map[*websocket.Conn]bool)
+var clients = make(map[*websocket.Conn]int)
 
 func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -100,27 +100,30 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	_, nickname, err := models.GetUserId(r, db)
-	fmt.Println("eer",err)
+	id, nickname, err := models.GetUserId(r, db)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	clients[conn] = id
+	sendUserList(id)
 
-	clients[conn] = true
-	fmt.Println(len(clients), "aaaqsqds")
 	for client := range clients {
 		msg := []byte(fmt.Sprintf("%s has joinned 👤", nickname))
 		if client != conn {
 			err := client.WriteMessage(websocket.TextMessage, []byte(string(msg)))
 			if err != nil {
-
 				client.Close()
 				delete(clients, client)
+
 			}
+
 		}
 	}
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			delete(clients, conn)
-			fmt.Println(len(clients))
 			break
 		}
 		fmt.Println(msg)

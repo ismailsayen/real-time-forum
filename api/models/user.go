@@ -53,8 +53,8 @@ func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 	return int(userId), nickname, err
 }
 
-func FetchUsers(db *sql.DB) ([]database.User, error) {
-	rows, err := db.Query("SELECT ID, Nickname, FirstName, LastName, Email, Age, Gender FROM Users")
+func FetchUsers(db *sql.DB, id int) ([]database.User, error) {
+	rows, err := db.Query("SELECT ID, Nickname FROM Users WHERE ID <> ?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func FetchUsers(db *sql.DB) ([]database.User, error) {
 	var users []database.User
 	for rows.Next() {
 		var u database.User
-		err := rows.Scan(&u.ID, &u.NickName, &u.FirstName, &u.LastName, &u.Email, &u.Age, &u.Gender)
+		err := rows.Scan(&u.ID, &u.NickName)
 		if err != nil {
 			return nil, err
 		}
