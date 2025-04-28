@@ -2,7 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/gorilla/websocket"
 )
@@ -14,7 +13,6 @@ func sendUserList(id int) {
 			ids = append(ids, idU)
 		}
 	}
-	fmt.Println(ids)
 	userListMessage := map[string]interface{}{
 		"type":  "userList",
 		"users": ids,

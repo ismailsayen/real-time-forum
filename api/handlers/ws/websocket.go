@@ -100,7 +100,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	id, nickname, err := models.GetUserId(r, db)
+	id, _, err := models.GetUserId(r, db)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -108,18 +108,18 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	clients[conn] = id
 	sendUserList(id)
 
-	for client := range clients {
-		msg := []byte(fmt.Sprintf("%s has joinned 👤", nickname))
-		if client != conn {
-			err := client.WriteMessage(websocket.TextMessage, []byte(string(msg)))
-			if err != nil {
-				client.Close()
-				delete(clients, client)
+	// for client := range clients {
+	// 	msg := []byte(fmt.Sprintf("%s has joinned 👤", nickname))
+	// 	if client != conn {
+	// 		err := client.WriteMessage(websocket.TextMessage, []byte(string(msg)))
+	// 		if err != nil {
+	// 			client.Close()
+	// 			delete(clients, client)
 
-			}
+	// 		}
 
-		}
-	}
+	// 	}
+	// }
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
