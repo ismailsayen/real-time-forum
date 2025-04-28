@@ -1,3 +1,5 @@
+import { Toast } from "../toast/toast.js";
+
 export async function FetchUsers() {
   const response = await fetch("/getUsers", {
     method: "GET",
@@ -68,9 +70,9 @@ export function startChatWith(receiverId, receiverNickname) {
   sendButton.className = "send-button";
   sendButton.textContent = "Send";
 
-  // sendButton.addEventListener("click", () => {
-  //   handleSendMessage(receiverId, chatInput, chatMessages);
-  // });
+  sendButton.addEventListener("click", () => {
+    handleSendMessage(receiverId, chatInput, chatMessages);
+  });
 
   chatInputContainer.appendChild(chatInput);
   chatInputContainer.appendChild(sendButton);
@@ -80,21 +82,33 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.appendChild(chatInputContainer);
 
   usersSection.appendChild(chatArea);
-  // fetchMessages(currentUserId, receiverId, chatMessages);
+  fetchMessages( receiverId, chatMessages);
 }
-async function fetchMessages(currentUserId, receiverId, chatMessages) {
-  const response = await fetch(
-    `/getMessages?user1_id=${currentUserId}&user2_id=${receiverId}`
-  );
+async function fetchMessages( receiverId, chatMessages) {
+  try {
+    const response = await fetch("/getMessages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        receiverId: receiverId
+      }),
+    });
 
   if (response.ok) {
     const messages = await response.json();
+    console.log(messages);
+    
     messages.forEach((msg) => {
-      displayMessage(chatMessages, msg, currentUserId);
+      displayMessage(chatMessages, msg);
     });
   } else {
-    console.error("Failed to load messages");
+    Toast("there is no messages yet !")
   }
+} catch (error) {
+  console.error("Error fetching message:", error);
+}
 }
 
 async function handleSendMessage(receiverId, chatInput, chatMessages) {
@@ -117,6 +131,7 @@ async function handleSendMessage(receiverId, chatInput, chatMessages) {
 
     if (response.ok) {
       const data = await response.json();
+      // fetchMessages( receiverId, chatMessages)
       displayMessage(chatMessages, {
         senderNickname: "You",
         content: messageContent,
@@ -133,10 +148,14 @@ async function handleSendMessage(receiverId, chatInput, chatMessages) {
   }
 }
 
-function displayMessage(chatMessages, message, currentUserId) {
+function displayMessage(chatMessages, message) {
   const messageDiv = document.createElement("div");
+  console.log(message);
+  let currentUserId =document.querySelector(".nickname")
   messageDiv.className = "message";
-  if (message.senderId == currentUserId) {
+  console.log(currentUserId.value,message.sender_nickname);
+  
+  if (message.sender_nickname===currentUserId.value) {
     messageDiv.classList.add("sent"); // right side
   } else {
     messageDiv.classList.add("received"); // left side

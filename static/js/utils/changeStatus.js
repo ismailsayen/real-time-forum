@@ -19,4 +19,6 @@ console.log(users);
 export function SetNickname(nickname){
 const nickdiv=document.querySelector(".nickname")
 nickdiv.textContent=nickname
+nickdiv.value=nickname
+
 }
