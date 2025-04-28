@@ -6,13 +6,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func sendUserList() {
+func sendUserList(nickname string) {
 	var ids []int
 	for _, idU := range clients {
 		ids = append(ids, idU)
 	}
 	userListMessage := map[string]interface{}{
 		"type":  "userList",
+		"nickname":nickname,
 		"users": ids,
 	}
 

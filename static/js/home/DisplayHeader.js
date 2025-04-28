@@ -5,10 +5,12 @@ export function Header() {
 
   const header = document.createElement("header");
   header.className = "header";
+  const divhead = document.createElement("div");
 
   const title = document.createElement("h1");
   title.textContent = "Real Time Forum";
-
+  const nickname = document.createElement("h3");
+  nickname.className = "nickname";
   const logoutBtn = document.createElement("button");
   logoutBtn.textContent = "Logout";
   logoutBtn.className = "logout-btn";
@@ -17,7 +19,10 @@ export function Header() {
   });
 
   header.appendChild(title);
-  header.appendChild(logoutBtn);
+  divhead.appendChild(nickname)
+  divhead.appendChild(logoutBtn);
+  header.appendChild(divhead);
+
 
   container.appendChild(header);
 }
