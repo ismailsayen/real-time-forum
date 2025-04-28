@@ -20,9 +20,7 @@ export function initSocket() {
   });
   socket.addEventListener("message", async (event) => {
     const data = JSON.parse(event.data);
-    if (data.type === "userList") {
-      console.log(data.nickname);
-      
+    if (data.type === "userList") {      
       SetNickname(data.nickname)
       await FetchUsers();
       ChangeStatus(data.users);

@@ -3,48 +3,53 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"rtFroum/api/models"
 	"rtFroum/database"
 	"rtFroum/utils"
-	"strconv"
 	"time"
 )
 
 func GetMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodPost {
 		utils.SendError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
+	type User2 struct {
+		ReceiverID int `json:"receiverId"`
+	}
+	user1ID := r.Context().Value("userId").(int)
 
-	
-	user1IDStr := r.URL.Query().Get("user1_id")
-	user2IDStr := r.URL.Query().Get("user2_id")
-
-	user1ID, err := strconv.Atoi(user1IDStr)
-	if err != nil || user1ID <= 0 {
-		utils.SendError(w, http.StatusBadRequest, "Invalid user1 ID")
+	if r.Body == nil {
+		fmt.Println("body")
+		utils.SendError(w, http.StatusBadRequest, "Empty request body")
 		return
 	}
+	var user2 User2
+	if err := json.NewDecoder(r.Body).Decode(&user2); err != nil {
+		fmt.Println("decode")
 
-	user2ID, err := strconv.Atoi(user2IDStr)
-	if err != nil || user2ID <= 0 {
-		utils.SendError(w, http.StatusBadRequest, "Invalid user2 ID")
+		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
+	fmt.Println(user1ID, user2.ReceiverID)
 
-	chatID, err := models.GetChatID(db, user1ID, user2ID)
+	chatID, err := models.GetChatID(db, user1ID, user2.ReceiverID)
 	if err != nil {
-		utils.SendError(w, http.StatusInternalServerError, "Failed to fetch chat ID")
+		fmt.Println("dd")
+		utils.SendError(w, http.StatusInternalServerError, "there is no chat yet ")
 		return
 	}
-
 
 	messages, err := models.GetMessagesByChatID(db, chatID)
 	if err != nil {
+		fmt.Println("getmessageby  ")
+
 		utils.SendError(w, http.StatusInternalServerError, "Failed to fetch messages")
 		return
 	}
+	fmt.Println("dd", messages)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(messages)
@@ -55,7 +60,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	ID := r.Context().Value("userId").(int)
-	users, err := models.FetchUsers(db,ID)
+	users, err := models.FetchUsers(db, ID)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to fetch users")
 		return
@@ -73,30 +78,29 @@ func SendMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	var request struct {
-		SenderID   int    `json:"senderId"`
 		ReceiverID int    `json:"receiverId"`
 		Content    string `json:"content"`
 	}
+
+	SenderID := r.Context().Value("userId").(int)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		utils.SendError(w, http.StatusBadRequest, "Invalid Request Body")
 		return
 	}
 
-	chatID, err := getOrCreateChat(db, request.SenderID, request.ReceiverID)
+	chatID, err := getOrCreateChat(db, SenderID, request.ReceiverID)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to get or create chat")
 		return
 	}
 
-
 	message := database.ChatMessage{
 		ConversationID: chatID,
-		Sender:         request.SenderID,
+		Sender:         SenderID,
 		Content:        request.Content,
-		SentAt:         int(time.Now().Unix()), 	
+		SentAt:         int(time.Now().Unix()),
 	}
-
 
 	messageID, err := models.InsertMessage(db, message)
 	if err != nil {
@@ -104,21 +108,19 @@ func SendMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-
 	response := map[string]interface{}{
 		"id":       messageID,
 		"content":  request.Content,
 		"sent_at":  time.Now().Format(time.RFC3339),
-		"senderId": request.SenderID,
+		"senderId": SenderID,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
-
 func getOrCreateChat(db *sql.DB, senderID, receiverID int) (int64, error) {
-	
+
 	var chatID int64
 	query := `
 	SELECT ID FROM Chat
@@ -126,10 +128,9 @@ func getOrCreateChat(db *sql.DB, senderID, receiverID int) (int64, error) {
 	`
 	err := db.QueryRow(query, senderID, receiverID, receiverID, senderID).Scan(&chatID)
 	if err == nil {
-	
+
 		return chatID, nil
 	}
-
 
 	query = `
 	INSERT INTO Chat (User1_ID, User2_ID, Created_At)
