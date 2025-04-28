@@ -22,6 +22,7 @@ export async function FetchUsers() {
   users.forEach((user) => {
     const userDiv = document.createElement("div");
     const status = document.createElement("div");
+
     userDiv.className = "user";
     userDiv.textContent = user.nickname;
     userDiv.dataset.userid = user.id;
