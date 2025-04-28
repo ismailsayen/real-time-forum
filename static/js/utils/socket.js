@@ -57,9 +57,7 @@ export function initSocket() {
   });
   socket.addEventListener("message", async (event) => {
     const data = JSON.parse(event.data);
-    
     if (data.type === "userList") {
-      console.log(data);
       await FetchUsers();
       ChangeStatus(data.users);
       return;
@@ -68,7 +66,7 @@ export function initSocket() {
   });
   document.querySelector(".logout-btn").addEventListener("click", () => {
     socket.close();
-    
+
     return socket;
   });
 }

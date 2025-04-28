@@ -106,8 +106,8 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	clients[conn] = id
-	sendUserList(id)
-
+	sendUserList()
+	fmt.Println(clients)
 	// for client := range clients {
 	// 	msg := []byte(fmt.Sprintf("%s has joinned 👤", nickname))
 	// 	if client != conn {

@@ -28,7 +28,7 @@ export async function HomeBody(currentuserid) {
   postSection.appendChild(postss);
   container.appendChild(homebd);
   DisplayPost();
-  FetchUsers(currentuserid)
+  // FetchUsers(currentuserid)
 }
 
 function createPostFormModal(categories) {
