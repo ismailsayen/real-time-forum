@@ -131,6 +131,7 @@ async function handleSendMessage(receiverId, chatInput, chatMessages) {
 
     if (response.ok) {
       const data = await response.json();
+      // fetchMessages( receiverId, chatMessages)
       displayMessage(chatMessages, {
         senderNickname: "You",
         content: messageContent,
