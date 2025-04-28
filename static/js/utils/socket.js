@@ -1,5 +1,6 @@
 // import { DisplayPost } from "../home/DisplayPost.js";
 
+import { FetchUsers } from "../home/DisplayChat.js";
 import { Toast } from "../toast/toast.js";
 import { ChangeStatus } from "./changeStatus.js";
 
@@ -52,14 +53,13 @@ import { ChangeStatus } from "./changeStatus.js";
 export function initSocket() {
   const socket = new WebSocket("ws://localhost:8080/ws");
   socket.addEventListener("open", () => {
-    console.log("connected");
+    socket.send();
   });
-  socket.addEventListener("message", (event) => {
+  socket.addEventListener("message", async (event) => {
     const data = JSON.parse(event.data);
 
     if (data.type === "userList") {
-      console.log(data);
-
+      await FetchUsers();
       ChangeStatus(data.users);
       return;
     }
