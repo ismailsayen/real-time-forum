@@ -1,5 +1,6 @@
 import { LoadPage } from "./loadPage.js";
 import { SetUrl } from "./navigation/setPath.js";
+import { SetNickname } from "./utils/changeStatus.js";
 
 export async function isLogged() {
   try {
@@ -12,9 +13,10 @@ export async function isLogged() {
     if (resp.ok) {
       SetUrl("/");
       LoadPage();
+      let data = await resp.json();
+      SetNickname(data.nickname);
     }
   } catch (error) {
-    console.error("Fetch error:", error);
     return;
   }
 }

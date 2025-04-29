@@ -1,8 +1,8 @@
-
 package ws
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -16,6 +16,11 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 var clients = make(map[*websocket.Conn]int)
+
+type Messages struct {
+	Type     string `json:"type"`
+	Receiver int    `json:"to"`
+}
 
 func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -31,19 +36,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	clients[conn] = id
 	sendUserList(nickname)
-	fmt.Println(clients)
-	// for client := range clients {
-	// 	msg := []byte(fmt.Sprintf("%s has joinned 👤", nickname))
-	// 	if client != conn {
-	// 		err := client.WriteMessage(websocket.TextMessage, []byte(string(msg)))
-	// 		if err != nil {
-	// 			client.Close()
-	// 			delete(clients, client)
-
-	// 		}
-
-	// 	}
-	// }
+	var data Messages
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
@@ -51,6 +44,28 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			sendUserList(nickname)
 			break
 		}
-		fmt.Println(msg)
+		err = json.Unmarshal(msg, &data)
+		if err != nil {
+			delete(clients, conn)
+			sendUserList(nickname)
+			break
+		}
+		if data.Type == "getMessages" {
+			m, err := models.GetMessages(id, data.Receiver, db)
+			if err != nil {
+				utils.SendError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			dataa := map[string]interface{}{
+				"type":"conversation",
+				"conversation": m,
+			}
+			
+			data, _ := json.Marshal(dataa)
+			for client := range clients {
+				client.WriteMessage(websocket.TextMessage, data)
+			}
+			fmt.Println(string(data))
+		}
 	}
 }

@@ -2,9 +2,12 @@ package middleware
 
 import (
 	"database/sql"
+	"encoding/json"
 	"net/http"
 	"time"
 
+	"rtFroum/api/models"
+	"rtFroum/database"
 	"rtFroum/utils"
 )
 
@@ -27,7 +30,18 @@ func VerifyCookie(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusForbidden, "Session Expired, you need to login/register")
 		return
 	}
+	_, nickname, err := models.GetUserId(r, db)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user := database.User{
+		NickName: nickname,
+	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "Failed to encode user data")
+	}
 }

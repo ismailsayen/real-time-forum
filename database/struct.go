@@ -1,7 +1,7 @@
 package database
 
 type User struct {
-	ID 	int 	`json:"id"`
+	ID        int    `json:"id"`
 	NickName  string `json:"nickname"`
 	Password  string `json:"password"`
 	Age       int    `json:"age"`
@@ -29,12 +29,12 @@ type Error struct {
 	Status  int    `json:"status"`
 }
 type Comment struct {
-	Id      int    `json:"id"`
-	Content string `json:"content"`
-	IdUser  int    `json:"iduser"`
-	IdPost  int    `json:"idPost"`
-	Date    int    `json:"date"`
-	NickName   string   `json:"nickname"`
+	Id       int    `json:"id"`
+	Content  string `json:"content"`
+	IdUser   int    `json:"iduser"`
+	IdPost   int    `json:"idPost"`
+	Date     int    `json:"date"`
+	NickName string `json:"nickname"`
 }
 type ErrorRegister struct {
 	ErrEmpty     string `json:"ErrEmpty"`
@@ -47,19 +47,17 @@ type ErrorRegister struct {
 	ErrEmail     string `json:"Erremail"`
 }
 
-
 type Conversation struct {
-	ID        int   `json:"id"`
-	User1ID   int   `json:"user1_id"`
-	User2ID   int   `json:"user2_id"`
-	CreatedAt int `json:"created_at"` 
+	ID        int `json:"id"`
+	User1ID   int `json:"user1_id"`
+	User2ID   int `json:"user2_id"`
+	CreatedAt int `json:"created_at"`
 }
 
 type ChatMessage struct {
-	ID             int       `json:"id"`
-	SenderNickname	string `json:"sender_ickname"`
-	ConversationID int64       `json:"conversation_id"`
-	Sender         int `json:"sender"`  
-	Content        string    `json:"content"`
-	SentAt         int     `json:"sent_at"`
+	ID               int    `json:"id"`
+	SenderNickname   string `json:"sender_nickname"`
+	ReceiverNickname string `json:"receiver_nickname"`
+	Content          string `json:"content"`
+	SentAt           int    `json:"sent_at"`
 }
