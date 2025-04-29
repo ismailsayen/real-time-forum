@@ -51,7 +51,7 @@ func Routers(db *sql.DB) {
 			handlers.PostHundler(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
-	
+
 	http.HandleFunc("/getComment", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handlers.FetchComment(w, r, db)
@@ -63,7 +63,7 @@ func Routers(db *sql.DB) {
 			handlers.GetUsers(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
-	
+
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ws.WebSocket(w, r, db)
