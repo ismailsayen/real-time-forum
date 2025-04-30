@@ -1,3 +1,4 @@
+import { Toast } from "../toast/toast.js";
 import { socket } from "../utils/socket.js";
 
 export async function FetchUsers() {
@@ -76,12 +77,27 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.appendChild(chatInputContainer);
   usersSection.appendChild(chatArea);
   sendButton.addEventListener("click", () => {
-    console.log(chatInput.value);
+    SendMessage(chatInput.value, receiverId);
   });
   socket.send(
     JSON.stringify({
       type: "getMessages",
       to: receiverId,
+    })
+  );
+}
+
+function SendMessage(message, receiverId) {
+  if (message === "" || message.length > 30) {
+    Toast("Message cannot be empty or more than 30 characters.⛔");
+    return;
+  }
+  socket.send(
+    JSON.stringify({
+      type: "sendMessages",
+      content: message,
+      to: receiverId,
+      date: new Date() - 0,
     })
   );
 }

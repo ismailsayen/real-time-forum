@@ -6,18 +6,22 @@ export async function isLogged() {
   try {
     const resp = await fetch("/isLog");
 
-    if (resp.status === 403) {
-      SetUrl("/auth");
-      LoadPage();
-    }
     if (resp.ok) {
+      let data = await resp.json();
       SetUrl("/");
       LoadPage();
-      let data = await resp.json();
       SetNickname(data.nickname);
+      return true;
+    }
+    if (!resp.ok) {
+      SetUrl("/auth");
+      LoadPage();
+      return false;
     }
   } catch (error) {
-    return;
+    SetUrl("/auth");
+    LoadPage();
+    return false;
   }
 }
 

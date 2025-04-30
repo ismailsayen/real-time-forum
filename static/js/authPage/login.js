@@ -1,50 +1,49 @@
-import { LoadPage } from "../loadPage.js";
+
+import { isLogged } from "../main.js";
 
 export async function Login() {
-const nickname = document.querySelector("#nickname").value
-const password = document.querySelector("#loginPassword").value
-const error = document.querySelector(".login-error")
+  const nickname = document.querySelector("#nickname").value;
+  const password = document.querySelector("#loginPassword").value;
+  const error = document.querySelector(".login-error");
 
-if (nickname === "" || password === "") {
+  if (nickname === "" || password === "") {
     error.innerHTML = "Nickname and password cannot be empty";
     error.style.display = "block";
     return;
-}
+  }
 
-if (nickname.length < 4 || password.length < 6) {
-    error.innerHTML = "Nickname must be at least 4 characters and password at least 6";
+  if (nickname.length < 4 || password.length < 6) {
+    error.innerHTML =
+      "Nickname must be at least 4 characters and password at least 6";
     error.style.display = "block";
     return;
-}
+  }
 
-try {
+  try {
     const resp = await fetch("/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            nickname: nickname,
-            password: password
-        })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nickname: nickname,
+        password: password,
+      }),
     });
 
     if (!resp.ok) {
-        const result = await resp.json();
-        console.log(result);
-        
-        error.innerHTML = result.message ;
-        error.style.display = "block";
-        return;
+      const result = await resp.json();
+      console.log(result);
+
+      error.innerHTML = result.message;
+      error.style.display = "block";
+      return;
     }
     localStorage.setItem("welcome", `Welcome, ${nickname}!`);
-    window.history.pushState(null, "", "/");
-    LoadPage()
-} catch (err) {
+    await isLogged();
+  } catch (err) {
     console.error("Login error:", err);
     error.innerHTML = "Something went wrong. Please try again.";
     error.style.display = "block";
-}
-
-
+  }
 }

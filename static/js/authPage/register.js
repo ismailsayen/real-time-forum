@@ -1,6 +1,5 @@
-import { LoadPage } from "../loadPage.js";
-import { SetUrl } from "../navigation/setPath.js";
-import { Toast } from "../toast/toast.js";
+import { isLogged } from "../main.js";
+import { initSocket } from "../utils/socket.js";
 
 export function Register() {
   const form = document.getElementById("signup-form");
@@ -21,7 +20,6 @@ export function Register() {
     });
 
     if (!req.ok) {
-
       let data = await req.json();
       for (let [key, value] of Object.entries(data)) {
         if (value !== "") {
@@ -32,8 +30,8 @@ export function Register() {
       return;
     }
     localStorage.setItem("welcome", `Welcome, ${nickname}!`);
-    SetUrl("/");
-    LoadPage();
+    await isLogged();
+    initSocket();
   });
 }
 
@@ -43,10 +41,9 @@ function displayError(name, message) {
   div.style.display = "block";
 }
 
-
 function clearErrors() {
-  const errorDivs = document.querySelectorAll(".error"); 
-  errorDivs.forEach(div => {
+  const errorDivs = document.querySelectorAll(".error");
+  errorDivs.forEach((div) => {
     div.innerHTML = "";
     div.style.display = "none";
   });

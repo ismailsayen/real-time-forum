@@ -3,7 +3,6 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"rtFroum/api/models"
@@ -21,6 +20,12 @@ type Messages struct {
 	Type     string `json:"type"`
 	Receiver int    `json:"to"`
 }
+type SendMessage struct {
+	Type       string `json:"type"`
+	Content    string `json:"content"`
+	ReceiverId int    `json:"to"`
+	Date       int    `json:"date"`
+}
 
 func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -29,25 +34,25 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	id, nickname, err := models.GetUserId(r, db)
+	id, _, err := models.GetUserId(r, db)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	clients[conn] = id
-	sendUserList(nickname)
+	sendUserList()
 	var data Messages
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			delete(clients, conn)
-			sendUserList(nickname)
+			sendUserList()
 			break
 		}
 		err = json.Unmarshal(msg, &data)
 		if err != nil {
 			delete(clients, conn)
-			sendUserList(nickname)
+			sendUserList()
 			break
 		}
 		if data.Type == "getMessages" {
@@ -56,16 +61,29 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
-			dataa := map[string]interface{}{
-				"type":"conversation",
-				"conversation": m,
-			}
-			
-			data, _ := json.Marshal(dataa)
+			data, _ := json.Marshal(m)
 			for client := range clients {
 				client.WriteMessage(websocket.TextMessage, data)
 			}
-			fmt.Println(string(data))
+
+		}
+		if data.Type == "sendMessages" {
+			var newMsg SendMessage
+			err = json.Unmarshal(msg, &newMsg)
+			if err != nil {
+				delete(clients, conn)
+				sendUserList()
+				break
+			}
+			messageSent, err := models.SendMessage(newMsg.Content, id, newMsg.ReceiverId, newMsg.Date, db)
+			if err != nil {
+				utils.SendError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			data, _ := json.Marshal(messageSent)
+			for client := range clients {
+				client.WriteMessage(websocket.TextMessage, data)
+			}
 		}
 	}
 }
