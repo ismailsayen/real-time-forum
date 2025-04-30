@@ -40,7 +40,7 @@ export async function Login() {
       return;
     }
     localStorage.setItem("welcome", `Welcome, ${nickname}!`);
-    await isLogged();
+    await isLogged(true);
   } catch (err) {
     console.error("Login error:", err);
     error.innerHTML = "Something went wrong. Please try again.";

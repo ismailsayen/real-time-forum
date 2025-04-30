@@ -1,5 +1,4 @@
 import { isLogged } from "../main.js";
-import { initSocket } from "../utils/socket.js";
 
 export function Register() {
   const form = document.getElementById("signup-form");
@@ -30,8 +29,8 @@ export function Register() {
       return;
     }
     localStorage.setItem("welcome", `Welcome, ${nickname}!`);
-    await isLogged();
-    initSocket();
+    await isLogged(true);
+
   });
 }
 

@@ -1,16 +1,19 @@
 import { LoadPage } from "./loadPage.js";
 import { SetUrl } from "./navigation/setPath.js";
 import { SetNickname } from "./utils/changeStatus.js";
-
-export async function isLogged() {
+export let nickname;
+export async function isLogged(change = false) {
   try {
     const resp = await fetch("/isLog");
 
     if (resp.ok) {
-      let data = await resp.json();
-      SetUrl("/");
-      LoadPage();
-      SetNickname(data.nickname);
+      if (change) {
+        let data = await resp.json();
+        nickname = data.nickname;
+        SetUrl("/");
+        LoadPage();
+        SetNickname(nickname);
+      }
       return true;
     }
     if (!resp.ok) {
@@ -25,4 +28,4 @@ export async function isLogged() {
   }
 }
 
-await isLogged();
+await isLogged(true);

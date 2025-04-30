@@ -3,10 +3,10 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"rtFroum/api/models"
-	"rtFroum/utils"
 
 	"github.com/gorilla/websocket"
 )
@@ -25,18 +25,19 @@ type SendMessage struct {
 	Content    string `json:"content"`
 	ReceiverId int    `json:"to"`
 	Date       int    `json:"date"`
+	ChatID     int    `json:"chatID"`
 }
 
 func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		utils.SendError(w, http.StatusInternalServerError, err.Error())
+		// utils.SendError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	id, _, err := models.GetUserId(r, db)
+	id, nickname, err := models.GetUserId(r, db)
 	if err != nil {
-		utils.SendError(w, http.StatusInternalServerError, err.Error())
+		// utils.SendError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	clients[conn] = id
@@ -49,6 +50,12 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			sendUserList()
 			break
 		}
+		kk, t, erre := models.GetUserId(r, db)
+		fmt.Println("user id ",kk,t)
+		if erre != nil {
+			// utils.SendError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
 		err = json.Unmarshal(msg, &data)
 		if err != nil {
 			delete(clients, conn)
@@ -56,14 +63,23 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			break
 		}
 		if data.Type == "getMessages" {
-			m, err := models.GetMessages(id, data.Receiver, db)
+			chatId, err := models.GetOrCreateChat(db, id, data.Receiver)
 			if err != nil {
-				utils.SendError(w, http.StatusInternalServerError, err.Error())
+				// utils.SendError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			m, err := models.GetMessages(id, data.Receiver, chatId, db)
+			if err != nil {
+				fmt.Println(err)
+				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
 			data, _ := json.Marshal(m)
 			for client := range clients {
-				client.WriteMessage(websocket.TextMessage, data)
+				if clients[client] == id {
+					client.WriteMessage(websocket.TextMessage, data)
+				}
 			}
 
 		}
@@ -75,15 +91,26 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				sendUserList()
 				break
 			}
-			messageSent, err := models.SendMessage(newMsg.Content, id, newMsg.ReceiverId, newMsg.Date, db)
+			messageSent, err := models.SendMessage(newMsg.Content, nickname, id, newMsg.ReceiverId, newMsg.Date, newMsg.ChatID, db)
 			if err != nil {
-				utils.SendError(w, http.StatusInternalServerError, err.Error())
+				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
 			data, _ := json.Marshal(messageSent)
 			for client := range clients {
-				client.WriteMessage(websocket.TextMessage, data)
+				if clients[client] == id || clients[client] == newMsg.ReceiverId {
+					client.WriteMessage(websocket.TextMessage, data)
+				}
 			}
+		}
+		if data.Type == "user-close" {
+			for C, client := range clients {
+				if client == id {
+					C.Close()
+					delete(clients, C)
+				}
+			}
+			break
 		}
 	}
 }

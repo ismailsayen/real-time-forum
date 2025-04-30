@@ -40,6 +40,7 @@ func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 	var userId int
 	var nickname string
 	token, err := r.Cookie("token")
+
 	if err != nil || token.Value == "" {
 		return 0, "", err
 	}

@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"net/http"
+	"time"
 
 	"rtFroum/database"
 )
@@ -51,4 +52,32 @@ func GetComment(w http.ResponseWriter, r *http.Request, db *sql.DB, postId int) 
 	}
 
 	return comments, nil
+}
+
+func GetOrCreateChat(db *sql.DB, senderID, receiverID int) (int64, error) {
+	var chatID int64
+	query := `
+    SELECT ID FROM Chat
+    WHERE (User1_ID = ? AND User2_ID = ?) OR (User1_ID = ? AND User2_ID = ?)
+    `
+	err := db.QueryRow(query, senderID, receiverID, receiverID, senderID).Scan(&chatID)
+	if err == nil {
+		return chatID, nil
+	}
+
+	query = `
+    INSERT INTO Chat (User1_ID, User2_ID, Created_At)
+    VALUES (?, ?, ?)
+    `
+	result, err := db.Exec(query, senderID, receiverID, time.Now().Unix())
+	if err != nil {
+		return 0, err
+	}
+
+	chatID, err = result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int64(chatID), nil
 }

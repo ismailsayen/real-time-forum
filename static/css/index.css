@@ -421,7 +421,6 @@ img[src="/static/images/profil.svg"] {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  
 }
 .user:hover {
   background-color: #b8b7b7;
@@ -519,4 +518,42 @@ img[src="/static/images/profil.svg"] {
 .timestamp {
   font-size: 0.7rem;
   color: #999;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Message de l'expéditeur (moi) */
+.sender-msg {
+  background-color: #e0ffe0;
+  color: #006400;
+  align-self: flex-end;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 60%;
+  text-align: right;
+}
+
+/* Message du récepteur */
+.receiver-msg {
+  background-color: #fff;
+  color: #000;
+  align-self: flex-start;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 60%;
+  text-align: left;
+}
+
+/* Temps du message */
+.msg-time {
+  font-size: 0.75rem;
+  color: gray;
+  margin-top: 5px;
 }

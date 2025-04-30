@@ -1,4 +1,6 @@
+import { isLogged, nickname } from "../main.js";
 import { Toast } from "../toast/toast.js";
+import { convertTime } from "../utils/convertDate.js";
 import { socket } from "../utils/socket.js";
 
 export async function FetchUsers() {
@@ -12,7 +14,10 @@ export async function FetchUsers() {
   }
 
   const users = await response.json();
-  const usersSection = document.querySelector(".user-section");
+  let usersSection = document.querySelector(".user-list");
+  if (!usersSection) {
+    usersSection = document.querySelector(".user-section");
+  }
   usersSection.innerHTML = "";
   if (!users) {
     usersSection.innerHTML = `<h1>  no users yet </h1>`;
@@ -41,10 +46,9 @@ export async function FetchUsers() {
   usersSection.appendChild(userList);
 }
 
-export function startChatWith(receiverId, receiverNickname) {
+export  function  startChatWith(receiverId, receiverNickname) {
   const usersSection = document.querySelector(".user-section");
   const oldChat = document.querySelector(".chat-area");
-
   if (oldChat) {
     oldChat.remove();
   }
@@ -87,17 +91,79 @@ export function startChatWith(receiverId, receiverNickname) {
   );
 }
 
-function SendMessage(message, receiverId) {
+async function SendMessage(message, receiverId) {
+  const chatId = document.querySelector(".chat-messages").id;
+  console.log(chatId);
+
   if (message === "" || message.length > 30) {
     Toast("Message cannot be empty or more than 30 characters.⛔");
     return;
   }
+ let l= await isLogged(false);
+ if(!l){
+  return
+}
+console.log("dd");
+ 
   socket.send(
     JSON.stringify({
       type: "sendMessages",
       content: message,
       to: receiverId,
       date: new Date() - 0,
+      chatId: Number(chatId),
     })
   );
+}
+
+export function DisplayMessages(data) {
+  const chat_messages = document.querySelector(".chat-messages");
+  chat_messages.id = data.chatID;
+  let messages = data.conversation;
+  if (!messages) {
+    Toast("No message yet.");
+    return;
+  }
+  console.log(messages);
+
+  messages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));
+
+  messages.forEach((ele) => {
+    const msg = document.createElement("div");
+    msg.className =
+      ele.receiver_nickname === nickname ? "receiver-msg" : "sender-msg";
+
+    const username = document.createElement("h4");
+    username.textContent = ele.sender_nickname;
+
+    const p = document.createElement("p");
+    p.textContent = ele.content;
+
+    const time = document.createElement("div");
+    time.className = "msg-time";
+    time.textContent = convertTime(ele.sent_at);
+
+    msg.appendChild(username);
+    msg.appendChild(p);
+    msg.appendChild(time);
+    chat_messages.appendChild(msg);
+  });
+  chat_messages.scrollTop = chat_messages.scrollHeight;
+}
+
+export function AddNewMsgToChat(ele) {
+  const chat_messages = document.querySelector(".chat-messages");
+  const msg = document.createElement("div");
+  msg.className = ele.sender === nickname ? "sender-msg" : "receiver-msg";
+  const username = document.createElement("h4");
+  username.textContent = ele.sender;
+  const p = document.createElement("p");
+  p.textContent = ele.message;
+  const time = document.createElement("div");
+  time.textContent = convertTime(ele.date);
+  msg.appendChild(username);
+  msg.appendChild(p);
+  msg.appendChild(time);
+  chat_messages.appendChild(msg);
+  chat_messages.scrollTop = chat_messages.scrollHeight;
 }
