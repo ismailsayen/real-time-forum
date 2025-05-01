@@ -70,8 +70,9 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
-
+			fmt.Println("d",data)
 			m, err := models.GetMessages(id, data.Receiver, chatId, data.Offset, data.Limit, db)
+			fmt.Println("m",m)
 			if err != nil {
 				fmt.Println(err)
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())

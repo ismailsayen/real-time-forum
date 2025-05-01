@@ -36,7 +36,7 @@ func GetOrCreateChat(db *sql.DB, senderID, receiverID int) (int64, error) {
 	return int64(chatID), nil
 }
 
-func GetMessages(user1_id, user2_id int, chatID int64,offset,limit int, db *sql.DB) (map[string]interface{}, error) {
+func GetMessages(user1_id, user2_id int, chatID int64,offset int,limit int, db *sql.DB) (map[string]interface{}, error) {
 	query := `SELECT 
 				m.ID, 
 				u.Nickname , 
@@ -46,9 +46,9 @@ func GetMessages(user1_id, user2_id int, chatID int64,offset,limit int, db *sql.
 			INNER JOIN users u ON m.Reciever_ID = u.ID 
 			WHERE m.Chat_ID = ? 
 			ORDER BY m.Sent_At DESC
-			LIMIT ? OFFSET ?
+			LIMIT ? OFFSET ?;
 			`
-	rows, err := db.Query(query, chatID,offset,limit)
+	rows, err := db.Query(query, chatID,limit,offset)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}

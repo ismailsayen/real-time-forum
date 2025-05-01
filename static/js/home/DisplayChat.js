@@ -3,6 +3,12 @@ import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
 import { socket } from "../utils/socket.js";
 
+let offset = 0;
+const limit = 10;
+let loading = false;
+let allLoaded = false;
+
+
 export async function FetchUsers() {
   const response = await fetch("/getUsers", {
     method: "GET",
@@ -47,6 +53,9 @@ export async function FetchUsers() {
 }
 
 export function startChatWith(receiverId, receiverNickname) {
+  offset = 0;
+allLoaded = false;
+
   const usersSection = document.querySelector(".user-section");
   const oldChat = document.querySelector(".chat-area");
   if (oldChat) {
@@ -82,14 +91,28 @@ export function startChatWith(receiverId, receiverNickname) {
   usersSection.appendChild(chatArea);
   sendButton.addEventListener("click", () => {
     SendMessage(chatInput.value, receiverId);
+    chatInput.value=""
   });
   socket.send(
     JSON.stringify({
       type: "getMessages",
       to: receiverId,
+      offset:offset,
+      limit:limit,
     })
   );
-  chatInput.value=""
+
+  chatMessages.addEventListener("scroll", () => {
+    if (chatMessages.scrollTop === 0 && !loading && !allLoaded) {
+      loading = true;
+      socket.send(JSON.stringify({
+        type: "getMessages",
+        to: receiverId,
+        offset,
+        limit,
+      }));
+    }
+  });
 }
 
 async function SendMessage(message, receiverId) {
@@ -125,9 +148,14 @@ export function DisplayMessages(data) {
     Toast("No message yet.");
     return;
   }
+  if (!data.conversation || data.conversation.length === 0) {
+    allLoaded = true;
+    return;
+  }
   console.log(messages);
 
   messages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));
+  const scrollPosition = chat_messages.scrollHeight - chat_messages.scrollTop;
 
   messages.forEach((ele) => {
     const msg = document.createElement("div");
@@ -149,7 +177,10 @@ export function DisplayMessages(data) {
     msg.appendChild(time);
     chat_messages.appendChild(msg);
   });
-  chat_messages.scrollTop = chat_messages.scrollHeight;
+
+  chat_messages.scrollTop = chat_messages.scrollHeight - scrollPosition;
+  offset += data.conversation.length;
+  loading = false;
 }
 
 export function AddNewMsgToChat(ele) {
