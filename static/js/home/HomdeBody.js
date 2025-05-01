@@ -11,7 +11,7 @@ export async function HomeBody(currentuserid) {
   usersSection.className = "user-section";
   postSection.className = "post-section";
   homebd.className = "container-body";
-  homebd.style.height = `calc(100% - ${header.height}px - 0.7rem)`;
+  homebd.style.height = `calc(100% - ${header.height}px - 3rem)`;
   const postss = document.createElement("div");
   postss.className = "postss";
   const addPostBtn = document.createElement("button");
@@ -28,7 +28,7 @@ export async function HomeBody(currentuserid) {
   postSection.appendChild(postss);
   container.appendChild(homebd);
   DisplayPost();
-  // FetchUsers(currentuserid)
+  
 }
 
 function createPostFormModal(categories) {

@@ -20,7 +20,7 @@ export async function FetchUsers() {
   }
   usersSection.innerHTML = "";
   if (!users) {
-    usersSection.innerHTML = `<h1>  no users yet </h1>`;
+    usersSection.innerHTML = `<h1>no users yet <i class="fa-solid fa-user-xmark"></i> </h1>`;
     return;
   }
   users.sort((a, b) =>
@@ -46,7 +46,7 @@ export async function FetchUsers() {
   usersSection.appendChild(userList);
 }
 
-export  function  startChatWith(receiverId, receiverNickname) {
+export function startChatWith(receiverId, receiverNickname) {
   const usersSection = document.querySelector(".user-section");
   const oldChat = document.querySelector(".chat-area");
   if (oldChat) {
@@ -99,12 +99,12 @@ async function SendMessage(message, receiverId) {
     Toast("Message cannot be empty or more than 30 characters.⛔");
     return;
   }
- let l= await isLogged(false);
- if(!l){
-  return
-}
-console.log("dd");
- 
+  let l = await isLogged(false);
+  if (!l) {
+    return;
+  }
+  console.log("dd");
+
   socket.send(
     JSON.stringify({
       type: "sendMessages",

@@ -400,6 +400,11 @@ img[src="/static/images/profil.svg"] {
 .user-section {
   display: flex;
   flex-direction: column;
+  border-radius: 8px;
+}
+.user-section h1 {
+  font-size: 18px;
+  margin: auto;
 }
 
 .user-list {
