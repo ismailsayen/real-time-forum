@@ -89,6 +89,7 @@ export function startChatWith(receiverId, receiverNickname) {
       to: receiverId,
     })
   );
+  chatInput.value=""
 }
 
 async function SendMessage(message, receiverId) {

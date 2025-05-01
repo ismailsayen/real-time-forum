@@ -3,11 +3,40 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"rtFroum/database"
 )
 
-func GetMessages(user1_id, user2_id int, chatID int64, db *sql.DB) (map[string]interface{}, error) {
+func GetOrCreateChat(db *sql.DB, senderID, receiverID int) (int64, error) {
+	var chatID int64
+	query := `
+    SELECT ID FROM Chat
+    WHERE (User1_ID = ? AND User2_ID = ?) OR (User1_ID = ? AND User2_ID = ?)
+    `
+	err := db.QueryRow(query, senderID, receiverID, receiverID, senderID).Scan(&chatID)
+	if err == nil {
+		return chatID, nil
+	}
+
+	query = `
+    INSERT INTO Chat (User1_ID, User2_ID, Created_At)
+    VALUES (?, ?, ?)
+    `
+	result, err := db.Exec(query, senderID, receiverID, time.Now().Unix())
+	if err != nil {
+		return 0, err
+	}
+
+	chatID, err = result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int64(chatID), nil
+}
+
+func GetMessages(user1_id, user2_id int, chatID int64,offset,limit int, db *sql.DB) (map[string]interface{}, error) {
 	query := `SELECT 
 				m.ID, 
 				u.Nickname , 
@@ -16,9 +45,10 @@ func GetMessages(user1_id, user2_id int, chatID int64, db *sql.DB) (map[string]i
 			FROM Messages m 
 			INNER JOIN users u ON m.Reciever_ID = u.ID 
 			WHERE m.Chat_ID = ? 
-			ORDER BY m.Sent_At DESC;
+			ORDER BY m.Sent_At DESC
+			LIMIT ? OFFSET ?
 			`
-	rows, err := db.Query(query, chatID)
+	rows, err := db.Query(query, chatID,offset,limit)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
