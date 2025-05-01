@@ -101,9 +101,16 @@ allLoaded = false;
       limit:limit,
     })
   );
-
+  let throttleTimeout = null;
   chatMessages.addEventListener("scroll", () => {
-    if (chatMessages.scrollTop === 0 && !loading && !allLoaded) {
+    if (throttleTimeout) return;
+
+    throttleTimeout = setTimeout(() => {
+      throttleTimeout = null;
+    }, 500);
+console.log(chatMessages.scrollTop,loading,allLoaded,throttleTimeout);
+
+    if (chatMessages.scrollTop === 1 && !loading && !allLoaded) {
       loading = true;
       socket.send(JSON.stringify({
         type: "getMessages",
