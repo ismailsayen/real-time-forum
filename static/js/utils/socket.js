@@ -2,6 +2,7 @@ import { Logout } from "../authPage/logout.js";
 import {
   AddNewMsgToChat,
   DisplayMessages,
+  DisplayNotif,
   FetchUsers,
 } from "../home/DisplayChat.js";
 import { isLogged } from "../main.js";
@@ -10,15 +11,19 @@ import { ChangeStatus } from "./changeStatus.js";
 export let socket;
 export function initSocket() {
   socket = new WebSocket("ws://localhost:8080/ws");
-
+  socket.addEventListener("open", async (event) => {
+    socket.send(
+      JSON.stringify({
+        type: "getAllUsers",
+      })
+    );
+  });
   socket.addEventListener("close", async (event) => {
-   
     const data = JSON.parse(event.data);
     if (data.type === "userList") {
       ChangeStatus(data.users);
       return;
     }
-    Toast(event.data);
   });
   socket.addEventListener("message", async (event) => {
     let islogged = await isLogged(false);
@@ -33,11 +38,14 @@ export function initSocket() {
       return;
     }
     const data = JSON.parse(event.data);
-    console.log(data);
 
     if (!data || !data.type) return;
+    if (data.type == "AllUsers") {
+      FetchUsers(data.users);
+      ChangeStatus(data.users);
+      return;
+    }
     if (data.type === "userList") {
-      await FetchUsers();
       ChangeStatus(data.users);
       return;
     }
@@ -46,9 +54,12 @@ export function initSocket() {
       return;
     }
     if (data.type === "messageSent") {
-      console.log("ssss");
-      
       AddNewMsgToChat(data);
+      return;
+    }
+    if (data.type === "notification") {
+      DisplayNotif(data.usersid);
+      Toast(`${data.message}`);
       return;
     }
     Toast(event.data);

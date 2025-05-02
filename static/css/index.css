@@ -25,6 +25,12 @@ body {
   padding: 1rem;
 }
 
+.header div {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .logout-btn {
   background-color: crimson;
   color: white;
@@ -413,7 +419,7 @@ img[src="/static/images/profil.svg"] {
 
 .user {
   padding: 0.5rem 1rem;
-  background-color: #eee;
+  
   border-radius: 8px;
   cursor: pointer;
   margin: 10px 20px;
@@ -421,6 +427,9 @@ img[src="/static/images/profil.svg"] {
   align-items: center;
   justify-content: space-between;
   transition: 0.5s ease-in-out;
+}
+.active {
+  background-color: #e1e1e1;
 }
 .user div {
   width: 10px;
@@ -438,12 +447,26 @@ img[src="/static/images/profil.svg"] {
   border-top: 1px solid #ccc;
   display: flex;
   flex-direction: column;
-  height: 300px;
+  height: 400px;
+  position: absolute;
+  border-radius: 8px;
+  bottom: 0;
+  left: 10px;
+  z-index: 1;
 }
 
 .chat-header {
   font-weight: bold;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 5px;
+  border-bottom: 1px solid;
+}
+.chat-header .fa-solid {
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 .chat-messages {
@@ -561,4 +584,11 @@ img[src="/static/images/profil.svg"] {
   font-size: 0.75rem;
   color: gray;
   margin-top: 5px;
+}
+.user p{
+  display: flex; align-items: center;
+}
+.user p span{
+  
+  margin: 0 10px;
 }

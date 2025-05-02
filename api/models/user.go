@@ -54,7 +54,7 @@ func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 	return int(userId), nickname, err
 }
 
-func FetchUsers(db *sql.DB, id int) ([]database.User, error) {
+func FetchUsers(db *sql.DB, id int) (map[string]interface{}, error) {
 	rows, err := db.Query("SELECT ID, Nickname FROM Users WHERE ID <> ?", id)
 	if err != nil {
 		return nil, err
@@ -70,5 +70,9 @@ func FetchUsers(db *sql.DB, id int) ([]database.User, error) {
 		}
 		users = append(users, u)
 	}
-	return users, nil
+	usersList := map[string]interface{}{
+		"type":  "AllUsers",
+		"users": users,
+	}
+	return usersList, nil
 }

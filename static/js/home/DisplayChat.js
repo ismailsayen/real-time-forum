@@ -3,42 +3,44 @@ import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
 import { socket } from "../utils/socket.js";
 
-export async function FetchUsers() {
-  const response = await fetch("/getUsers", {
-    method: "GET",
-  });
-
-  if (!response.ok) {
-    console.error("Failed to fetch users");
-    return;
-  }
-
-  const users = await response.json();
+export function FetchUsers(users) {
   let usersSection = document.querySelector(".user-list");
   if (!usersSection) {
     usersSection = document.querySelector(".user-section");
   }
-  usersSection.innerHTML = "";
-  if (!users) {
-    usersSection.innerHTML = `<h1>no users yet <i class="fa-solid fa-user-xmark"></i> </h1>`;
+  if (users.length == 0) {
+    usersSection.innerHTML = `<h1>no users yet <i class="fa-solid fa-user-xmark"></i></h1>`;
     return;
   }
-  users.sort((a, b) =>
-    a.nickname.localeCompare(b.nickname, undefined, { sensitivity: "base" })
-  );
+
+  users.sort((a, b) => {
+    const nicknameA = a.nickname || "";
+    const nicknameB = b.nickname || "";
+    return nicknameA.localeCompare(nicknameB, undefined, {
+      sensitivity: "base",
+    });
+  });
+
   const userList = document.createElement("div");
   userList.className = "user-list";
 
   users.forEach((user) => {
     const userDiv = document.createElement("div");
     const status = document.createElement("div");
+    const username = document.createElement("p");
+    const notif = document.createElement("span");
+    notif.style.display = "none";
     status.style.backgroundColor = "red";
-    userDiv.className = "user";
-    userDiv.textContent = user.nickname;
+    userDiv.classList.add("user");
+    username.textContent = user.nickname;
+
+    username.appendChild(notif);
     userDiv.dataset.userid = user.id;
     userDiv.addEventListener("click", () => {
+      userDiv.classList.add("active");
       startChatWith(user.id, user.nickname);
     });
+    userDiv.append(username);
     userDiv.append(status);
     userList.appendChild(userDiv);
   });
@@ -47,7 +49,7 @@ export async function FetchUsers() {
 }
 
 export function startChatWith(receiverId, receiverNickname) {
-  const usersSection = document.querySelector(".user-section");
+  const post_section = document.querySelector(".post-section");
   const oldChat = document.querySelector(".chat-area");
   if (oldChat) {
     oldChat.remove();
@@ -57,11 +59,21 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.className = "chat-area";
   const chatHeader = document.createElement("div");
   chatHeader.className = "chat-header";
-  chatHeader.textContent = `Chat with ${receiverNickname}`;
-
+  const userName = document.createElement("p");
+  userName.textContent = `Chat with ${receiverNickname}`;
+  const closeChat = document.createElement("i");
+  closeChat.className = "fa-solid fa-xmark";
+  chatHeader.appendChild(userName);
+  chatHeader.appendChild(closeChat);
+  closeChat.addEventListener("click", () => {
+    document.querySelector(".chat-area").style.display = "none";
+    const userElement = document.querySelector(".user");
+    if (userElement && userElement.classList.contains("active")) {
+      userElement.classList.remove("active");
+    }
+  });
   const chatMessages = document.createElement("div");
   chatMessages.className = "chat-messages";
-
   const chatInputContainer = document.createElement("div");
   chatInputContainer.className = "chat-input-container";
 
@@ -79,9 +91,10 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.appendChild(chatHeader);
   chatArea.appendChild(chatMessages);
   chatArea.appendChild(chatInputContainer);
-  usersSection.appendChild(chatArea);
+  post_section.appendChild(chatArea);
   sendButton.addEventListener("click", () => {
     SendMessage(chatInput.value, receiverId);
+    chatInput.value = "";
   });
   socket.send(
     JSON.stringify({
@@ -93,7 +106,6 @@ export function startChatWith(receiverId, receiverNickname) {
 
 async function SendMessage(message, receiverId) {
   const chatId = document.querySelector(".chat-messages").id;
-  console.log(chatId);
 
   if (message === "" || message.length > 30) {
     Toast("Message cannot be empty or more than 30 characters.⛔");
@@ -103,8 +115,6 @@ async function SendMessage(message, receiverId) {
   if (!l) {
     return;
   }
-  console.log("dd");
-
   socket.send(
     JSON.stringify({
       type: "sendMessages",
@@ -124,7 +134,6 @@ export function DisplayMessages(data) {
     Toast("No message yet.");
     return;
   }
-  console.log(messages);
 
   messages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));
 
@@ -133,9 +142,6 @@ export function DisplayMessages(data) {
     msg.className =
       ele.receiver_nickname === nickname ? "receiver-msg" : "sender-msg";
 
-    const username = document.createElement("h4");
-    username.textContent = ele.sender_nickname;
-
     const p = document.createElement("p");
     p.textContent = ele.content;
 
@@ -143,7 +149,6 @@ export function DisplayMessages(data) {
     time.className = "msg-time";
     time.textContent = convertTime(ele.sent_at);
 
-    msg.appendChild(username);
     msg.appendChild(p);
     msg.appendChild(time);
     chat_messages.appendChild(msg);
@@ -153,17 +158,23 @@ export function DisplayMessages(data) {
 
 export function AddNewMsgToChat(ele) {
   const chat_messages = document.querySelector(".chat-messages");
+  if (!chat_messages || chat_messages.id != ele.ChatID) return;
   const msg = document.createElement("div");
   msg.className = ele.sender === nickname ? "sender-msg" : "receiver-msg";
-  const username = document.createElement("h4");
-  username.textContent = ele.sender;
   const p = document.createElement("p");
   p.textContent = ele.message;
   const time = document.createElement("div");
   time.textContent = convertTime(ele.date);
-  msg.appendChild(username);
   msg.appendChild(p);
   msg.appendChild(time);
   chat_messages.appendChild(msg);
   chat_messages.scrollTop = chat_messages.scrollHeight;
+}
+
+export function DisplayNotif(idUser) {
+  const notifDiv = document.querySelector(`[data-userid="${idUser}"] span`);
+  if (notifDiv.style.display === "none") {
+    notifDiv.style.display = "inline-block";
+    notifDiv.innerHTML = `<i class="fa-solid fa-envelope"></i>`;
+  }
 }

@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -26,12 +25,11 @@ func Authorization(next http.Handler, db *sql.DB) http.HandlerFunc {
 		JOIN Session s ON s.ID_User = u.ID
 		WHERE s.token = ?;
 	`
-	err = db.QueryRow(query, cookie.Value).Scan(&userId, &nickname, &expired)
-	if err != nil {
-		fmt.Println(" error:", err)
-		utils.SendError(w, http.StatusForbidden, "you need to login.")
-		return
-	}
+		err = db.QueryRow(query, cookie.Value).Scan(&userId, &nickname, &expired)
+		if err != nil {
+			utils.SendError(w, http.StatusForbidden, "you need to login.")
+			return
+		}
 
 		if time.Now().UTC().After(expired.UTC()) {
 			db.Exec("UPDATE users set Session=? WHERE ID=?", "", userId)

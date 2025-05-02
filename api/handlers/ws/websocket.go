@@ -3,7 +3,6 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"rtFroum/api/models"
@@ -14,7 +13,7 @@ import (
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
-var clients = make(map[*websocket.Conn]int)
+var clients = make(map[int][]*websocket.Conn)
 
 type Messages struct {
 	Type     string `json:"type"`
@@ -40,25 +39,33 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		// utils.SendError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	clients[conn] = id
+	clients[id] = append(clients[id], conn)
 	sendUserList()
 	var data Messages
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			delete(clients, conn)
+			removeConnection(id, conn)
 			sendUserList()
 			break
 		}
-		kk, t, erre := models.GetUserId(r, db)
-		fmt.Println("user id ",kk,t)
-		if erre != nil {
-			// utils.SendError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
+
 		err = json.Unmarshal(msg, &data)
 		if err != nil {
-			delete(clients, conn)
+			removeConnection(id, conn)
+			sendUserList()
+			break
+		}
+		if data.Type == "getAllUsers" {
+			users, err := models.FetchUsers(db, id)
+			if err != nil {
+				// utils.SendError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			data, _ := json.Marshal(users)
+			for _, conns := range clients[id] {
+				conns.WriteMessage(websocket.TextMessage, data)
+			}
 			sendUserList()
 			break
 		}
@@ -71,14 +78,13 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 			m, err := models.GetMessages(id, data.Receiver, chatId, db)
 			if err != nil {
-				fmt.Println(err)
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
 			data, _ := json.Marshal(m)
-			for client := range clients {
-				if clients[client] == id {
-					client.WriteMessage(websocket.TextMessage, data)
+			for _, conns := range clients {
+				for i := 0; i < len(conns); i++ {
+					conns[i].WriteMessage(websocket.TextMessage, data)
 				}
 			}
 
@@ -87,7 +93,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			var newMsg SendMessage
 			err = json.Unmarshal(msg, &newMsg)
 			if err != nil {
-				delete(clients, conn)
+				removeConnection(id, conn)
 				sendUserList()
 				break
 			}
@@ -97,20 +103,37 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				return
 			}
 			data, _ := json.Marshal(messageSent)
-			for client := range clients {
-				if clients[client] == id || clients[client] == newMsg.ReceiverId {
-					client.WriteMessage(websocket.TextMessage, data)
+			if conns, exists := clients[id]; exists {
+				for _, conn := range conns {
+					conn.WriteMessage(websocket.TextMessage, data)
 				}
 			}
+			if conns, exists := clients[newMsg.ReceiverId]; exists {
+				for _, conn := range conns {
+					conn.WriteMessage(websocket.TextMessage, data)
+				}
+			}
+			SendNotif(nickname, id, newMsg.ReceiverId)
 		}
 		if data.Type == "user-close" {
-			for C, client := range clients {
-				if client == id {
-					C.Close()
-					delete(clients, C)
-				}
-			}
+			removeConnection(id, conn)
+			sendUserList()
 			break
+		}
+	}
+}
+
+func removeConnection(userId int, conn *websocket.Conn) {
+	if conns, exists := clients[userId]; exists {
+		for i, c := range conns {
+			if c == conn {
+				// Remove this connection from the slice
+				clients[userId] = append(conns[:i], conns[i+1:]...)
+				break
+			}
+		}
+		if len(clients[userId]) == 0 {
+			delete(clients, userId)
 		}
 	}
 }

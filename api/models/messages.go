@@ -28,6 +28,7 @@ func GetMessages(user1_id, user2_id int, chatID int64, db *sql.DB) (map[string]i
 		var msg database.ChatMessage
 		err = rows.Scan(&msg.ID, &msg.ReceiverNickname, &msg.Content, &msg.SentAt)
 		if err != nil {
+			fmt.Println("err geting")
 			return nil, err
 		}
 		messages = append(messages, msg)
@@ -45,7 +46,7 @@ func SendMessage(message, sender string, senderID, receiverID, date, chatID int,
 	VALUES (?, ?, ?, ?, ?)`
 	_, err := db.Exec(query, senderID, receiverID, message, date, chatID)
 	if err != nil {
-		fmt.Println(err, "SS")
+		fmt.Println("err inseting")
 		return nil, err
 	}
 	messageSent := map[string]interface{}{

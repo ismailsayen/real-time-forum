@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -71,6 +72,7 @@ func GetOrCreateChat(db *sql.DB, senderID, receiverID int) (int64, error) {
     `
 	result, err := db.Exec(query, senderID, receiverID, time.Now().Unix())
 	if err != nil {
+		fmt.Println("erro chat")
 		return 0, err
 	}
 
