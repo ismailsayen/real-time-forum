@@ -61,14 +61,12 @@ export function initSocket() {
       return;
     }
     if (data.type === "notification") {
-      DisplayNotif(data.usersid);
+      DisplayNotif(data.usersid,data.chatID);
       Toast(`${data.message}`);
       return;
     }
     if (data.type == "NewUserJoinned") {
       AppendNewUser(data.user);
-      
-
       return;
     }
   });

@@ -89,11 +89,8 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				return
 			}
 			data, _ := json.Marshal(m)
-
-			for _, conns := range clients {
-				for i := 0; i < len(conns); i++ {
-					conns[i].WriteMessage(websocket.TextMessage, data)
-				}
+			for _, conn := range clients[id] {
+				conn.WriteMessage(websocket.TextMessage, data)
 			}
 
 		}
@@ -121,7 +118,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 					conn.WriteMessage(websocket.TextMessage, data)
 				}
 			}
-			SendNotif(nickname, id, newMsg.ReceiverId)
+			SendNotif(nickname, id, newMsg.ReceiverId, newMsg.ChatID)
 		}
 		if data.Type == "user-close" {
 			removeConnection(id, conn)

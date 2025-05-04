@@ -25,7 +25,6 @@ export function FetchUsers(users) {
     status.style.backgroundColor = "red";
     userDiv.classList.add("user");
     username.textContent = user.nickname;
-
     username.appendChild(notif);
     userDiv.dataset.userid = user.id;
     userDiv.addEventListener("click", () => {
@@ -57,12 +56,16 @@ export function startChatWith(receiverId, receiverNickname) {
   chatHeader.appendChild(userName);
   chatHeader.appendChild(closeChat);
   closeChat.addEventListener("click", () => {
-    document.querySelector(".chat-area").style.display = "none";
-    const userElement = document.querySelector(".user");
-    if (userElement && userElement.classList.contains("active")) {
-      userElement.classList.remove("active");
+    const chat = document.querySelector(".chat-area");
+    if (chat) {
+      chat.remove();
     }
   });
+  const notifDiv = document.querySelector(`[data-userid="${receiverId}"] span`);
+  if (notifDiv.style.display === "inline-block") {
+    notifDiv.style.display = "none";
+  }
+
   const chatMessages = document.createElement("div");
   chatMessages.className = "chat-messages";
   const chatInputContainer = document.createElement("div");
@@ -165,11 +168,14 @@ export function AddNewMsgToChat(ele) {
   chat_messages.scrollTop = chat_messages.scrollHeight;
 }
 
-export function DisplayNotif(idUser) {
+export function DisplayNotif(idUser, chatID) {
   const chat_messages = document.querySelector(".chat-messages");
   const notifDiv = document.querySelector(`[data-userid="${idUser}"] span`);
-  console.log("before");
-  if (chat_messages) {
+  let userchat = null;
+  if (chat_messages && chat_messages.id) {
+    userchat = Number(chat_messages.id);
+  }
+  if (chatID === userchat) {
     notifDiv.style.display = "none";
     return;
   }
