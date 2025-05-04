@@ -8,18 +8,10 @@ export function FetchUsers(users) {
   if (!usersSection) {
     usersSection = document.querySelector(".user-section");
   }
-  if (users.length == 0) {
+  if (!users) {
     usersSection.innerHTML = `<h1>no users yet <i class="fa-solid fa-user-xmark"></i></h1>`;
     return;
   }
-
-  users.sort((a, b) => {
-    const nicknameA = a.nickname || "";
-    const nicknameB = b.nickname || "";
-    return nicknameA.localeCompare(nicknameB, undefined, {
-      sensitivity: "base",
-    });
-  });
 
   const userList = document.createElement("div");
   userList.className = "user-list";
@@ -37,7 +29,6 @@ export function FetchUsers(users) {
     username.appendChild(notif);
     userDiv.dataset.userid = user.id;
     userDiv.addEventListener("click", () => {
-      userDiv.classList.add("active");
       startChatWith(user.id, user.nickname);
     });
     userDiv.append(username);
@@ -92,16 +83,16 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.appendChild(chatMessages);
   chatArea.appendChild(chatInputContainer);
   post_section.appendChild(chatArea);
-  sendButton.addEventListener("click", () => {
-    SendMessage(chatInput.value, receiverId);
-    chatInput.value = "";
-  });
   socket.send(
     JSON.stringify({
       type: "getMessages",
       to: receiverId,
     })
   );
+  sendButton.addEventListener("click", () => {
+    SendMessage(chatInput.value, receiverId);
+    chatInput.value = "";
+  });
 }
 
 async function SendMessage(message, receiverId) {
@@ -128,6 +119,9 @@ async function SendMessage(message, receiverId) {
 
 export function DisplayMessages(data) {
   const chat_messages = document.querySelector(".chat-messages");
+  if (!chat_messages) {
+    return;
+  }
   chat_messages.id = data.chatID;
   let messages = data.conversation;
   if (!messages) {
@@ -172,9 +166,70 @@ export function AddNewMsgToChat(ele) {
 }
 
 export function DisplayNotif(idUser) {
+  const chat_messages = document.querySelector(".chat-messages");
   const notifDiv = document.querySelector(`[data-userid="${idUser}"] span`);
+  console.log("before");
+  if (chat_messages) {
+    notifDiv.style.display = "none";
+    return;
+  }
+
   if (notifDiv.style.display === "none") {
     notifDiv.style.display = "inline-block";
     notifDiv.innerHTML = `<i class="fa-solid fa-envelope"></i>`;
   }
+}
+
+export function AppendNewUser(user) {
+  let usersSection = document.querySelector(".user-list");
+  const existingUser = document.querySelector(
+    `.user[data-userid="${user.id}"]`
+  );
+  if (existingUser) {
+    return;
+  }
+
+  const userDiv = document.createElement("div");
+  const status = document.createElement("div");
+  const username = document.createElement("p");
+  const notif = document.createElement("span");
+
+  notif.style.display = "none";
+  status.style.backgroundColor = "red";
+  userDiv.classList.add("user");
+  username.textContent = user.nickname;
+  username.appendChild(notif);
+  userDiv.dataset.userid = user.id;
+
+  userDiv.addEventListener("click", () => {
+    startChatWith(user.id, user.nickname);
+  });
+
+  userDiv.appendChild(username);
+  userDiv.appendChild(status);
+
+  usersSection.appendChild(userDiv);
+
+  SortUsers();
+}
+
+function SortUsers() {
+  // Fixed: function name to match call
+  // Select all user elements, not the container
+  let users = document.querySelectorAll(".user");
+  let usersArray = Array.from(users);
+
+  // Sort users by name
+  usersArray.sort((a, b) => {
+    let nameA = a.querySelector("p").textContent.trim().toLowerCase();
+    let nameB = b.querySelector("p").textContent.trim().toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  // Get the parent container
+  const parent = document.querySelector(".user-list");
+
+  // Clear the container and add sorted users
+  parent.innerHTML = "";
+  usersArray.forEach((user) => parent.appendChild(user));
 }

@@ -54,25 +54,41 @@ func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 	return int(userId), nickname, err
 }
 
-func FetchUsers(db *sql.DB, id int) (map[string]interface{}, error) {
-	rows, err := db.Query("SELECT ID, Nickname FROM Users WHERE ID <> ?", id)
+func FetchUsers(db *sql.DB, id int) (map[string]interface{}, map[string]interface{}, error) {
+	row, err := db.Query("SELECT ID, Nickname FROM Users WHERE ID <> ? ORDER BY Nickname ASC", id)
 	if err != nil {
-		return nil, err
+		return nil, nil,err
 	}
-	defer rows.Close()
-
+	defer row.Close()
+	row2, err := db.Query("SELECT ID, Nickname FROM Users WHERE ID = ?", id)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer row2.Close()
 	var users []database.User
-	for rows.Next() {
+	for row.Next() {
 		var u database.User
-		err := rows.Scan(&u.ID, &u.NickName)
+		err := row.Scan(&u.ID, &u.NickName)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		users = append(users, u)
+	}
+	var newUser database.User
+	for row2.Next() {
+		err := row2.Scan(&newUser.ID, &newUser.NickName)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	user := map[string]interface{}{
+		"type":  "NewUserJoinned",
+		"user": newUser,
 	}
 	usersList := map[string]interface{}{
 		"type":  "AllUsers",
 		"users": users,
 	}
-	return usersList, nil
+	return usersList, user, nil
 }

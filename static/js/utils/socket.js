@@ -1,6 +1,7 @@
 import { Logout } from "../authPage/logout.js";
 import {
   AddNewMsgToChat,
+  AppendNewUser,
   DisplayMessages,
   DisplayNotif,
   FetchUsers,
@@ -46,6 +47,8 @@ export function initSocket() {
       return;
     }
     if (data.type === "userList") {
+      console.log(data);
+
       ChangeStatus(data.users);
       return;
     }
@@ -62,7 +65,12 @@ export function initSocket() {
       Toast(`${data.message}`);
       return;
     }
-    Toast(event.data);
+    if (data.type == "NewUserJoinned") {
+      AppendNewUser(data.user);
+      
+
+      return;
+    }
   });
   document.querySelector(".logout-btn").addEventListener("click", () => {
     socket.send(

@@ -57,7 +57,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			break
 		}
 		if data.Type == "getAllUsers" {
-			users, err := models.FetchUsers(db, id)
+			users, newUser, err := models.FetchUsers(db, id)
 			if err != nil {
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
@@ -66,8 +66,15 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			for _, conns := range clients[id] {
 				conns.WriteMessage(websocket.TextMessage, data)
 			}
+			data, _ = json.Marshal(newUser)
+			for keyId, conns := range clients {
+				if keyId != id {
+					for _, conn := range conns {
+						conn.WriteMessage(websocket.TextMessage, data)
+					}
+				}
+			}
 			sendUserList()
-			break
 		}
 		if data.Type == "getMessages" {
 			chatId, err := models.GetOrCreateChat(db, id, data.Receiver)
@@ -82,6 +89,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				return
 			}
 			data, _ := json.Marshal(m)
+
 			for _, conns := range clients {
 				for i := 0; i < len(conns); i++ {
 					conns[i].WriteMessage(websocket.TextMessage, data)
@@ -127,7 +135,6 @@ func removeConnection(userId int, conn *websocket.Conn) {
 	if conns, exists := clients[userId]; exists {
 		for i, c := range conns {
 			if c == conn {
-				// Remove this connection from the slice
 				clients[userId] = append(conns[:i], conns[i+1:]...)
 				break
 			}
