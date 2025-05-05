@@ -1,4 +1,7 @@
-export function ChangeStatus(users = []) {
+export function ChangeStatus(users) {
+  if (!users) {
+    return;
+  }
   const userstatus = document.querySelectorAll(".user div");
   userstatus.forEach((div) => {
     div.style.backgroundColor = "red";

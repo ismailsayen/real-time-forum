@@ -46,26 +46,29 @@ export function initSocket() {
       ChangeStatus(data.users);
       return;
     }
-    if (data.type === "userList") {
-      console.log(data);
 
+    if (data.type === "userList") {
       ChangeStatus(data.users);
       return;
     }
+
     if (data.type === "conversation") {
       DisplayMessages(data);
       return;
     }
+
     if (data.type === "messageSent") {
       AddNewMsgToChat(data);
       return;
     }
+
     if (data.type === "notification") {
       DisplayNotif(data.usersid,data.chatID);
-      Toast(`${data.message}`);
+      Toast(`${data.message} 🔔`);
       return;
     }
-    if (data.type == "NewUserJoinned") {
+
+    if (data.type == "NewUserJoinned") {  
       AppendNewUser(data.user);
       return;
     }
