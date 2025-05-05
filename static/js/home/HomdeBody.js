@@ -2,7 +2,7 @@ import { Toast } from "../toast/toast.js";
 import { DisplayPost } from "./DisplayPost.js";
 
 
-export async function HomeBody(currentuserid) {
+export async function HomeBody() {
   const header = document.querySelector(".header").getBoundingClientRect();
   const container = document.querySelector(".container");
   const homebd = document.createElement("div");

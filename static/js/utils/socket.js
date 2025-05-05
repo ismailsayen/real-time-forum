@@ -47,8 +47,6 @@ export function initSocket() {
       return;
     }
     if (data.type === "userList") {
-      console.log(data);
-
       ChangeStatus(data.users);
       return;
     }
@@ -66,6 +64,8 @@ export function initSocket() {
       return;
     }
     if (data.type == "NewUserJoinned") {
+      console.log(data.user);
+      
       AppendNewUser(data.user);
       return;
     }

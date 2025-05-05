@@ -188,6 +188,13 @@ export function DisplayNotif(idUser, chatID) {
 
 export function AppendNewUser(user) {
   let usersSection = document.querySelector(".user-list");
+  if (!usersSection) {
+    const section = document.querySelector(".user-section");
+    section.innerHTML = "";
+    usersSection = document.createElement("div");
+    usersSection.className = "user-list";
+    section.appendChild(usersSection);
+  }
   const existingUser = document.querySelector(
     `.user[data-userid="${user.id}"]`
   );
