@@ -46,7 +46,7 @@ func GetMessages(user1_id, user2_id int, chatID int64,offset int,limit int, db *
 			FROM Messages m 
 			INNER JOIN users u ON m.Reciever_ID = u.ID 
 			WHERE m.Chat_ID = ? 
-			ORDER BY m.Sent_At Asc
+			ORDER BY m.Sent_At desc
 			LIMIT ? OFFSET ?;
 			`
 	rows, err := db.Query(query, chatID,limit,offset)

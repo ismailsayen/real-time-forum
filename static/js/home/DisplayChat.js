@@ -138,9 +138,6 @@ chatInputContainer.appendChild(chatInput);
         spinner.style.display = "block";
       }
 
-      
- 
-   
       loading = true;
       socket.send(JSON.stringify({
         type: "getMessages",
