@@ -111,7 +111,39 @@ async function addComment(idpost) {
     if (resp.ok) {
       Toast("Commment added ✅.");
       content.value = "";
+      const commentsDiv = document.querySelector(`[data-postID="${idpost}"]`);
+      let commentBtn = document.querySelector(`[data-post="${idpost}"]`);
+      if (!commentBtn) {
+        const card = content.closest(".card");
+        const reactsDiv = card.querySelector(".reacts > div");
+    
+       
+        commentBtn = document.createElement("button");
+        commentBtn.setAttribute("data-post", idpost);
+        commentBtn.className = "cmnt-btn show";
+        commentBtn.innerHTML = `<i class="fa-regular fa-comment"></i>`;
+        commentBtn.dataset.loaded = "false";
+    
       
+        commentBtn.addEventListener("click", async function (e) {
+          if (this.dataset.loaded === "false") {
+            await ShowComments(e);
+            this.dataset.loaded = "true";
+          } else {
+            ShowDiv(this, document.querySelector(`[data-postID="${idpost}"]`));
+          }
+        });
+    
+       
+        reactsDiv.innerHTML = `<span>1</span>`;
+        reactsDiv.appendChild(commentBtn);
+      }
+      if (commentsDiv && commentBtn) {
+        commentsDiv.innerHTML = ""; 
+        commentBtn.dataset.loaded = "false"; 
+        await ShowComments({ currentTarget: commentBtn });
+        commentBtn.dataset.loaded = "true";
+      }
     } else {
       const errr = await resp.json();
       console.error("Failed to create comment", errr);
