@@ -555,6 +555,7 @@ img[src="/static/images/profil.svg"] {
   max-height: 80vh;
   overflow-y: auto;
   padding: 10px;
+  position: relative;
 }
 
 /* Message de l'expéditeur (moi) */

@@ -18,6 +18,8 @@ var clients = make(map[int][]*websocket.Conn)
 type Messages struct {
 	Type     string `json:"type"`
 	Receiver int    `json:"to"`
+	Offset   int    `json:"offset"`
+	Limit    int    `json:"limit"`
 }
 type SendMessage struct {
 	Type       string `json:"type"`
@@ -83,8 +85,9 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				return
 			}
 
-			m, err := models.GetMessages(id, data.Receiver, chatId, db)
+			m, err := models.GetMessages(id, data.Receiver, chatId, data.Offset, data.Limit, db)
 			if err != nil {
+			
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}

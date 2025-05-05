@@ -2,6 +2,10 @@ import { isLogged, nickname } from "../main.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
 import { socket } from "../utils/socket.js";
+let offset = 0;
+const limit = 10;
+let loading = false;
+let allLoaded = false;
 
 export function FetchUsers(users) {
   let usersSection = document.querySelector(".user-list");
@@ -39,6 +43,8 @@ export function FetchUsers(users) {
 }
 
 export function startChatWith(receiverId, receiverNickname) {
+  offset = 0;
+  allLoaded = false;
   const post_section = document.querySelector(".post-section");
   const oldChat = document.querySelector(".chat-area");
   if (oldChat) {
@@ -49,11 +55,13 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.className = "chat-area";
   const chatHeader = document.createElement("div");
   chatHeader.className = "chat-header";
+ 
   const userName = document.createElement("p");
   userName.textContent = `Chat with ${receiverNickname}`;
   const closeChat = document.createElement("i");
   closeChat.className = "fa-solid fa-xmark";
-  chatHeader.appendChild(userName);
+ 
+chatHeader.appendChild(userName);
   chatHeader.appendChild(closeChat);
   closeChat.addEventListener("click", () => {
     const chat = document.querySelector(".chat-area");
@@ -67,7 +75,22 @@ export function startChatWith(receiverId, receiverNickname) {
   }
 
   const chatMessages = document.createElement("div");
+
   chatMessages.className = "chat-messages";
+  chatMessages.innerHTML = `
+  <div class="chat-loading-indicator" style="
+    display: none;
+    text-align: center;
+    padding: 10px;
+    color: red;
+    font-size: 14px;
+    position:absolute;
+    z-index:999;
+  ">
+    <i class="fa fa-spinner fa-spin"></i> Loading messages...
+  </div>
+`;
+ 
   const chatInputContainer = document.createElement("div");
   chatInputContainer.className = "chat-input-container";
 
@@ -80,21 +103,57 @@ export function startChatWith(receiverId, receiverNickname) {
   sendButton.className = "send-button";
   sendButton.textContent = "Send";
 
-  chatInputContainer.appendChild(chatInput);
+ 
+  
+chatInputContainer.appendChild(chatInput);
   chatInputContainer.appendChild(sendButton);
   chatArea.appendChild(chatHeader);
   chatArea.appendChild(chatMessages);
   chatArea.appendChild(chatInputContainer);
   post_section.appendChild(chatArea);
+  sendButton.addEventListener("click", () => {
+    SendMessage(chatInput.value, receiverId);
+    chatInput.value = "";
+  });
   socket.send(
     JSON.stringify({
       type: "getMessages",
       to: receiverId,
+      offset: offset,
+      limit: limit,
     })
   );
-  sendButton.addEventListener("click", () => {
-    SendMessage(chatInput.value, receiverId);
-    chatInput.value = "";
+  let throttleTimeout = null;
+  chatMessages.addEventListener("scroll", () => {
+    if (throttleTimeout) return;
+
+  
+    console.log(chatMessages.scrollHeight,chatMessages.scrollTop,chatMessages.clientHeight);
+
+    const spinner = document.querySelector(".chat-loading-indicator");
+    if (chatMessages.scrollTop <=4 && !loading) {
+      if (spinner){
+     console.log(spinner);
+     
+        spinner.style.display = "block";
+      }
+
+      
+ 
+   
+      loading = true;
+      socket.send(JSON.stringify({
+        type: "getMessages",
+        to: receiverId,
+        offset,
+        limit,
+      }));
+    }
+    throttleTimeout = setTimeout(() => {
+      // spinner.style.display = "none";
+
+      throttleTimeout = null;
+    }, 500);
   });
 }
 
@@ -121,23 +180,42 @@ async function SendMessage(message, receiverId) {
 }
 
 export function DisplayMessages(data) {
+  console.log("d",data);
+  
   const chat_messages = document.querySelector(".chat-messages");
   if (!chat_messages) {
     return;
   }
   chat_messages.id = data.chatID;
+  const spinner = chat_messages.querySelector(".chat-loading-indicator");
+if (spinner) spinner.style.display = "none";
+
   let messages = data.conversation;
-  if (!messages) {
-    Toast("No message yet.");
+  if (!messages || messages.length === 0) {
+    if (offset === 0) {
+      Toast("No message yet.");
+    } else {
+      
+      allLoaded = true;
+    }
+    loading = false;
     return;
   }
-
+    
+    
+  const prevScrollHeight = chat_messages.scrollHeight;
+  const prevScrollTop = chat_messages.scrollTop;
   messages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));
-
+  if (offset > 0) {
+    messages.reverse();
+  }
   messages.forEach((ele) => {
     const msg = document.createElement("div");
     msg.className =
       ele.receiver_nickname === nickname ? "receiver-msg" : "sender-msg";
+
+    const username = document.createElement("h4");
+    username.textContent = ele.sender_nickname;
 
     const p = document.createElement("p");
     p.textContent = ele.content;
@@ -146,11 +224,25 @@ export function DisplayMessages(data) {
     time.className = "msg-time";
     time.textContent = convertTime(ele.sent_at);
 
+    msg.appendChild(username);
     msg.appendChild(p);
     msg.appendChild(time);
-    chat_messages.appendChild(msg);
+    if (offset >0) {
+      chat_messages.insertBefore(msg, chat_messages.firstChild);
+    } else {
+      chat_messages.appendChild(msg);
+        }
   });
-  chat_messages.scrollTop = chat_messages.scrollHeight;
+
+  if (offset === 0) {
+    chat_messages.scrollTop = chat_messages.scrollHeight;
+  } else {
+    const newScrollHeight = chat_messages.scrollHeight;
+    chat_messages.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
+  }
+  
+  offset += messages.length;
+  loading = false;
 }
 
 export function AddNewMsgToChat(ele) {
