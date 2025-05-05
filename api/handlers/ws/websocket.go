@@ -65,8 +65,10 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				return
 			}
 			data, _ := json.Marshal(users)
-			for _, conns := range clients[id] {
-				conns.WriteMessage(websocket.TextMessage, data)
+			for _, c := range clients[id] {
+				if c == conn {
+					c.WriteMessage(websocket.TextMessage, data)
+				}
 			}
 			data, _ = json.Marshal(newUser)
 			for keyId, conns := range clients {
@@ -87,7 +89,6 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 			m, err := models.GetMessages(id, data.Receiver, chatId, data.Offset, data.Limit, db)
 			if err != nil {
-			
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
