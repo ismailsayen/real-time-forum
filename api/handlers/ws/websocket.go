@@ -3,6 +3,7 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
+	
 	"net/http"
 
 	"rtFroum/api/models"
@@ -92,6 +93,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
+			// fmt.Println(m)
 			data, _ := json.Marshal(m)
 			for _, conn := range clients[id] {
 				conn.WriteMessage(websocket.TextMessage, data)
@@ -101,6 +103,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		if data.Type == "sendMessages" {
 			var newMsg SendMessage
 			err = json.Unmarshal(msg, &newMsg)
+			
 			if err != nil {
 				removeConnection(id, conn)
 				sendUserList()

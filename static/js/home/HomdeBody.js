@@ -145,11 +145,11 @@ async function handlePostSubmit(event) {
     Toast("Category Required");
     return;
   }
-  if (!title || title.length <= 5) {
+  if (!title || title.length <= 5||title.trim().length==0) {
     Toast("Title to short");
     return;
   }
-  if (!content || content.length <= 5) {
+  if (!content || content.length <= 5||content.trim().length==0) {
     Toast("Content too short ");
     return;
   }
@@ -173,7 +173,6 @@ async function handlePostSubmit(event) {
     if (response.ok) {
       document.querySelector(".post-modal").style.display = "none";
       document.getElementById("post-form").reset();
-      const postSection = document.querySelector(".post-section");
       container.innerHTML = "";
       DisplayPost();
       Toast("Post added ✅.");

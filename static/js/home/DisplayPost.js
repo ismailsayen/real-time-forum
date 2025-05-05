@@ -86,10 +86,10 @@ async function addComment(idpost) {
   const content = document.getElementById(`${idpost}`);
   console.log(content);
 
-  if (!content.value || content.value.length <= 3) {
+  if (!content.value || content.value.length <= 3||content.value.trim().length==0) {
     console.log(content.value);
-
-    Toast("invalide Comment");
+    content.value = "";
+    Toast("invalid Comment");
     return;
   }
 
