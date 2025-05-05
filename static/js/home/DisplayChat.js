@@ -19,7 +19,7 @@ export function FetchUsers(users) {
 
   const userList = document.createElement("div");
   userList.className = "user-list";
-
+  let storedNotifs = JSON.parse(localStorage.getItem("notifications") || "{}");
   users.forEach((user) => {
     const userDiv = document.createElement("div");
     const status = document.createElement("div");
@@ -37,6 +37,10 @@ export function FetchUsers(users) {
     userDiv.append(username);
     userDiv.append(status);
     userList.appendChild(userDiv);
+    if (storedNotifs[user.id]) {
+      notif.style.display = "inline-block";
+      notif.innerHTML = `<i class="fa-solid fa-envelope"></i>`;
+    }
   });
 
   usersSection.appendChild(userList);
@@ -50,7 +54,14 @@ export function startChatWith(receiverId, receiverNickname) {
   if (oldChat) {
     oldChat.remove();
   }
-
+  let notif = document.querySelector(`[data-userid="${receiverId}"] span`);
+  if (notif.style.display === "inline-block") {
+    notif.style.display = "none";
+    // Remove notification from localStorage
+    let storedNotifs = JSON.parse(localStorage.getItem("notifications") || "{}");
+    delete storedNotifs[receiverId];
+    localStorage.setItem("notifications", JSON.stringify(storedNotifs));
+  }
   const chatArea = document.createElement("div");
   chatArea.className = "chat-area";
   const chatHeader = document.createElement("div");
@@ -69,7 +80,7 @@ chatHeader.appendChild(userName);
       chat.remove();
     }
   });
-  const notifDiv = document.querySelector(`[data-userid="${receiverId}"] span`);
+  let notifDiv = document.querySelector(`[data-userid="${receiverId}"] span`);
   if (notifDiv.style.display === "inline-block") {
     notifDiv.style.display = "none";
   }
@@ -259,19 +270,24 @@ export function AddNewMsgToChat(ele) {
 
 export function DisplayNotif(idUser, chatID) {
   const chat_messages = document.querySelector(".chat-messages");
-  const notifDiv = document.querySelector(`[data-userid="${idUser}"] span`);
+  let notifDiv = document.querySelector(`[data-userid="${idUser}"] span`);
   let userchat = null;
+  let storedNotifs = JSON.parse(localStorage.getItem("notifications") || "{}");
   if (chat_messages && chat_messages.id) {
     userchat = Number(chat_messages.id);
   }
   if (chatID === userchat) {
     notifDiv.style.display = "none";
+    delete storedNotifs[idUser];
+    localStorage.setItem("notifications", JSON.stringify(storedNotifs));
     return;
   }
 
   if (notifDiv.style.display === "none") {
     notifDiv.style.display = "inline-block";
     notifDiv.innerHTML = `<i class="fa-solid fa-envelope"></i>`;
+    storedNotifs[idUser] = chatID;
+    localStorage.setItem("notifications", JSON.stringify(storedNotifs));
   }
 }
 
