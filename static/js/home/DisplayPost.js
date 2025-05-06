@@ -1,3 +1,4 @@
+import { DispalyError } from "../ErrorPage.js";
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
@@ -78,6 +79,8 @@ export async function DisplayPost() {
     });
     SetUrl("/posts");
   } catch (error) {
+   
+    DispalyError(error.Status,error.Message)
     console.log("Error fetching posts:", error);
   }
 }
@@ -86,10 +89,10 @@ async function addComment(idpost) {
   const content = document.getElementById(`${idpost}`);
   console.log(content);
 
-  if (!content.value || content.value.length <= 3) {
+  if (!content.value || content.value.length <= 3||content.value.trim().length==0) {
     console.log(content.value);
-
-    Toast("invalide Comment");
+    content.value = "";
+    Toast("invalid Comment");
     return;
   }
 
@@ -111,13 +114,50 @@ async function addComment(idpost) {
     if (resp.ok) {
       Toast("Commment added ✅.");
       content.value = "";
+      const commentsDiv = document.querySelector(`[data-postID="${idpost}"]`);
+      let commentBtn = document.querySelector(`[data-post="${idpost}"]`);
+      if (!commentBtn) {
+        const card = content.closest(".card");
+        const reactsDiv = card.querySelector(".reacts > div");
+    
+       
+        commentBtn = document.createElement("button");
+        commentBtn.setAttribute("data-post", idpost);
+        commentBtn.className = "cmnt-btn show";
+        commentBtn.innerHTML = `<i class="fa-regular fa-comment"></i>`;
+        commentBtn.dataset.loaded = "false";
+    
       
+        commentBtn.addEventListener("click", async function (e) {
+          if (this.dataset.loaded === "false") {
+            await ShowComments(e);
+            this.dataset.loaded = "true";
+          } else {
+            ShowDiv(this, document.querySelector(`[data-postID="${idpost}"]`));
+          }
+        });
+    
+       
+        reactsDiv.innerHTML = `<span>1</span>`;
+        reactsDiv.appendChild(commentBtn);
+      }
+      if (commentsDiv && commentBtn) {
+        commentsDiv.innerHTML = ""; 
+        commentBtn.dataset.loaded = "false"; 
+        await ShowComments({ currentTarget: commentBtn });
+        commentBtn.dataset.loaded = "true";
+      }
     } else {
       const errr = await resp.json();
+    
+
       console.error("Failed to create comment", errr);
       Toast(errr);
     }
   } catch (err) {
+    console.log(err);
+    
+    DispalyError(err.Status,err.Message)
     Toast(err);
   }
 }

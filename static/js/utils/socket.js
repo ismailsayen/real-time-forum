@@ -1,8 +1,12 @@
 import { Logout } from "../authPage/logout.js";
 import {
   AddNewMsgToChat,
+  AppendNewUser,
   DisplayMessages,
+  DisplayNotif,
   FetchUsers,
+  HideTypingIndicator,
+  ShowTypingIndicator,
 } from "../home/DisplayChat.js";
 import { isLogged } from "../main.js";
 import { Toast } from "../toast/toast.js";
@@ -10,16 +14,22 @@ import { ChangeStatus } from "./changeStatus.js";
 export let socket;
 export function initSocket() {
   socket = new WebSocket("ws://localhost:8080/ws");
+  socket.addEventListener("open", async () => {
+    socket.send(
+      JSON.stringify({
+        type: "getAllUsers",
+      })
+    );
+  });
 
   socket.addEventListener("close", async (event) => {
-   
     const data = JSON.parse(event.data);
     if (data.type === "userList") {
       ChangeStatus(data.users);
       return;
     }
-    Toast(event.data);
   });
+
   socket.addEventListener("message", async (event) => {
     let islogged = await isLogged(false);
     if (!islogged) {
@@ -32,26 +42,56 @@ export function initSocket() {
       Logout();
       return;
     }
+
     const data = JSON.parse(event.data);
-    console.log(data);
 
     if (!data || !data.type) return;
-    if (data.type === "userList") {
-      await FetchUsers();
+    if (data.type == "AllUsers") {
+      FetchUsers(data.users);
       ChangeStatus(data.users);
       return;
     }
+
+    if (data.type === "userList") {
+      ChangeStatus(data.users);
+      return;
+    }
+    if (data.type === "LAstusersChatted") {
+      FetchUsers(data.users)
+      ChangeStatus(data.users);
+      return;
+    }
+
     if (data.type === "conversation") {
       DisplayMessages(data);
       return;
     }
+
     if (data.type === "messageSent") {
-      console.log("ssss");
-      
+
       AddNewMsgToChat(data);
       return;
     }
-    Toast(event.data);
+
+    if (data.type === "typing") {
+      ShowTypingIndicator(data.from); 
+      return;
+    }
+    
+    if (data.type === "stopTyping") {
+      HideTypingIndicator(data.from); 
+      return;
+    }
+    if (data.type === "notification") {
+      DisplayNotif(data.usersid, data.chatID);
+      Toast(`${data.message} 🔔`);
+      return;
+    }
+
+    if (data.type == "NewUserJoinned") {
+      AppendNewUser(data.user);
+      return;
+    }
   });
   document.querySelector(".logout-btn").addEventListener("click", () => {
     socket.send(

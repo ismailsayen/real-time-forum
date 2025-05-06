@@ -2,7 +2,7 @@ import { Toast } from "../toast/toast.js";
 import { DisplayPost } from "./DisplayPost.js";
 
 
-export async function HomeBody(currentuserid) {
+export async function HomeBody() {
   const header = document.querySelector(".header").getBoundingClientRect();
   const container = document.querySelector(".container");
   const homebd = document.createElement("div");
@@ -11,7 +11,7 @@ export async function HomeBody(currentuserid) {
   usersSection.className = "user-section";
   postSection.className = "post-section";
   homebd.className = "container-body";
-  homebd.style.height = `calc(100% - ${header.height}px - 3rem)`;
+  homebd.style.height = `calc(100% - ${header.height}px - 1rem)`;
   const postss = document.createElement("div");
   postss.className = "postss";
   const addPostBtn = document.createElement("button");
@@ -120,7 +120,7 @@ async function GetCategory() {
 
     if (!resp.ok) {
       const result = await resp.json();
-
+      Toast(result)
       return;
     }
     const data = await resp.json();
@@ -128,6 +128,7 @@ async function GetCategory() {
 
     return data;
   } catch (err) {
+    DispalyError(err.Status,err.Message)
     Toast(err);
   }
 }
@@ -145,11 +146,11 @@ async function handlePostSubmit(event) {
     Toast("Category Required");
     return;
   }
-  if (!title || title.length <= 5) {
+  if (!title || title.length <= 5||title.trim().length==0) {
     Toast("Title to short");
     return;
   }
-  if (!content || content.length <= 5) {
+  if (!content || content.length <= 5||content.trim().length==0) {
     Toast("Content too short ");
     return;
   }
@@ -173,17 +174,17 @@ async function handlePostSubmit(event) {
     if (response.ok) {
       document.querySelector(".post-modal").style.display = "none";
       document.getElementById("post-form").reset();
-      const postSection = document.querySelector(".post-section");
       container.innerHTML = "";
       DisplayPost();
       Toast("Post added ✅.");
     } else {
       const errr = await response.json();
-      console.error("Failed to create post", errr);
+    DispalyError(errr.Status,errr.Message)
+
       Toast(errr);
     }
   } catch (error) {
-    console.error("Error creating post:", error);
+    DispalyError(error.Status,error.Message)
     Toast(error);
   }
 }

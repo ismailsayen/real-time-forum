@@ -9,7 +9,7 @@ export async function Logout() {
 
     if (!resp.ok) {
       const result = await resp.json();
-      console.log(result);
+    
       return;
     }
     Toast("good Bye");
@@ -18,5 +18,6 @@ export async function Logout() {
     initSocket().onclose();
   } catch (err) {
     Toast(err);
+    DispalyError(err.Status,err.Message)
   }
 }

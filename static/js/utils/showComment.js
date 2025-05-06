@@ -1,6 +1,8 @@
 import { convertTime } from "./convertDate.js";
 
 export const ShowComments = async (e) => {
+
+  
   const idPost = e.currentTarget.getAttribute("data-post");
   const comments = document.querySelector(`[data-postID="${idPost}"]`);
   const div = e.currentTarget;
@@ -43,6 +45,8 @@ async function getComment(postid) {
 
     data = await resp.json();
   } catch (err) {
+    DispalyError(err.Status,err.Message)
+
     Toast(err);
   }
   return data;

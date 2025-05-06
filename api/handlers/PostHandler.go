@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"html"
 	"net/http"
 	"strconv"
@@ -57,7 +56,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	post.UserID = ID
 	idPost, err := models.CreatePost(post.Title, post.Content, post.CreatedAt, post.UserID, db)
 	if err != nil {
-		fmt.Println(err)
 		utils.SendError(w, http.StatusBadRequest, "Cannot create post")
 		return
 	}

@@ -8,7 +8,7 @@ export function Header() {
   const divhead = document.createElement("div");
 
   const title = document.createElement("h1");
-  title.textContent = "Real Time Forum";
+  title.textContent = "RT-Forum";
   const nickname = document.createElement("h3");
   nickname.className = "nickname";
   const logoutBtn = document.createElement("button");
@@ -19,10 +19,9 @@ export function Header() {
   });
 
   header.appendChild(title);
-  divhead.appendChild(nickname)
+  divhead.appendChild(nickname);
   divhead.appendChild(logoutBtn);
   header.appendChild(divhead);
-
 
   container.appendChild(header);
 }

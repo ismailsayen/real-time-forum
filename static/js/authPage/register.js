@@ -23,7 +23,7 @@ export function Register() {
       for (let [key, value] of Object.entries(data)) {
         if (value !== "") {
           displayError(key, value);
-          console.log(key, value);
+         
         }
       }
       return;

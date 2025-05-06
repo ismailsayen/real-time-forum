@@ -58,12 +58,6 @@ func Routers(db *sql.DB) {
 		}), db).ServeHTTP(w, r)
 	})
 
-	http.HandleFunc("/getUsers", func(w http.ResponseWriter, r *http.Request) {
-		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.GetUsers(w, r, db)
-		}), db).ServeHTTP(w, r)
-	})
-
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		middleware.Authorization(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ws.WebSocket(w, r, db)
