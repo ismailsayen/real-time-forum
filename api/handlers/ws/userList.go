@@ -17,9 +17,11 @@ func sendUserList() {
 	}
 
 	data, _ := json.Marshal(userListMessage)
+	mu.Lock()
 	for _, client := range clients {
 		for _, c := range client {
 			c.WriteMessage(websocket.TextMessage, data)
 		}
 	}
+	mu.Unlock()
 }

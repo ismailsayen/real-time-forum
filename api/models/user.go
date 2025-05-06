@@ -55,7 +55,18 @@ func GetUserId(r *http.Request, db *sql.DB) (int, string, error) {
 }
 
 func FetchUsers(db *sql.DB, id int) (map[string]interface{}, map[string]interface{}, error) {
-	row, err := db.Query("SELECT ID, Nickname FROM Users WHERE ID <> ? ORDER BY Nickname ASC", id)
+	query:=`SELECT u.ID, u.Nickname,
+		(
+			SELECT MAX(m.Sent_At)
+			FROM Messages m
+			WHERE (m.Sender_ID = ? AND m.Reciever_ID = u.ID)
+			   OR (m.Reciever_ID = ? AND m.Sender_ID = u.ID)
+		) AS lastAt
+	FROM Users u
+	WHERE u.ID <> ?
+	ORDER BY lastAt DESC, u.Nickname ASC;
+	`
+	row, err := db.Query(query, id,id,id)
 	if err != nil {
 		return nil, nil,err
 	}
@@ -68,7 +79,7 @@ func FetchUsers(db *sql.DB, id int) (map[string]interface{}, map[string]interfac
 	var users []database.User
 	for row.Next() {
 		var u database.User
-		err := row.Scan(&u.ID, &u.NickName)
+		err := row.Scan(&u.ID, &u.NickName,&u.Last)
 		if err != nil {
 			return nil, nil, err
 		}

@@ -18,5 +18,6 @@ export async function Logout() {
     initSocket().onclose();
   } catch (err) {
     Toast(err);
+    DispalyError(err.Status,err.Message)
   }
 }

@@ -8,10 +8,15 @@ let loading = false;
 let allLoaded = false;
 
 export function FetchUsers(users) {
+
   let usersSection = document.querySelector(".user-list");
+ 
   if (!usersSection) {
     usersSection = document.querySelector(".user-section");
+  }else{
+    usersSection.innerHTML=""
   }
+
   if (!users) {
     usersSection.innerHTML = `<h1>no users yet <i class="fa-solid fa-user-xmark"></i></h1>`;
     return;
@@ -66,13 +71,13 @@ export function startChatWith(receiverId, receiverNickname) {
   chatArea.className = "chat-area";
   const chatHeader = document.createElement("div");
   chatHeader.className = "chat-header";
- 
+
   const userName = document.createElement("p");
   userName.textContent = `Chat with ${receiverNickname}`;
   const closeChat = document.createElement("i");
   closeChat.className = "fa-solid fa-xmark";
- 
-chatHeader.appendChild(userName);
+
+  chatHeader.appendChild(userName);
   chatHeader.appendChild(closeChat);
   closeChat.addEventListener("click", () => {
     const chat = document.querySelector(".chat-area");
@@ -101,7 +106,7 @@ chatHeader.appendChild(userName);
     <i class="fa fa-spinner fa-spin"></i> Loading messages...
   </div>
 `;
- 
+
   const chatInputContainer = document.createElement("div");
   chatInputContainer.className = "chat-input-container";
 
@@ -114,9 +119,37 @@ chatHeader.appendChild(userName);
   sendButton.className = "send-button";
   sendButton.textContent = "Send";
 
- 
+  let typingTimeout;
+  chatInput.addEventListener("input", () => {
+    console.log("hihi");
+    
+    socket.send(JSON.stringify({
+      type: "typing",
+      to: receiverId,
+      from: nickname,
+    }));
   
-chatInputContainer.appendChild(chatInput);
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.send(JSON.stringify({
+        type: "stopTyping",
+        to: receiverId,
+        from: nickname,
+      }));
+    }, 1000); 
+  });
+
+  const typingIndicator = document.createElement("div");
+  typingIndicator.className = "typing-indicator";
+  typingIndicator.id = `typing-${receiverId}`;
+  typingIndicator.style.cssText = "color: gray; padding: 5px; font-style: italic;";
+
+  typingIndicator.style.display = "none";
+  typingIndicator.textContent = `${receiverNickname} is typing...`;
+  
+  chatArea.appendChild(typingIndicator);
+ 
+  chatInputContainer.appendChild(chatInput);
   chatInputContainer.appendChild(sendButton);
   chatArea.appendChild(chatHeader);
   chatArea.appendChild(chatMessages);
@@ -138,14 +171,14 @@ chatInputContainer.appendChild(chatInput);
   chatMessages.addEventListener("scroll", () => {
     if (throttleTimeout) return;
 
-  
-    console.log(chatMessages.scrollHeight,chatMessages.scrollTop,chatMessages.clientHeight);
+
+    console.log(chatMessages.scrollHeight, chatMessages.scrollTop, chatMessages.clientHeight);
 
     const spinner = document.querySelector(".chat-loading-indicator");
-    if (chatMessages.scrollTop <=4 && !loading) {
-      if (spinner){
-     console.log(spinner);
-     
+    if (chatMessages.scrollTop <= 4 && !loading) {
+      if (spinner) {
+        console.log(spinner);
+
         spinner.style.display = "block";
       }
 
@@ -164,7 +197,15 @@ chatInputContainer.appendChild(chatInput);
     }, 500);
   });
 }
+export function ShowTypingIndicator(userId) {
+  const el = document.querySelector(`#typing-${userId}`);
+  if (el) el.style.display = "block";
+}
 
+export function HideTypingIndicator(userId) {
+  const el = document.querySelector(`#typing-${userId}`);
+  if (el) el.style.display = "none";
+}
 async function SendMessage(message, receiverId) {
   const chatId = document.querySelector(".chat-messages").id;
 
@@ -185,32 +226,33 @@ async function SendMessage(message, receiverId) {
       chatId: Number(chatId),
     })
   );
+
 }
 
 export function DisplayMessages(data) {
-  console.log("d",data);
   
+
   const chat_messages = document.querySelector(".chat-messages");
   if (!chat_messages) {
     return;
   }
   chat_messages.id = data.chatID;
   const spinner = chat_messages.querySelector(".chat-loading-indicator");
-if (spinner) spinner.style.display = "none";
+  if (spinner) spinner.style.display = "none";
 
   let messages = data.conversation;
   if (!messages || messages.length === 0) {
     if (offset === 0) {
       Toast("No message yet.");
     } else {
-      
+
       allLoaded = true;
     }
     loading = false;
     return;
   }
-    
-    
+
+
   const prevScrollHeight = chat_messages.scrollHeight;
   const prevScrollTop = chat_messages.scrollTop;
   messages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));
@@ -235,11 +277,11 @@ if (spinner) spinner.style.display = "none";
     msg.appendChild(username);
     msg.appendChild(p);
     msg.appendChild(time);
-    if (offset >0) {
+    if (offset > 0) {
       chat_messages.insertBefore(msg, chat_messages.firstChild);
     } else {
       chat_messages.appendChild(msg);
-        }
+    }
   });
 
   if (offset === 0) {
@@ -248,7 +290,7 @@ if (spinner) spinner.style.display = "none";
     const newScrollHeight = chat_messages.scrollHeight;
     chat_messages.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
   }
-  
+
   offset += messages.length;
   loading = false;
 }
@@ -328,7 +370,7 @@ export function AppendNewUser(user) {
 
   usersSection.appendChild(userDiv);
 
-  SortUsers();
+  // SortUsers();
 }
 
 function SortUsers() {

@@ -1,14 +1,17 @@
 package database
 
+import "database/sql"
+
 type User struct {
-	ID        int    `json:"id"`
-	NickName  string `json:"nickname"`
-	Password  string `json:"password"`
-	Age       int    `json:"age"`
-	Gender    string `json:"gender"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
+	ID        int           `json:"id"`
+	NickName  string        `json:"nickname"`
+	Password  string        `json:"password"`
+	Age       int           `json:"age"`
+	Gender    string        `json:"gender"`
+	FirstName string        `json:"firstName"`
+	LastName  string        `json:"lastName"`
+	Email     string        `json:"email"`
+	Last      sql.NullInt64 `json:"last"`
 }
 type Posts struct {
 	ID         int      `json:"id"`
