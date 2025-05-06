@@ -119,8 +119,36 @@ export function startChatWith(receiverId, receiverNickname) {
   sendButton.className = "send-button";
   sendButton.textContent = "Send";
 
+  let typingTimeout;
+  chatInput.addEventListener("input", () => {
+    console.log("hihi");
+    
+    socket.send(JSON.stringify({
+      type: "typing",
+      to: receiverId,
+      from: nickname,
+    }));
+  
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.send(JSON.stringify({
+        type: "stopTyping",
+        to: receiverId,
+        from: nickname,
+      }));
+    }, 1000); 
+  });
 
+  const typingIndicator = document.createElement("div");
+  typingIndicator.className = "typing-indicator";
+  typingIndicator.id = `typing-${receiverId}`;
+  typingIndicator.style.cssText = "color: gray; padding: 5px; font-style: italic;";
 
+  typingIndicator.style.display = "none";
+  typingIndicator.textContent = `${receiverNickname} is typing...`;
+  
+  chatArea.appendChild(typingIndicator);
+ 
   chatInputContainer.appendChild(chatInput);
   chatInputContainer.appendChild(sendButton);
   chatArea.appendChild(chatHeader);
@@ -169,7 +197,15 @@ export function startChatWith(receiverId, receiverNickname) {
     }, 500);
   });
 }
+export function ShowTypingIndicator(userId) {
+  const el = document.querySelector(`#typing-${userId}`);
+  if (el) el.style.display = "block";
+}
 
+export function HideTypingIndicator(userId) {
+  const el = document.querySelector(`#typing-${userId}`);
+  if (el) el.style.display = "none";
+}
 async function SendMessage(message, receiverId) {
   const chatId = document.querySelector(".chat-messages").id;
 

@@ -170,6 +170,21 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			}()
 			SendNotif(nickname, id, newMsg.ReceiverId, newMsg.ChatID)
 		}
+
+		if data.Type == "typing" || data.Type == "stopTyping" {
+			typingData := map[string]interface{}{
+			  "type": data.Type,
+			  "from": id,
+			}
+			typing, _ := json.Marshal(typingData)
+		  
+			if conns, exists := clients[data.Receiver]; exists {
+			  for _, conn := range conns {
+				conn.WriteMessage(websocket.TextMessage, typing)
+			  }
+			}
+		  }
+
 		if data.Type == "user-close" {
 			removeConnection(id, conn)
 			sendUserList()

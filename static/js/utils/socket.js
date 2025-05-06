@@ -5,6 +5,8 @@ import {
   DisplayMessages,
   DisplayNotif,
   FetchUsers,
+  HideTypingIndicator,
+  ShowTypingIndicator,
 } from "../home/DisplayChat.js";
 import { isLogged } from "../main.js";
 import { Toast } from "../toast/toast.js";
@@ -71,6 +73,15 @@ export function initSocket() {
       return;
     }
 
+    if (data.type === "typing") {
+      ShowTypingIndicator(data.from); 
+      return;
+    }
+    
+    if (data.type === "stopTyping") {
+      HideTypingIndicator(data.from); 
+      return;
+    }
     if (data.type === "notification") {
       DisplayNotif(data.usersid, data.chatID);
       Toast(`${data.message} 🔔`);
