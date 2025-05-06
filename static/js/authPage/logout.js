@@ -9,7 +9,7 @@ export async function Logout() {
 
     if (!resp.ok) {
       const result = await resp.json();
-      console.log(result);
+    
       return;
     }
     Toast("good Bye");

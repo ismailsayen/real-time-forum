@@ -11,7 +11,7 @@ export async function HomeBody() {
   usersSection.className = "user-section";
   postSection.className = "post-section";
   homebd.className = "container-body";
-  homebd.style.height = `calc(100% - ${header.height}px - 3rem)`;
+  homebd.style.height = `calc(100% - ${header.height}px - 1rem)`;
   const postss = document.createElement("div");
   postss.className = "postss";
   const addPostBtn = document.createElement("button");
@@ -120,7 +120,7 @@ async function GetCategory() {
 
     if (!resp.ok) {
       const result = await resp.json();
-
+      Toast(result)
       return;
     }
     const data = await resp.json();
@@ -178,11 +178,9 @@ async function handlePostSubmit(event) {
       Toast("Post added ✅.");
     } else {
       const errr = await response.json();
-      console.error("Failed to create post", errr);
       Toast(errr);
     }
   } catch (error) {
-    console.error("Error creating post:", error);
     Toast(error);
   }
 }

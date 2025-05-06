@@ -12,13 +12,14 @@ import { ChangeStatus } from "./changeStatus.js";
 export let socket;
 export function initSocket() {
   socket = new WebSocket("ws://localhost:8080/ws");
-  socket.addEventListener("open", async (event) => {
+  socket.addEventListener("open", async () => {
     socket.send(
       JSON.stringify({
         type: "getAllUsers",
       })
     );
   });
+
   socket.addEventListener("close", async (event) => {
     const data = JSON.parse(event.data);
     if (data.type === "userList") {
@@ -26,6 +27,7 @@ export function initSocket() {
       return;
     }
   });
+
   socket.addEventListener("message", async (event) => {
     let islogged = await isLogged(false);
     if (!islogged) {
@@ -38,6 +40,7 @@ export function initSocket() {
       Logout();
       return;
     }
+  
     const data = JSON.parse(event.data);
 
     if (!data || !data.type) return;
@@ -63,12 +66,12 @@ export function initSocket() {
     }
 
     if (data.type === "notification") {
-      DisplayNotif(data.usersid,data.chatID);
+      DisplayNotif(data.usersid, data.chatID);
       Toast(`${data.message} 🔔`);
       return;
     }
 
-    if (data.type == "NewUserJoinned") {  
+    if (data.type == "NewUserJoinned") {
       AppendNewUser(data.user);
       return;
     }
