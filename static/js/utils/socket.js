@@ -40,7 +40,7 @@ export function initSocket() {
       Logout();
       return;
     }
-  
+
     const data = JSON.parse(event.data);
 
     if (!data || !data.type) return;
@@ -51,6 +51,11 @@ export function initSocket() {
     }
 
     if (data.type === "userList") {
+      ChangeStatus(data.users);
+      return;
+    }
+    if (data.type === "LAstusersChatted") {
+      FetchUsers(data.users)
       ChangeStatus(data.users);
       return;
     }

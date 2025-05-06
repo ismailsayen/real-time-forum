@@ -45,6 +45,8 @@ async function getComment(postid) {
 
     data = await resp.json();
   } catch (err) {
+    DispalyError(err.Status,err.Message)
+
     Toast(err);
   }
   return data;

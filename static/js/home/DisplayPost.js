@@ -1,3 +1,4 @@
+import { DispalyError } from "../ErrorPage.js";
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
@@ -78,6 +79,8 @@ export async function DisplayPost() {
     });
     SetUrl("/posts");
   } catch (error) {
+   
+    DispalyError(error.Status,error.Message)
     console.log("Error fetching posts:", error);
   }
 }
@@ -150,6 +153,7 @@ async function addComment(idpost) {
       Toast(errr);
     }
   } catch (err) {
+    DispalyError(err.Status,err.Message)
     Toast(err);
   }
 }

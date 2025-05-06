@@ -128,6 +128,7 @@ async function GetCategory() {
 
     return data;
   } catch (err) {
+    DispalyError(err.Status,err.Message)
     Toast(err);
   }
 }
@@ -178,9 +179,12 @@ async function handlePostSubmit(event) {
       Toast("Post added ✅.");
     } else {
       const errr = await response.json();
+    DispalyError(errr.Status,errr.Message)
+
       Toast(errr);
     }
   } catch (error) {
+    DispalyError(error.Status,error.Message)
     Toast(error);
   }
 }
