@@ -37,9 +37,10 @@ export async function Login() {
       return;
     }
     localStorage.setItem("welcome", `Welcome, ${nickname}!`);
+  
     await isLogged(true);
   } catch (err) {
-     DispalyError(err.Status,err.Message)
+    DispalyError(err.Status, err.Message)
     error.innerHTML = "Something went wrong. Please try again.";
     error.style.display = "block";
   }

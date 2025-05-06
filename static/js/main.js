@@ -1,3 +1,4 @@
+import { DispalyError } from "./ErrorPage.js";
 import { LoadPage } from "./loadPage.js";
 import { SetUrl } from "./navigation/setPath.js";
 import { SetNickname } from "./utils/changeStatus.js";
@@ -10,7 +11,12 @@ export async function isLogged(change = false) {
       if (change) {
         let data = await resp.json();
         nickname = data.nickname;
-        SetUrl("/");
+        let path = location.pathname
+        if (path === "/auth") {
+          path = "/"
+        }
+
+        SetUrl(path);
         LoadPage();
         SetNickname(nickname);
       }
@@ -22,8 +28,7 @@ export async function isLogged(change = false) {
       return false;
     }
   } catch (error) {
-    SetUrl("/auth");
-    LoadPage();
+    DispalyError(error.Status, error.Message)
     return false;
   }
 }

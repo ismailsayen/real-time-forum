@@ -19,7 +19,7 @@ func PostHundler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	posts, err := models.GetPosts(db)
-	if err != nil {
+	if err == nil {
 		utils.SendError(w, http.StatusInternalServerError, "Cannot Fetch Post")
 		return
 	}
