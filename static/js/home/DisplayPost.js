@@ -149,10 +149,14 @@ async function addComment(idpost) {
       }
     } else {
       const errr = await resp.json();
+    
+
       console.error("Failed to create comment", errr);
       Toast(errr);
     }
   } catch (err) {
+    console.log(err);
+    
     DispalyError(err.Status,err.Message)
     Toast(err);
   }

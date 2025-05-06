@@ -1,7 +1,7 @@
 import { LoadPage } from "./loadPage.js"
 import { SetUrl } from "./navigation/setPath.js"
 
-export async function DispalyError(status=500,message="Internal Server Error"){   
+export async function DispalyError(status=404,message="Error Not Found"){   
     const container=document.querySelector(".container")
     container.innerHTML=``
     let div=document.createElement("div")
