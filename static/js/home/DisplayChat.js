@@ -145,7 +145,8 @@ export function startChatWith(receiverId, receiverNickname) {
   typingIndicator.style.cssText = "color: gray; padding: 5px; font-style: italic;";
 
   typingIndicator.style.display = "none";
-  typingIndicator.textContent = `${receiverNickname} is typing...`;
+  typingIndicator.innerHTML = `${receiverNickname} is typing<span class="typing-dots"></span>`;
+
   
   chatArea.appendChild(typingIndicator);
  
