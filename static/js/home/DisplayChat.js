@@ -185,6 +185,13 @@ async function SendMessage(message, receiverId) {
       chatId: Number(chatId),
     })
   );
+
+  let usersSection = document.querySelector(".user-list");
+  if (!usersSection) {
+    usersSection = document.querySelector(".user-section");
+  }
+  usersSection.innerHTML=""
+
 }
 
 export function DisplayMessages(data) {

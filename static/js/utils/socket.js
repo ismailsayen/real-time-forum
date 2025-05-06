@@ -61,6 +61,7 @@ export function initSocket() {
     }
 
     if (data.type === "messageSent") {
+
       AddNewMsgToChat(data);
       return;
     }

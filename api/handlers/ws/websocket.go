@@ -3,7 +3,7 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
-	
+
 	"net/http"
 
 	"rtFroum/api/models"
@@ -61,6 +61,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		}
 		if data.Type == "getAllUsers" {
 			users, newUser, err := models.FetchUsers(db, id)
+			// fmt.Println(users, newUser)
 			if err != nil {
 				// utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return
@@ -103,7 +104,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		if data.Type == "sendMessages" {
 			var newMsg SendMessage
 			err = json.Unmarshal(msg, &newMsg)
-			
+
 			if err != nil {
 				removeConnection(id, conn)
 				sendUserList()
@@ -125,6 +126,16 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 					conn.WriteMessage(websocket.TextMessage, data)
 				}
 			}
+			users, _, err := models.FetchUsers(db, id)
+			if err == nil {
+				usersData, _ := json.Marshal(users)
+				if conns, exists := clients[id]; exists {
+					for _, conn := range conns {
+						conn.WriteMessage(websocket.TextMessage, usersData)
+					}
+				}
+			}
+			sendUserList()
 			SendNotif(nickname, id, newMsg.ReceiverId, newMsg.ChatID)
 		}
 		if data.Type == "user-close" {
