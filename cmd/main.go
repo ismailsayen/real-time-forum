@@ -14,6 +14,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	
 
 	routes.Routers(db)
 	fmt.Println("http://localhost:8080/")
