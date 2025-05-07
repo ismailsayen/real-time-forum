@@ -29,8 +29,11 @@ export function initSocket() {
   });
 
   socket.addEventListener("close", async (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === "userList") {
+    let data;
+    if (event.data) {
+      data = JSON.parse(event.data);
+    }
+    if (data && data.type === "userList") {
       ChangeStatus(data.users);
       return;
     }
@@ -59,8 +62,6 @@ export function initSocket() {
     }
 
     if (data.type === "userList") {
-      console.log("SSA");
-
       ChangeStatus(data.users);
       return;
     }

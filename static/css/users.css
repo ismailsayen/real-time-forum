@@ -7,8 +7,6 @@
   flex-direction: column;
   border-radius: 8px;
   min-height: fit-content;
-  max-height: 100%;
-  overflow-y: scroll;
 }
 .user-section h1 {
   font-size: 18px;
@@ -17,6 +15,8 @@
 
 .user-list {
   margin: 10px 5px;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .user {

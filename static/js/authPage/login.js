@@ -32,8 +32,8 @@ export async function Login() {
     });
 
     if (!resp.ok) {
-      Toast(`${data.status} ${data.message}`);
       const result = await resp.json();
+      Toast(`${result.status} ${result.message}`);
       error.innerHTML = result.message;
       error.style.display = "block";
       return;
@@ -42,7 +42,8 @@ export async function Login() {
 
     await isLogged(true);
   } catch (err) {
-    DispalyError(err.Status, err.Message);
+    console.log(err);
+
     error.innerHTML = "Something went wrong. Please try again.";
     error.style.display = "block";
   }

@@ -1,3 +1,4 @@
+import { DispalyError } from "../ErrorPage.js";
 import { LoadPage } from "../loadPage.js";
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
@@ -18,6 +19,5 @@ export async function Logout() {
     initSocket().onclose();
   } catch (err) {
     Toast(err);
-    DispalyError(err.Status, err.Message);
   }
 }

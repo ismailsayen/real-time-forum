@@ -5,7 +5,6 @@ export const ShowComments = async (e) => {
   const idPost = e.currentTarget.getAttribute("data-post");
   const comments = document.querySelector(`[data-postID="${idPost}"]`);
   const div = e.currentTarget;
-
   if (comments.children.length == 0) {
     let data = await getComment(idPost);
     data.map((ele) => {

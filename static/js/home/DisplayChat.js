@@ -8,13 +8,12 @@ let loading = false;
 let allLoaded = false;
 
 export function FetchUsers(users) {
-
   let usersSection = document.querySelector(".user-list");
- 
+
   if (!usersSection) {
     usersSection = document.querySelector(".user-section");
-  }else{
-    usersSection.innerHTML=""
+  } else {
+    usersSection.innerHTML = "";
   }
 
   if (!users) {
@@ -62,7 +61,9 @@ export function startChatWith(receiverId, receiverNickname) {
   let notif = document.querySelector(`[data-userid="${receiverId}"] span`);
   if (notif.style.display === "inline-block") {
     notif.style.display = "none";
-    let storedNotifs = JSON.parse(localStorage.getItem("notifications") || "{}");
+    let storedNotifs = JSON.parse(
+      localStorage.getItem("notifications") || "{}"
+    );
     delete storedNotifs[receiverId];
     localStorage.setItem("notifications", JSON.stringify(storedNotifs));
   }
@@ -120,35 +121,37 @@ export function startChatWith(receiverId, receiverNickname) {
 
   let typingTimeout;
   chatInput.addEventListener("input", () => {
-    console.log("hihi");
-    
-    socket.send(JSON.stringify({
-      type: "typing",
-      to: receiverId,
-      from: nickname,
-    }));
-  
-    clearTimeout(typingTimeout);
-    typingTimeout = setTimeout(() => {
-      socket.send(JSON.stringify({
-        type: "stopTyping",
+    socket.send(
+      JSON.stringify({
+        type: "typing",
         to: receiverId,
         from: nickname,
-      }));
-    }, 1000); 
+      })
+    );
+
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.send(
+        JSON.stringify({
+          type: "stopTyping",
+          to: receiverId,
+          from: nickname,
+        })
+      );
+    }, 1000);
   });
 
   const typingIndicator = document.createElement("div");
   typingIndicator.className = "typing-indicator";
   typingIndicator.id = `typing-${receiverId}`;
-  typingIndicator.style.cssText = "color: gray; padding: 5px; font-style: italic;";
+  typingIndicator.style.cssText =
+    "color: gray; padding: 5px; font-style: italic;";
 
   typingIndicator.style.display = "none";
   typingIndicator.innerHTML = `${receiverNickname} is typing<div class="typing-dots"></div>`;
 
-  
   chatArea.appendChild(typingIndicator);
- 
+
   chatInputContainer.appendChild(chatInput);
   chatInputContainer.appendChild(sendButton);
   chatArea.appendChild(chatHeader);
@@ -170,10 +173,9 @@ export function startChatWith(receiverId, receiverNickname) {
   let throttleTimeout = null;
   chatMessages.addEventListener("scroll", () => {
     if (throttleTimeout) return;
-    console.log(chatMessages.scrollHeight, chatMessages.scrollTop, chatMessages.clientHeight);
 
     const spinner = document.querySelector(".chat-loading-indicator");
-    if (chatMessages.scrollTop <= 6 && !loading) {
+    if (chatMessages.scrollTop <= 10 && !loading) {
       if (spinner) {
         console.log(spinner);
 
@@ -181,18 +183,20 @@ export function startChatWith(receiverId, receiverNickname) {
       }
 
       loading = true;
-      socket.send(JSON.stringify({
-        type: "getMessages",
-        to: receiverId,
-        offset,
-        limit,
-      }));
+      socket.send(
+        JSON.stringify({
+          type: "getMessages",
+          to: receiverId,
+          offset,
+          limit,
+        })
+      );
     }
     throttleTimeout = setTimeout(() => {
       // spinner.style.display = "none";
 
       throttleTimeout = null;
-    }, 500);
+    }, 200);
   });
 }
 export function ShowTypingIndicator(userId) {
@@ -224,12 +228,9 @@ async function SendMessage(message, receiverId) {
       chatId: Number(chatId),
     })
   );
-
 }
 
 export function DisplayMessages(data) {
-  
-
   const chat_messages = document.querySelector(".chat-messages");
   if (!chat_messages) {
     return;
@@ -243,13 +244,11 @@ export function DisplayMessages(data) {
     if (offset === 0) {
       Toast("No message yet.");
     } else {
-
       allLoaded = true;
     }
     loading = false;
     return;
   }
-
 
   const prevScrollHeight = chat_messages.scrollHeight;
   const prevScrollTop = chat_messages.scrollTop;
@@ -286,7 +285,8 @@ export function DisplayMessages(data) {
     chat_messages.scrollTop = chat_messages.scrollHeight;
   } else {
     const newScrollHeight = chat_messages.scrollHeight;
-    chat_messages.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
+    chat_messages.scrollTop =
+      newScrollHeight - prevScrollHeight + prevScrollTop;
   }
 
   offset += messages.length;
@@ -301,6 +301,7 @@ export function AddNewMsgToChat(ele) {
   const p = document.createElement("p");
   p.textContent = ele.message;
   const time = document.createElement("div");
+  time.className="msg-time"
   time.textContent = convertTime(ele.date);
   msg.appendChild(p);
   msg.appendChild(time);

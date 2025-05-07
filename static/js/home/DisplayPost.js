@@ -1,8 +1,9 @@
 import { DispalyError } from "../ErrorPage.js";
+import { nickname } from "../main.js";
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
-import { ShowComments, ShowDiv } from "../utils/showComment.js";
+import { ShowComments } from "../utils/showComment.js";
 
 export async function DisplayPost() {
   const container = document.querySelector(".postss");
@@ -57,8 +58,7 @@ export async function DisplayPost() {
         </div>
       </div>
     </div>
-    <div class="comments" data-postID="${Number(post.id)}">
-    </div>
+    <div class="comments" data-postID="${Number(post.id)}"></div>
   <div class="new-comment">
     <input type="text" name="newComment" id="${Number(
       post.id
@@ -94,8 +94,6 @@ export async function DisplayPost() {
 
 async function addComment(idpost) {
   const content = document.getElementById(`${idpost}`);
-  console.log(content);
-
   if (
     !content.value ||
     content.value.length <= 3 ||
@@ -124,37 +122,10 @@ async function addComment(idpost) {
 
     if (resp.ok) {
       Toast("Commment added ✅.");
-      content.value = "";
-      const commentsDiv = document.querySelector(`[data-postID="${idpost}"]`);
-      let commentBtn = document.querySelector(`[data-post="${idpost}"]`);
-      if (!commentBtn) {
-        const card = content.closest(".card");
-        const reactsDiv = card.querySelector(".reacts > div");
-
-        commentBtn = document.createElement("button");
-        commentBtn.setAttribute("data-post", idpost);
-        commentBtn.className = "cmnt-btn show";
-        commentBtn.innerHTML = `<i class="fa-regular fa-comment"></i>`;
-        commentBtn.dataset.loaded = "false";
-
-        commentBtn.addEventListener("click", async function (e) {
-          if (this.dataset.loaded === "false") {
-            await ShowComments(e);
-            this.dataset.loaded = "true";
-          } else {
-            ShowDiv(this, document.querySelector(`[data-postID="${idpost}"]`));
-          }
-        });
-
-        reactsDiv.innerHTML = `<span>1</span>`;
-        reactsDiv.appendChild(commentBtn);
-      }
-      if (commentsDiv && commentBtn) {
-        commentsDiv.innerHTML = "";
-        commentBtn.dataset.loaded = "false";
-        await ShowComments({ currentTarget: commentBtn });
-        commentBtn.dataset.loaded = "true";
-      }
+      const comments = document.querySelector(
+        `.card [data-postid="${idpost}"] .reacts div`
+      );
+      console.log(comments);
     } else {
       const errr = await resp.json();
 
@@ -162,9 +133,6 @@ async function addComment(idpost) {
       Toast(errr);
     }
   } catch (err) {
-    console.log(err);
-
-    DispalyError(err.Status, err.Message);
     Toast(err);
   }
 }
