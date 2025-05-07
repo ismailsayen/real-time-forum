@@ -3,6 +3,7 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
+	"html"
 	"net/http"
 	"sync"
 
@@ -118,13 +119,14 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		}
 		if data.Type == "sendMessages" {
 			var newMsg SendMessage
+			
 			err = json.Unmarshal(msg, &newMsg)
 			if err != nil {
 				removeConnection(id, conn)
 				sendUserList()
 				break
 			}
-			messageSent, err := models.SendMessage(newMsg.Content, nickname, id, newMsg.ReceiverId, newMsg.Date, newMsg.ChatID, db)
+			messageSent, err := models.SendMessage(html.EscapeString(newMsg.Content), nickname, id, newMsg.ReceiverId, newMsg.Date, newMsg.ChatID, db)
 			if err != nil {
 				utils.SendError(w, http.StatusInternalServerError, err.Error())
 				return

@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"html"
 	"io"
 	"net/http"
 
@@ -30,6 +31,10 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	user.Password = utils.HashPassword(user.Password)
+	user.FirstName=html.EscapeString(user.FirstName)
+	user.LastName=html.EscapeString(user.LastName)
+	user.NickName=html.EscapeString(user.NickName)
+
 	id, err := models.Register(user, db, &Errors)
 	if len(err) > 0 {
 		w.Header().Set("Content-Type", "application/json")

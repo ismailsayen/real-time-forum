@@ -22,6 +22,7 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "All fields are required")
 		return
 	}
+	
 	ID, err := models.UserExist(user.NickName, db)
 	if err == sql.ErrNoRows {
 		utils.SendError(w, http.StatusBadRequest, "Invalid email or password")
