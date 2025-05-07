@@ -1,7 +1,6 @@
 import { Toast } from "../toast/toast.js";
 import { DisplayPost } from "./DisplayPost.js";
 
-
 export async function HomeBody() {
   const header = document.querySelector(".header").getBoundingClientRect();
   const container = document.querySelector(".container");
@@ -28,7 +27,6 @@ export async function HomeBody() {
   postSection.appendChild(postss);
   container.appendChild(homebd);
   DisplayPost();
-  
 }
 
 function createPostFormModal(categories) {
@@ -119,16 +117,15 @@ async function GetCategory() {
     const resp = await fetch("/getCategory");
 
     if (!resp.ok) {
-      const result = await resp.json();
-      Toast(result)
+      let data = await resp.json();
+      Toast(`${data.status} ${data.message}`);
       return;
     }
     const data = await resp.json();
-   
 
     return data;
   } catch (err) {
-    DispalyError(err.Status,err.Message)
+    DispalyError(err.Status, err.Message);
     Toast(err);
   }
 }
@@ -146,11 +143,11 @@ async function handlePostSubmit(event) {
     Toast("Category Required");
     return;
   }
-  if (!title || title.length <= 5||title.trim().length==0) {
+  if (!title || title.length <= 5 || title.trim().length == 0) {
     Toast("Title to short");
     return;
   }
-  if (!content || content.length <= 5||content.trim().length==0) {
+  if (!content || content.length <= 5 || content.trim().length == 0) {
     Toast("Content too short ");
     return;
   }
@@ -179,12 +176,12 @@ async function handlePostSubmit(event) {
       Toast("Post added ✅.");
     } else {
       const errr = await response.json();
-    DispalyError(errr.Status,errr.Message)
-
-      Toast(errr);
+      DispalyError(errr.Status, errr.Message);
+     
+      Toast(`${errr.status} ${errr.message}`);
     }
   } catch (error) {
-    DispalyError(error.Status,error.Message)
+    DispalyError(error.Status, error.Message);
     Toast(error);
   }
 }

@@ -8,12 +8,17 @@ export async function DisplayPost() {
   const container = document.querySelector(".postss");
   try {
     const resp = await fetch("/Getposts");
+    if (!resp.ok) {
+      let data = await resp.json();
+      Toast(`${data.status} ${data.message}`);
+      return;
+    }
     const data = await resp.json();
     if (data === null) {
       container.innerHTML = "<h1>No Post</h1>";
       return;
     }
-    container.innerHTML = ""; 
+    container.innerHTML = "";
     data.forEach((post) => {
       const postss = document.createElement("div");
       postss.className = "card";
@@ -40,10 +45,14 @@ export async function DisplayPost() {
       <div class="reacts">
         <div>
           <span>${Number(post.nbCmnts)}</span>
-          <button data-post="${Number(
-            post.id
-          )}" class="cmnt-btn ${hasCmts ? "hide" : "disabled"}" ${hasCmts ? "" : "disabled"}>
-           ${hasCmts ? `<i class="fa-regular fa-comment"></i>` : `No comments yet`}
+          <button data-post="${Number(post.id)}" class="cmnt-btn ${
+        hasCmts ? "hide" : "disabled"
+      }" ${hasCmts ? "" : "disabled"}>
+           ${
+             hasCmts
+               ? `<i class="fa-regular fa-comment"></i>`
+               : `No comments yet`
+           }
           </button>
         </div>
       </div>
@@ -66,11 +75,11 @@ export async function DisplayPost() {
       const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
       if (hasCmts) {
         const btn = postss.querySelector(`[data-post="${Number(post.id)}"]`);
-        btn.dataset.loaded = "false"; 
+        btn.dataset.loaded = "false";
         btn.addEventListener("click", async function (e) {
           if (this.dataset.loaded === "false") {
             await ShowComments(e);
-            this.dataset.loaded = "true"; 
+            this.dataset.loaded = "true";
           } else {
             ShowDiv(this, document.querySelector(`[data-postID="${post.id}"]`));
           }
@@ -79,9 +88,7 @@ export async function DisplayPost() {
     });
     SetUrl("/posts");
   } catch (error) {
-   
-    DispalyError(error.Status,error.Message)
-    console.log("Error fetching posts:", error);
+    DispalyError(error.Status, error.Message);
   }
 }
 
@@ -89,7 +96,11 @@ async function addComment(idpost) {
   const content = document.getElementById(`${idpost}`);
   console.log(content);
 
-  if (!content.value || content.value.length <= 3||content.value.trim().length==0) {
+  if (
+    !content.value ||
+    content.value.length <= 3 ||
+    content.value.trim().length == 0
+  ) {
     console.log(content.value);
     content.value = "";
     Toast("invalid Comment");
@@ -119,15 +130,13 @@ async function addComment(idpost) {
       if (!commentBtn) {
         const card = content.closest(".card");
         const reactsDiv = card.querySelector(".reacts > div");
-    
-       
+
         commentBtn = document.createElement("button");
         commentBtn.setAttribute("data-post", idpost);
         commentBtn.className = "cmnt-btn show";
         commentBtn.innerHTML = `<i class="fa-regular fa-comment"></i>`;
         commentBtn.dataset.loaded = "false";
-    
-      
+
         commentBtn.addEventListener("click", async function (e) {
           if (this.dataset.loaded === "false") {
             await ShowComments(e);
@@ -136,29 +145,26 @@ async function addComment(idpost) {
             ShowDiv(this, document.querySelector(`[data-postID="${idpost}"]`));
           }
         });
-    
-       
+
         reactsDiv.innerHTML = `<span>1</span>`;
         reactsDiv.appendChild(commentBtn);
       }
       if (commentsDiv && commentBtn) {
-        commentsDiv.innerHTML = ""; 
-        commentBtn.dataset.loaded = "false"; 
+        commentsDiv.innerHTML = "";
+        commentBtn.dataset.loaded = "false";
         await ShowComments({ currentTarget: commentBtn });
         commentBtn.dataset.loaded = "true";
       }
     } else {
       const errr = await resp.json();
-    
 
       console.error("Failed to create comment", errr);
       Toast(errr);
     }
   } catch (err) {
     console.log(err);
-    
-    DispalyError(err.Status,err.Message)
+
+    DispalyError(err.Status, err.Message);
     Toast(err);
   }
 }
-

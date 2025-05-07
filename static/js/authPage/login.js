@@ -1,4 +1,5 @@
 import { isLogged } from "../main.js";
+import { Toast } from "../toast/toast.js";
 
 export async function Login() {
   const nickname = document.querySelector("#nickname").value;
@@ -31,16 +32,17 @@ export async function Login() {
     });
 
     if (!resp.ok) {
+      Toast(`${data.status} ${data.message}`);
       const result = await resp.json();
       error.innerHTML = result.message;
       error.style.display = "block";
       return;
     }
     localStorage.setItem("welcome", `Welcome, ${nickname}!`);
-  
+
     await isLogged(true);
   } catch (err) {
-    DispalyError(err.Status, err.Message)
+    DispalyError(err.Status, err.Message);
     error.innerHTML = "Something went wrong. Please try again.";
     error.style.display = "block";
   }

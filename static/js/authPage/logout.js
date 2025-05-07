@@ -8,8 +8,8 @@ export async function Logout() {
     const resp = await fetch("/logout");
 
     if (!resp.ok) {
-      const result = await resp.json();
-    
+      let data = await resp.json();
+      Toast(`${data.status} ${data.message}`);
       return;
     }
     Toast("good Bye");
@@ -18,6 +18,6 @@ export async function Logout() {
     initSocket().onclose();
   } catch (err) {
     Toast(err);
-    DispalyError(err.Status,err.Message)
+    DispalyError(err.Status, err.Message);
   }
 }

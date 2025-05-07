@@ -3,9 +3,8 @@ package ws
 import (
 	"database/sql"
 	"encoding/json"
-	"sync"
-
 	"net/http"
+	"sync"
 
 	"rtFroum/api/models"
 	"rtFroum/utils"
@@ -16,8 +15,11 @@ import (
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
-var mu sync.Mutex
-var clients = make(map[int][]*websocket.Conn)
+
+var (
+	mu      sync.Mutex
+	clients = make(map[int][]*websocket.Conn)
+)
 
 type Messages struct {
 	Type     string `json:"type"`
@@ -36,7 +38,15 @@ type SendMessage struct {
 func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		utils.SendError(w, http.StatusInternalServerError, err.Error())
+		e := map[string]interface{}{
+			"type":    "errors",
+			"status":  http.StatusUpgradeRequired,
+			"message": "error under upgrading your conx please try again.",
+		}
+		data, _ := json.Marshal(e)
+		mu.Lock()
+		conn.WriteMessage(websocket.TextMessage, data)
+		mu.Unlock()
 		return
 	}
 
@@ -53,19 +63,15 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-
 			removeConnection(id, conn)
 			sendUserList()
-
 			break
 		}
 
 		err = json.Unmarshal(msg, &data)
 		if err != nil {
-
 			removeConnection(id, conn)
 			sendUserList()
-
 			break
 		}
 		if data.Type == "getAllUsers" {
@@ -90,7 +96,6 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 					}
 				}
 			}
-
 			sendUserList()
 		}
 		if data.Type == "getMessages" {
@@ -168,24 +173,22 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				mu.Unlock()
 				sendUserList()
 			}()
-			
-			sendUserList()
 			SendNotif(nickname, id, newMsg.ReceiverId, newMsg.ChatID)
 		}
 
 		if data.Type == "typing" || data.Type == "stopTyping" {
 			typingData := map[string]interface{}{
-			  "type": data.Type,
-			  "from": id,
+				"type": data.Type,
+				"from": id,
 			}
 			typing, _ := json.Marshal(typingData)
-		  
+
 			if conns, exists := clients[data.Receiver]; exists {
-			  for _, conn := range conns {
-				conn.WriteMessage(websocket.TextMessage, typing)
-			  }
+				for _, conn := range conns {
+					conn.WriteMessage(websocket.TextMessage, typing)
+				}
 			}
-		  }
+		}
 
 		if data.Type == "user-close" {
 			removeConnection(id, conn)
@@ -208,3 +211,12 @@ func removeConnection(userId int, conn *websocket.Conn) {
 		}
 	}
 }
+
+// func SendError(status ,id int, message string){
+// 	err:=map[string]interface{}{
+// 		"type":"errors",
+// 		"status":status,
+// 		"message":message,
+// 	}
+// 	for id,conns
+// }

@@ -15,6 +15,10 @@ export function LoadPage() {
       HomePage();
       initSocket();
       break;
+    case "/posts":
+      HomePage();
+      initSocket();
+      break;
     default:
       DispalyError();
   }

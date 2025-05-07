@@ -1,4 +1,5 @@
 import { isLogged } from "../main.js";
+import { Toast } from "../toast/toast.js";
 
 export function Register() {
   const form = document.getElementById("signup-form");
@@ -20,6 +21,9 @@ export function Register() {
 
     if (!req.ok) {
       let data = await req.json();
+    
+      
+      Toast(`${data.status} ${data.message}`)
       for (let [key, value] of Object.entries(data)) {
         if (value !== "") {
           displayError(key, value);

@@ -21,6 +21,12 @@ export function initSocket() {
       })
     );
   });
+  socket.addEventListener("error", (e) => {
+    const data = JSON.parse(e.data);
+    Toast(`${data.status} ${data.message}`);
+    Logout();
+    return;
+  });
 
   socket.addEventListener("close", async (event) => {
     const data = JSON.parse(event.data);
@@ -53,11 +59,13 @@ export function initSocket() {
     }
 
     if (data.type === "userList") {
+      console.log("SSA");
+
       ChangeStatus(data.users);
       return;
     }
     if (data.type === "LAstusersChatted") {
-      FetchUsers(data.users)
+      FetchUsers(data.users);
       ChangeStatus(data.users);
       return;
     }
@@ -68,18 +76,17 @@ export function initSocket() {
     }
 
     if (data.type === "messageSent") {
-
       AddNewMsgToChat(data);
       return;
     }
 
     if (data.type === "typing") {
-      ShowTypingIndicator(data.from); 
+      ShowTypingIndicator(data.from);
       return;
     }
-    
+
     if (data.type === "stopTyping") {
-      HideTypingIndicator(data.from); 
+      HideTypingIndicator(data.from);
       return;
     }
     if (data.type === "notification") {

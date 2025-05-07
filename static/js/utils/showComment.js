@@ -1,8 +1,7 @@
+import { Toast } from "../toast/toast.js";
 import { convertTime } from "./convertDate.js";
 
 export const ShowComments = async (e) => {
-
-  
   const idPost = e.currentTarget.getAttribute("data-post");
   const comments = document.querySelector(`[data-postID="${idPost}"]`);
   const div = e.currentTarget;
@@ -42,16 +41,20 @@ async function getComment(postid) {
       },
       body: JSON.stringify(newComment),
     });
-
+    if (!resp.ok) {
+      let data = await resp.json();
+      Toast(`${data.status} ${data.message}`);
+      return;
+    }
     data = await resp.json();
   } catch (err) {
-    DispalyError(err.Status,err.Message)
+    DispalyError(err.Status, err.Message);
 
     Toast(err);
   }
   return data;
 }
-  export function ShowDiv(div, comments) {
+export function ShowDiv(div, comments) {
   if (div.classList[1] == "hide") {
     comments.style.display = "block";
     div.classList.replace("hide", "show");
