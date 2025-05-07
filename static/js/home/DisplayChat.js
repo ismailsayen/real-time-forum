@@ -62,7 +62,6 @@ export function startChatWith(receiverId, receiverNickname) {
   let notif = document.querySelector(`[data-userid="${receiverId}"] span`);
   if (notif.style.display === "inline-block") {
     notif.style.display = "none";
-    // Remove notification from localStorage
     let storedNotifs = JSON.parse(localStorage.getItem("notifications") || "{}");
     delete storedNotifs[receiverId];
     localStorage.setItem("notifications", JSON.stringify(storedNotifs));
@@ -171,12 +170,10 @@ export function startChatWith(receiverId, receiverNickname) {
   let throttleTimeout = null;
   chatMessages.addEventListener("scroll", () => {
     if (throttleTimeout) return;
-
-
     console.log(chatMessages.scrollHeight, chatMessages.scrollTop, chatMessages.clientHeight);
 
     const spinner = document.querySelector(".chat-loading-indicator");
-    if (chatMessages.scrollTop <= 4 && !loading) {
+    if (chatMessages.scrollTop <= 6 && !loading) {
       if (spinner) {
         console.log(spinner);
 

@@ -43,6 +43,21 @@ func AddPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.SendError(w, http.StatusBadRequest, "Invalid json format data")
 		return
 	}
+	validCategoryIDs := map[string]bool{
+		"1": true,
+		"2": true,
+		"3": true,
+		"4": true,
+		"5": true,
+		"6": true,
+		"7": true,
+	}
+	for _, catID := range post.Categories {
+		if !validCategoryIDs[strings.TrimSpace(catID)] {
+			utils.SendError(w, http.StatusBadRequest, "Invalid category")
+			return
+		}
+	}
 	if strings.TrimSpace(post.Title) == "" || len(post.Categories) == 0 || strings.TrimSpace(post.Content) == "" {
 		utils.SendError(w, http.StatusBadRequest, "Title or Content or Categorie field's  empty ")
 		return
