@@ -33,6 +33,24 @@ export function FetchUsers(users) {
     status.style.backgroundColor = "red";
     userDiv.classList.add("user");
     username.textContent = user.nickname;
+
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'user-typing-indicator';
+    typingIndicator.innerHTML = 'typing <div class="typing-dots"></div>';
+    typingIndicator.style.cssText = `
+      color: #777;
+      font-size: 12px;
+      font-style: italic;
+      margin-top: 2px;
+      display: none;
+    `;
+    
+    notif.style.display = "none";
+    status.style.backgroundColor = "red";
+    userDiv.classList.add("user");
+    username.textContent = user.nickname;
+
+
     username.appendChild(notif);
     userDiv.dataset.userid = user.id;
     userDiv.addEventListener("click", () => {
@@ -48,6 +66,46 @@ export function FetchUsers(users) {
   });
 
   usersSection.appendChild(userList);
+}
+export function ShowUserListTypingIndicator(userId) {
+  // Find the user in the list
+  const userDiv = document.querySelector(`.user[data-userid="${userId}"]`);
+  if (!userDiv) return;
+  
+  // Check if typing indicator already exists
+  let typingIndicator = userDiv.querySelector('.user-typing-indicator');
+  
+  if (!typingIndicator) {
+    // Create the typing indicator if it doesn't exist
+    typingIndicator = document.createElement('div');
+    typingIndicator.className = 'user-typing-indicator';
+    typingIndicator.innerHTML = 'typing <div class="typing-dots"></div>';
+    typingIndicator.style.cssText = `
+      color: #777;
+      font-size: 12px;
+      font-style: italic;
+      margin-top: 2px;
+      display: block;
+    `;
+    
+    // Add it after the username
+    const username = userDiv.querySelector('p');
+    username.appendChild(typingIndicator);
+  } else {
+    // Just show it if it already exists
+    typingIndicator.style.display = 'block';
+  }
+}
+
+export function HideUserListTypingIndicator(userId) {
+  // Find the user's typing indicator and hide it
+  const userDiv = document.querySelector(`.user[data-userid="${userId}"]`);
+  if (!userDiv) return;
+  
+  const typingIndicator = userDiv.querySelector('.user-typing-indicator');
+  if (typingIndicator) {
+    typingIndicator.style.display = 'none';
+  }
 }
 
 export function startChatWith(receiverId, receiverNickname) {
