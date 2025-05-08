@@ -45,7 +45,7 @@ export async function DisplayPost() {
       </div>
       <div class="reacts">
         <div>
-          <span>${Number(post.nbCmnts)}</span>
+          <span class="comment-count">${Number(post.nbCmnts)}</span>
           <button data-post="${Number(post.id)}" class="cmnt-btn ${
         hasCmts ? "hide" : "disabled"
       }" ${hasCmts ? "" : "disabled"}>
@@ -69,10 +69,10 @@ export async function DisplayPost() {
     
   </div>
 `;
+      container.appendChild(postss);
       const commentBtn = postss.querySelector("#comment-btn");
       commentBtn.addEventListener("click", () => addComment(Number(post.id)));
-      container.appendChild(postss);
-      const btn = document.querySelector(`[data-post="${Number(post.id)}"]`);
+      
       if (hasCmts) {
         const btn = postss.querySelector(`[data-post="${Number(post.id)}"]`);
         btn.dataset.loaded = "false";
@@ -122,10 +122,51 @@ async function addComment(idpost) {
 
     if (resp.ok) {
       Toast("Commment added ✅.");
-      const comments = document.querySelector(
-        `.card [data-postid="${idpost}"] .reacts div`
-      );
-      console.log(comments);
+
+      const card = document.getElementById(`${idpost}`).closest('.card');
+      console.log(card);
+      
+      const commentsContainer = card.querySelector(`[data-postid="${idpost}"]`);
+      console.log(commentsContainer);
+      
+      const countSpan = card.querySelector('.comment-count');
+      const commentBtn = card.querySelector(`[data-post="${idpost}"]`);
+      const currentCount = parseInt(countSpan.textContent);
+      countSpan.textContent = currentCount + 1;
+
+      if (currentCount === 0) {
+        commentBtn.classList.replace("disabled", "hide");
+        commentBtn.disabled = false;
+        commentBtn.innerHTML = '<i class="fa-regular fa-comment"></i>';
+        commentBtn.dataset.loaded = "false";
+        commentBtn.addEventListener("click", async function (e) {
+          if (this.dataset.loaded === "false") {
+            await ShowComments(e);
+            this.dataset.loaded = "true";
+          } else {
+            ShowDiv(this, commentsContainer);
+          }
+        });
+      }
+
+      if (commentsContainer.style.display === "block") {
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment';
+        commentElement.innerHTML = /*html*/ `
+          <div class="header-comment">
+            <h4>
+              <img src="/static/images/profil.svg" alt="">
+              ${nickname}
+            </h4>
+            <p class="datetime">${convertTime(newComment.date)}</p>
+          </div>
+          <p class="content">${newComment.content}</p>
+        `;
+        commentsContainer.appendChild(commentElement);
+      } else if (commentBtn.classList.contains("hide") && !commentBtn.disabled) {
+        commentBtn.dataset.loaded = "false";
+      }
+      content.value = "";
     } else {
       const errr = await resp.json();
 
