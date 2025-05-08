@@ -6,7 +6,7 @@ let offset = 0;
 const limit = 10;
 let loading = false;
 let allLoaded = false;
-
+let chatwith=""
 export function FetchUsers(users) {
   let usersSection = document.querySelector(".user-list");
 
@@ -74,6 +74,7 @@ export function startChatWith(receiverId, receiverNickname) {
 
   const userName = document.createElement("p");
   userName.textContent = `Chat with ${receiverNickname}`;
+  chatwith=receiverNickname
   const closeChat = document.createElement("i");
   closeChat.className = "fa-solid fa-xmark";
 
@@ -258,11 +259,21 @@ export function DisplayMessages(data) {
   }
   messages.forEach((ele) => {
     const msg = document.createElement("div");
-    msg.className =
-      ele.receiver_nickname === nickname ? "receiver-msg" : "sender-msg";
+    let usernickname= ele.receiver_nickname === nickname ?  "receiver-msg" :"sender-msg" ;
+    msg.className =usernickname
+    // console.log(ele.receiver_nickname);
 
     const username = document.createElement("h4");
-    username.textContent = ele.sender_nickname;
+    
+
+    
+    if (usernickname=="sender-msg") {
+      username.textContent = nickname;
+    }else if (usernickname=="receiver-msg"){
+      username.textContent = chatwith;
+
+
+    }
 
     const p = document.createElement("p");
     p.textContent = ele.content;
@@ -298,11 +309,14 @@ export function AddNewMsgToChat(ele) {
   if (!chat_messages || chat_messages.id != ele.ChatID) return;
   const msg = document.createElement("div");
   msg.className = ele.sender === nickname ? "sender-msg" : "receiver-msg";
+  const username = document.createElement("h4");
+username.textContent=ele.sender
   const p = document.createElement("p");
   p.textContent = ele.message;
   const time = document.createElement("div");
   time.className="msg-time"
   time.textContent = convertTime(ele.date);
+  msg.appendChild(username);
   msg.appendChild(p);
   msg.appendChild(time);
   chat_messages.appendChild(msg);

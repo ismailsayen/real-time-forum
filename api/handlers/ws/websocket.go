@@ -176,6 +176,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				sendUserList()
 			}()
 			SendNotif(nickname, id, newMsg.ReceiverId, newMsg.ChatID)
+			sendUserList()
 		}
 
 		if data.Type == "typing" || data.Type == "stopTyping" {

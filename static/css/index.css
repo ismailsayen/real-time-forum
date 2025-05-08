@@ -214,7 +214,13 @@ body {
   max-width: 60%;
   text-align: right;
 }
-
+.sender-msg p {
+  margin: 0;
+  padding: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
 .receiver-msg {
   background-color: #fff;
   color: #000;
