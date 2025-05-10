@@ -6,6 +6,7 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"strings"
 
 	"rtFroum/api/models"
 	"rtFroum/database"
@@ -33,7 +34,7 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	user.Password = utils.HashPassword(user.Password)
 	user.FirstName=html.EscapeString(user.FirstName)
 	user.LastName=html.EscapeString(user.LastName)
-	user.NickName=html.EscapeString(user.NickName)
+	user.NickName=html.EscapeString(strings.Trim(user.NickName," "))
 
 	id, err := models.Register(user, db, &Errors)
 	if len(err) > 0 {
@@ -55,14 +56,14 @@ func VerifyData(user *database.User, errStruct *database.ErrorRegister, Body io.
 	if user.Email == "" || user.FirstName == "" || user.Gender == "" || user.LastName == "" || user.Password == "" || user.NickName == "" || user.Age == 0 || Body == nil {
 		errStruct.ErrEmpty = "All fields are required"
 	}
-	if user.Age <= 18 {
-		errStruct.ErrAge = "Age must be greater than 18"
+	if user.Age <= 18 && user.Age>=100 {
+		errStruct.ErrAge = "Age must be greater than 18 or less than 100"
 	}
 	if !utils.IsValidEmail(user.Email) {
 		errStruct.ErrEmail = "Invalid email format"
 	}
-	if len(user.NickName) > 30 {
-		errStruct.ErrNickName = "field Content too large"
+	if len(user.NickName) > 30 || strings.Contains(user.NickName," "){
+		errStruct.ErrNickName = "Invalid Nickname Format "
 	}
 
 	if len(user.Email) > 30 {

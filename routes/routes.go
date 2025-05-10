@@ -63,6 +63,7 @@ func Routers(db *sql.DB) {
 			ws.WebSocket(w, r, db)
 		}), db).ServeHTTP(w, r)
 	})
+
 	http.HandleFunc("/isLog", func(w http.ResponseWriter, r *http.Request) {
 		middleware.VerifyCookie(w, r, db)
 	})

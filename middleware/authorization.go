@@ -10,6 +10,7 @@ import (
 )
 
 func Authorization(next http.Handler, db *sql.DB) http.HandlerFunc {
+	
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("token")
 		if err != nil {

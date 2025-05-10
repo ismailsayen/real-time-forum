@@ -38,6 +38,7 @@ type SendMessage struct {
 
 func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
+	
 	if err != nil {
 		e := map[string]interface{}{
 			"type":    "errors",
@@ -176,6 +177,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 				sendUserList()
 			}()
 			SendNotif(nickname, id, newMsg.ReceiverId, newMsg.ChatID)
+			sendUserList()
 		}
 
 		if data.Type == "typing" || data.Type == "stopTyping" {
@@ -199,6 +201,15 @@ func WebSocket(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
 
 func removeConnection(userId int, conn *websocket.Conn) {
 	if conns, exists := clients[userId]; exists {
