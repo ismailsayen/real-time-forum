@@ -42,7 +42,7 @@ export async function Login() {
 
     await isLogged(true);
   } catch (err) {
-    console.log(err);
+ 
 
     error.innerHTML = "Something went wrong. Please try again.";
     error.style.display = "block";

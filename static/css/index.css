@@ -214,6 +214,7 @@ body {
   max-width: 60%;
   text-align: right;
 }
+
 .sender-msg p {
   margin: 0;
   padding: 0;
@@ -221,6 +222,7 @@ body {
   overflow-wrap: break-word;
   max-width: 100%;
 }
+
 .receiver-msg {
   background-color: #fff;
   color: #000;
@@ -253,12 +255,15 @@ body {
     width: 350px;
     height: 350px;
   }
+
   .sender-msg {
     font-size: 14px;
   }
+
   .msg-time {
     font-size: 0.6rem;
   }
+
   .chat-input {
     width: 60%;
   }
@@ -284,21 +289,33 @@ body {
 }
 
 .typing-dots {
-  width: 60px;
+  width: 30px;
   aspect-ratio: 2;
-  --_g: no-repeat radial-gradient(circle closest-side,#000 90%,#0000);
-  background: 
-    var(--_g) 0%   50%,
-    var(--_g) 50%  50%,
+  --_g: no-repeat radial-gradient(circle closest-side, #000 90%, #0000);
+  background:
+    var(--_g) 0% 50%,
+    var(--_g) 50% 50%,
     var(--_g) 100% 50%;
   background-size: calc(100%/3) 50%;
   animation: l3 1s infinite linear;
 }
+
 @keyframes l3 {
-    20%{background-position:0%   0%, 50%  50%,100%  50%}
-    40%{background-position:0% 100%, 50%   0%,100%  50%}
-    60%{background-position:0%  50%, 50% 100%,100%   0%}
-    80%{background-position:0%  50%, 50%  50%,100% 100%}
+  20% {
+    background-position: 0% 0%, 50% 50%, 100% 50%
+  }
+
+  40% {
+    background-position: 0% 100%, 50% 0%, 100% 50%
+  }
+
+  60% {
+    background-position: 0% 50%, 50% 100%, 100% 0%
+  }
+
+  80% {
+    background-position: 0% 50%, 50% 50%, 100% 100%
+  }
 }
 
 
@@ -308,7 +325,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999; /* ensure it's above everything */
+  z-index: 9999;
+  /* ensure it's above everything */
   padding: 2rem;
   background-color: #f8d7da;
   border: 1px solid #f5c2c7;

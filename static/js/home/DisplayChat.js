@@ -6,10 +6,9 @@ let offset = 0;
 const limit = 10;
 let loading = false;
 let allLoaded = false;
-let chatwith=""
+let chatwith = "";
 export function FetchUsers(users) {
   let usersSection = document.querySelector(".user-list");
-
   if (!usersSection) {
     usersSection = document.querySelector(".user-section");
   } else {
@@ -22,6 +21,10 @@ export function FetchUsers(users) {
   }
 
   const userList = document.createElement("div");
+  if (usersSection.classList.contains("user-list")) {
+    usersSection = document.querySelector(".user-section");
+    usersSection.innerHTML = ""
+  }
   userList.className = "user-list";
   let storedNotifs = JSON.parse(localStorage.getItem("notifications") || "{}");
   users.forEach((user) => {
@@ -34,22 +37,17 @@ export function FetchUsers(users) {
     userDiv.classList.add("user");
     username.textContent = user.nickname;
 
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'user-typing-indicator';
+    const typingIndicator = document.createElement("div");
+    typingIndicator.className = "user-typing-indicator";
     typingIndicator.innerHTML = 'typing <div class="typing-dots"></div>';
     typingIndicator.style.cssText = `
-      color: #777;
-      font-size: 12px;
-      font-style: italic;
-      margin-top: 2px;
       display: none;
     `;
-    
+
     notif.style.display = "none";
     status.style.backgroundColor = "red";
     userDiv.classList.add("user");
     username.textContent = user.nickname;
-
 
     username.appendChild(notif);
     userDiv.dataset.userid = user.id;
@@ -64,47 +62,42 @@ export function FetchUsers(users) {
       notif.innerHTML = `<i class="fa-solid fa-envelope"></i>`;
     }
   });
-
   usersSection.appendChild(userList);
 }
 export function ShowUserListTypingIndicator(userId) {
-  // Find the user in the list
   const userDiv = document.querySelector(`.user[data-userid="${userId}"]`);
   if (!userDiv) return;
-  
-  // Check if typing indicator already exists
-  let typingIndicator = userDiv.querySelector('.user-typing-indicator');
-  
+
+  let typingIndicator = userDiv.querySelector(".user-typing-indicator");
+
   if (!typingIndicator) {
-    // Create the typing indicator if it doesn't exist
-    typingIndicator = document.createElement('div');
-    typingIndicator.className = 'user-typing-indicator';
+    typingIndicator = document.createElement("div");
+    typingIndicator.className = "user-typing-indicator";
     typingIndicator.innerHTML = 'typing <div class="typing-dots"></div>';
     typingIndicator.style.cssText = `
       color: #777;
       font-size: 12px;
       font-style: italic;
       margin-top: 2px;
-      display: block;
+      display: flex;
+      gap:10px;
+      align-items:center;
     `;
-    
-    // Add it after the username
-    const username = userDiv.querySelector('p');
+
+    const username = userDiv.querySelector("p");
     username.appendChild(typingIndicator);
   } else {
-    // Just show it if it already exists
-    typingIndicator.style.display = 'block';
+    typingIndicator.style.display = "flex";
   }
 }
 
 export function HideUserListTypingIndicator(userId) {
-  // Find the user's typing indicator and hide it
   const userDiv = document.querySelector(`.user[data-userid="${userId}"]`);
   if (!userDiv) return;
-  
-  const typingIndicator = userDiv.querySelector('.user-typing-indicator');
+
+  const typingIndicator = userDiv.querySelector(".user-typing-indicator");
   if (typingIndicator) {
-    typingIndicator.style.display = 'none';
+    typingIndicator.style.display = "none";
   }
 }
 
@@ -132,7 +125,7 @@ export function startChatWith(receiverId, receiverNickname) {
 
   const userName = document.createElement("p");
   userName.textContent = `Chat with ${receiverNickname}`;
-  chatwith=receiverNickname
+  chatwith = receiverNickname;
   const closeChat = document.createElement("i");
   closeChat.className = "fa-solid fa-xmark";
 
@@ -150,9 +143,8 @@ export function startChatWith(receiverId, receiverNickname) {
   }
 
   const chatMessages = document.createElement("div");
+
   chatMessages.className = "chat-messages";
-  chatMessages.messageIds = new Set();
-  
   chatMessages.innerHTML = `
   <div class="chat-loading-indicator" style="
     display: none;
@@ -238,6 +230,7 @@ export function startChatWith(receiverId, receiverNickname) {
     if (chatMessages.scrollTop <= 10 && !loading) {
       if (spinner) {
 
+
         spinner.style.display = "block";
       }
 
@@ -252,7 +245,7 @@ export function startChatWith(receiverId, receiverNickname) {
       );
     }
     throttleTimeout = setTimeout(() => {
-      // spinner.style.display = "none";
+      spinner.style.display = "none";
 
       throttleTimeout = null;
     }, 200);
@@ -260,7 +253,10 @@ export function startChatWith(receiverId, receiverNickname) {
 }
 export function ShowTypingIndicator(userId) {
   const el = document.querySelector(`#typing-${userId}`);
-  if (el) el.style.display = "block";
+  if (el) {
+    el.style.display = "flex"
+    el.style.gap = "10px"
+  };
 }
 
 export function HideTypingIndicator(userId) {
@@ -308,9 +304,6 @@ export function DisplayMessages(data) {
     loading = false;
     return;
   }
-  if (!chat_messages.messageIds) {
-    chat_messages.messageIds = new Set();
-  }
 
   const prevScrollHeight = chat_messages.scrollHeight;
   const prevScrollTop = chat_messages.scrollTop;
@@ -318,28 +311,17 @@ export function DisplayMessages(data) {
   if (offset > 0) {
     messages.reverse();
   }
-  let newMessagesAdded = 0;
   messages.forEach((ele) => {
-    if (chat_messages.messageIds.has(ele.id)) {
-      return;
-    }
-    chat_messages.messageIds.add(ele.id);
     const msg = document.createElement("div");
-    let usernickname= ele.receiver_nickname === nickname ?  "receiver-msg" :"sender-msg" ;
-    msg.className =usernickname
-    msg.dataset.messageId = ele.id;
-     console.log(ele);
-
+    let usernickname =
+      ele.receiver_nickname === nickname ? "receiver-msg" : "sender-msg";
+    msg.className = usernickname;
     const username = document.createElement("h4");
-    
 
-    
-    if (usernickname=="sender-msg") {
+    if (usernickname == "sender-msg") {
       username.textContent = nickname;
-    }else if (usernickname=="receiver-msg"){
+    } else if (usernickname == "receiver-msg") {
       username.textContent = chatwith;
-
-
     }
 
     const p = document.createElement("p");
@@ -357,16 +339,14 @@ export function DisplayMessages(data) {
     } else {
       chat_messages.appendChild(msg);
     }
-    newMessagesAdded++;
   });
 
-  if (newMessagesAdded > 0) {
-    if (offset === 0) {
-      chat_messages.scrollTop = chat_messages.scrollHeight;
-    } else {
-      const newScrollHeight = chat_messages.scrollHeight;
-      chat_messages.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
-    }
+  if (offset === 0) {
+    chat_messages.scrollTop = chat_messages.scrollHeight;
+  } else {
+    const newScrollHeight = chat_messages.scrollHeight;
+    chat_messages.scrollTop =
+      newScrollHeight - prevScrollHeight + prevScrollTop;
   }
 
   offset += messages.length;
@@ -376,22 +356,14 @@ export function DisplayMessages(data) {
 export function AddNewMsgToChat(ele) {
   const chat_messages = document.querySelector(".chat-messages");
   if (!chat_messages || chat_messages.id != ele.ChatID) return;
-  if (!chat_messages.messageIds) {
-    chat_messages.messageIds = new Set();
-  }
-  if (chat_messages.messageIds.has(ele.messageId)) {
-    return;
-  }
-  chat_messages.messageIds.add(ele.messageId);
   const msg = document.createElement("div");
   msg.className = ele.sender === nickname ? "sender-msg" : "receiver-msg";
-  msg.dataset.messageId = ele.messageId;
   const username = document.createElement("h4");
-username.textContent=ele.sender
+  username.textContent = ele.sender;
   const p = document.createElement("p");
   p.textContent = ele.message;
   const time = document.createElement("div");
-  time.className="msg-time"
+  time.className = "msg-time";
   time.textContent = convertTime(ele.date);
   msg.appendChild(username);
   msg.appendChild(p);
@@ -424,14 +396,18 @@ export function DisplayNotif(idUser, chatID) {
 }
 
 export function AppendNewUser(user) {
+  const section = document.querySelector(".user-section");
+  if (!section) return;
+
   let usersSection = document.querySelector(".user-list");
   if (!usersSection) {
-    const section = document.querySelector(".user-section");
     section.innerHTML = "";
     usersSection = document.createElement("div");
     usersSection.className = "user-list";
     section.appendChild(usersSection);
+
   }
+
   const existingUser = document.querySelector(
     `.user[data-userid="${user.id}"]`
   );
@@ -450,36 +426,12 @@ export function AppendNewUser(user) {
   username.textContent = user.nickname;
   username.appendChild(notif);
   userDiv.dataset.userid = user.id;
-
   userDiv.addEventListener("click", () => {
     startChatWith(user.id, user.nickname);
   });
-
   userDiv.appendChild(username);
   userDiv.appendChild(status);
 
+
   usersSection.appendChild(userDiv);
-
-  // SortUsers();
-}
-
-function SortUsers() {
-  // Fixed: function name to match call
-  // Select all user elements, not the container
-  let users = document.querySelectorAll(".user");
-  let usersArray = Array.from(users);
-
-  // Sort users by name
-  usersArray.sort((a, b) => {
-    let nameA = a.querySelector("p").textContent.trim().toLowerCase();
-    let nameB = b.querySelector("p").textContent.trim().toLowerCase();
-    return nameA.localeCompare(nameB);
-  });
-
-  // Get the parent container
-  const parent = document.querySelector(".user-list");
-
-  // Clear the container and add sorted users
-  parent.innerHTML = "";
-  usersArray.forEach((user) => parent.appendChild(user));
 }

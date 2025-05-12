@@ -21,6 +21,7 @@
   cursor: pointer;
   font-weight: bold;
 }
+
 .add-post-btn:hover {
   background-color: #45a049;
 }
@@ -155,6 +156,7 @@
   max-width: 110px;
   justify-content: end;
 }
+
 .close-btn {
   position: absolute;
   top: 10px;
@@ -239,13 +241,12 @@ img[src="/static/images/profil.svg"] {
   width: 100%;
   margin: auto;
   background-color: #e6e6e6;
-  height: 100px;
   padding: 10px;
   border-radius: 8px;
   margin-top: 10px;
   display: none;
-  max-height: 180px;
-  max-height: 600px;
+  min-height: 180px;
+  max-height: 500px;
   overflow-y: scroll;
 }
 
@@ -319,6 +320,7 @@ img[src="/static/images/profil.svg"] {
   font-weight: 300;
   font-size: 0.8em;
 }
+
 @media screen and (max-width: 400px) {
   .container-body .post-section .postss .card .header-card h4 {
     font-size: 14px;

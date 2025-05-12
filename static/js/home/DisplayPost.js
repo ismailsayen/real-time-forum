@@ -3,7 +3,7 @@ import { nickname } from "../main.js";
 import { SetUrl } from "../navigation/setPath.js";
 import { Toast } from "../toast/toast.js";
 import { convertTime } from "../utils/convertDate.js";
-import { ShowComments } from "../utils/showComment.js";
+import { ShowComments, ShowDiv } from "../utils/showComment.js";
 
 export async function DisplayPost() {
   const container = document.querySelector(".postss");
@@ -38,22 +38,20 @@ export async function DisplayPost() {
       <div class="category">
         <p>
           <span>Category: </span>#${post.categories
-            .join("")
-            .split(",")
-            .join(" #")}
+          .join("")
+          .split(",")
+          .join(" #")}
         </p>
       </div>
       <div class="reacts">
         <div>
           <span class="comment-count">${Number(post.nbCmnts)}</span>
-          <button data-post="${Number(post.id)}" class="cmnt-btn ${
-        hasCmts ? "hide" : "disabled"
-      }" ${hasCmts ? "" : "disabled"}>
-           ${
-             hasCmts
-               ? `<i class="fa-regular fa-comment"></i>`
-               : `No comments yet`
-           }
+          <button data-post="${Number(post.id)}" class="cmnt-btn ${hasCmts ? "hide" : "disabled"
+        }" ${hasCmts ? "" : "disabled"}>
+           ${hasCmts
+          ? `<i class="fa-regular fa-comment"></i>`
+          : `No comments yet`
+        }
           </button>
         </div>
       </div>
@@ -61,18 +59,18 @@ export async function DisplayPost() {
     <div class="comments" data-postID="${Number(post.id)}"></div>
   <div class="new-comment">
     <input type="text" name="newComment" id="${Number(
-      post.id
-    )}" placeholder="Write your comment Here.">
+          post.id
+        )}" placeholder="Write your comment Here.">
     <button id="comment-btn" id="${Number(
-      post.id
-    )}" ><i class="fa-solid fa-plus"></i></button>
+          post.id
+        )}" ><i class="fa-solid fa-plus"></i></button>
     
   </div>
 `;
       container.appendChild(postss);
       const commentBtn = postss.querySelector("#comment-btn");
       commentBtn.addEventListener("click", () => addComment(Number(post.id)));
-      
+
       if (hasCmts) {
         const btn = postss.querySelector(`[data-post="${Number(post.id)}"]`);
         btn.dataset.loaded = "false";
@@ -99,7 +97,7 @@ async function addComment(idpost) {
     content.value.length <= 3 ||
     content.value.trim().length == 0
   ) {
-    console.log(content.value);
+
     content.value = "";
     Toast("invalid Comment");
     return;
@@ -122,13 +120,8 @@ async function addComment(idpost) {
 
     if (resp.ok) {
       Toast("Commment added ✅.");
-
       const card = document.getElementById(`${idpost}`).closest('.card');
-      console.log(card);
-      
       const commentsContainer = card.querySelector(`[data-postid="${idpost}"]`);
-      console.log(commentsContainer);
-      
       const countSpan = card.querySelector('.comment-count');
       const commentBtn = card.querySelector(`[data-post="${idpost}"]`);
       const currentCount = parseInt(countSpan.textContent);
@@ -170,7 +163,7 @@ async function addComment(idpost) {
     } else {
       const errr = await resp.json();
 
-      console.error("Failed to create comment", errr);
+
       Toast(errr);
     }
   } catch (err) {
