@@ -150,8 +150,9 @@ export function startChatWith(receiverId, receiverNickname) {
   }
 
   const chatMessages = document.createElement("div");
-
   chatMessages.className = "chat-messages";
+  chatMessages.messageIds = new Set();
+  
   chatMessages.innerHTML = `
   <div class="chat-loading-indicator" style="
     display: none;
@@ -236,7 +237,6 @@ export function startChatWith(receiverId, receiverNickname) {
     const spinner = document.querySelector(".chat-loading-indicator");
     if (chatMessages.scrollTop <= 10 && !loading) {
       if (spinner) {
-        console.log(spinner);
 
         spinner.style.display = "block";
       }
@@ -308,6 +308,9 @@ export function DisplayMessages(data) {
     loading = false;
     return;
   }
+  if (!chat_messages.messageIds) {
+    chat_messages.messageIds = new Set();
+  }
 
   const prevScrollHeight = chat_messages.scrollHeight;
   const prevScrollTop = chat_messages.scrollTop;
@@ -315,11 +318,17 @@ export function DisplayMessages(data) {
   if (offset > 0) {
     messages.reverse();
   }
+  let newMessagesAdded = 0;
   messages.forEach((ele) => {
+    if (chat_messages.messageIds.has(ele.id)) {
+      return;
+    }
+    chat_messages.messageIds.add(ele.id);
     const msg = document.createElement("div");
     let usernickname= ele.receiver_nickname === nickname ?  "receiver-msg" :"sender-msg" ;
     msg.className =usernickname
-    // console.log(ele.receiver_nickname);
+    msg.dataset.messageId = ele.id;
+     console.log(ele);
 
     const username = document.createElement("h4");
     
@@ -348,14 +357,16 @@ export function DisplayMessages(data) {
     } else {
       chat_messages.appendChild(msg);
     }
+    newMessagesAdded++;
   });
 
-  if (offset === 0) {
-    chat_messages.scrollTop = chat_messages.scrollHeight;
-  } else {
-    const newScrollHeight = chat_messages.scrollHeight;
-    chat_messages.scrollTop =
-      newScrollHeight - prevScrollHeight + prevScrollTop;
+  if (newMessagesAdded > 0) {
+    if (offset === 0) {
+      chat_messages.scrollTop = chat_messages.scrollHeight;
+    } else {
+      const newScrollHeight = chat_messages.scrollHeight;
+      chat_messages.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
+    }
   }
 
   offset += messages.length;
@@ -365,8 +376,16 @@ export function DisplayMessages(data) {
 export function AddNewMsgToChat(ele) {
   const chat_messages = document.querySelector(".chat-messages");
   if (!chat_messages || chat_messages.id != ele.ChatID) return;
+  if (!chat_messages.messageIds) {
+    chat_messages.messageIds = new Set();
+  }
+  if (chat_messages.messageIds.has(ele.messageId)) {
+    return;
+  }
+  chat_messages.messageIds.add(ele.messageId);
   const msg = document.createElement("div");
   msg.className = ele.sender === nickname ? "sender-msg" : "receiver-msg";
+  msg.dataset.messageId = ele.messageId;
   const username = document.createElement("h4");
 username.textContent=ele.sender
   const p = document.createElement("p");

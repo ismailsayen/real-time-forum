@@ -73,7 +73,11 @@ func GetMessages(user1_id, user2_id int, chatID int64, offset int, limit int, db
 func SendMessage(message, sender string, senderID, receiverID, date, chatID int, db *sql.DB) (map[string]interface{}, error) {
 	query := `INSERT INTO Messages (Sender_ID, Reciever_ID,Content,Sent_At,Chat_ID)
 	VALUES (?, ?, ?, ?, ?)`
-	_, err := db.Exec(query, senderID, receiverID, message, date, chatID)
+	result, err := db.Exec(query, senderID, receiverID, message, date, chatID)
+	if err != nil {
+		return nil, err
+	}
+	messageId, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +87,7 @@ func SendMessage(message, sender string, senderID, receiverID, date, chatID int,
 		"message": message,
 		"date":    date,
 		"ChatID":  chatID,
+		"messageId": messageId,
 	}
 	return messageSent, nil
 }
