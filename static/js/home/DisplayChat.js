@@ -143,7 +143,6 @@ export function startChatWith(receiverId, receiverNickname) {
   }
 
   const chatMessages = document.createElement("div");
-
   chatMessages.className = "chat-messages";
   chatMessages.innerHTML = `
   <div class="chat-loading-indicator" style="
@@ -161,16 +160,13 @@ export function startChatWith(receiverId, receiverNickname) {
 
   const chatInputContainer = document.createElement("div");
   chatInputContainer.className = "chat-input-container";
-
   const chatInput = document.createElement("input");
   chatInput.type = "text";
   chatInput.className = "chat-input";
   chatInput.placeholder = "Type a message...";
-
   const sendButton = document.createElement("button");
   sendButton.className = "send-button";
   sendButton.textContent = "Send";
-
   let typingTimeout;
   chatInput.addEventListener("input", () => {
     socket.send(
@@ -198,7 +194,6 @@ export function startChatWith(receiverId, receiverNickname) {
   typingIndicator.id = `typing-${receiverId}`;
   typingIndicator.style.cssText =
     "color: gray; padding: 5px; font-style: italic;";
-
   typingIndicator.style.display = "none";
   typingIndicator.innerHTML = `${receiverNickname} is typing<div class="typing-dots"></div>`;
 
