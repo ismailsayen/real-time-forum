@@ -22,6 +22,8 @@ export function initSocket() {
         type: "getAllUsers",
       })
     );
+    console.log("ana jiit");
+    
   });
   socket.addEventListener("error", (e) => {
     const data = JSON.parse(e.data);
@@ -103,6 +105,8 @@ export function initSocket() {
 
     if (data.type == "NewUserJoinned") {
       AppendNewUser(data.user);
+      console.log(data.user);
+
       return;
     }
   });

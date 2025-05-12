@@ -29,6 +29,7 @@ type Messages struct {
 	Limit    int    `json:"limit"`
 }
 type SendMessage struct {
+	ID               int64  `json:"ID"`
 	Type       string `json:"type"`
 	Content    string `json:"content"`
 	ReceiverId int    `json:"to"`
